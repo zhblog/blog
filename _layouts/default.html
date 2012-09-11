@@ -1,0 +1,109 @@
+---
+layout: default
+title: 江湖在喝酒的路上 
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>江湖在喝酒的路上</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="/jackzzh/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/jackzzh/css/jquery_lightbox.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="/jackzzh/css/alexgorbatchev/shCore.css" rel="stylesheet" type="text/css" />
+<link href="/jackzzh/css/alexgorbatchev/shThemeDefault.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/jackzzh/js/alexgorbatchev/shCore.js"></script>
+<script type="text/javascript" src="/jackzzh/js/alexgorbatchev/shBrushJScript.js"></script>
+<script type="text/javascript" src="/jackzzh/js/alexgorbatchev/shBrushPython.js"></script>
+<script type="text/javascript" src="/jackzzh/js/alexgorbatchev/shBrushCpp.js"></script>
+<script type="text/javascript" src="/jackzzh/js/alexgorbatchev/shBrushBash.js"></script>
+
+<script type="text/javascript" src="/jackzzh/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="/jackzzh/js/jquery_lightbox.js"></script>
+
+<style type="text/css">
+.imga{
+  border: 1px solid #12e3e3e;
+  border-width: 5px 5px 5px 5px;
+  }
+</style>
+<script type="text/javascript">
+          $(function() {
+                $('.aimg').lightBox();
+        });
+
+        SyntaxHighlighter.config.clipboardSwf = 'http://alexgorbatchev.com/pub/sh/current/scripts/clipboard.swf';
+        SyntaxHighlighter.all();
+</script>
+</head>
+<body>
+<div id="logo">
+  <p> <a href="http://jackzzh.github.com/jackzzh/">张郎的Blog</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;江湖在喝酒的路上</p>
+</div>
+<hr />
+<!-- end #logo -->
+<div id="page">
+  <div id="page-bgtop">
+    <div id="page-bgbtm">
+            <div id="content">
+        <div class="post">
+          <div class="post-bgtop">
+            <div class="post-bgbtm">
+                            <h2 class="title"><a id="titleid" href="#">TITLE</a></h2>
+                            <p class="meta"><span class="date">{{ site.posts.date }}</span> {{ site.posts.time }} <a href="#">Jack.ZH</a></p>
+                            <div class="entry">
+
+                                {{ content }}
+  
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="sidebar">
+        <ul>
+          <li>
+            <h2>最新文章 </h2>
+            <ul>
+                            {% for post in site.posts %}
+                                <li>{{ post.date | date_to_string }} <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+          </li>
+        </ul>
+      </div>
+      <!-- end #sidebar -->
+    </div>
+  </div>
+</div>
+<div id="footer">
+  <p>Copyright (c) © 2012 GitHub Inc. All rights reserved. <a href="http://blog.sina.com.cn/zzh250/">江湖</a>.</p>
+</div>
+<!-- end #footer -->
+</body>
+<script type="text/javascript">
+$(".addimg").each(function(){
+        html = "<a class='aimg' href='"+this.id+"'><img class='imga' src='"+this.id+"' ></img></a>"
+        $(this).html(html)
+      });
+
+function whimg()
+{
+     imga = $(".imga")
+         if(imga){
+               wt = (imga.width())
+               ht = (imga.height())
+               if (wt > 550)
+               {
+                      imga.width(550)
+                }
+           }
+}
+setTimeout("whimg()",2000)
+$("#fortitle").hide()
+$("#titleid").html($("#fortitle").html())
+</script>
+</html>
