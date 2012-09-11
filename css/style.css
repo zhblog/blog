@@ -11,7 +11,7 @@ a {
 body {
 	margin: 20px 0px 0px 0px;
 	padding: 0;
-	background: #191919 url(/jackzzh/images/img07.jpg) no-repeat right top;
+	background: #191919 url(/blog/images/img07.jpg) no-repeat right top;
 	font-family: Tahoma, Geneva, sans-serif;
 	font-size: 13px;
 	color: #424242;
@@ -173,7 +173,7 @@ hr {
 	height: 28px;
 	padding: 6px 0 0 7px;
 	border: none;
-	background: url(/jackzzh/images/img02.jpg) no-repeat left top;
+	background: url(/blog/images/img02.jpg) no-repeat left top;
 	color: #000000;
 }
 
@@ -182,7 +182,7 @@ hr {
 	height: 28px;
 	margin-left: 10px;
 	padding: 0px 5px;
-	background: url(/jackzzh/images/img.jpg) no-repeat left top;
+	background: url(/blog/images/img.jpg) no-repeat left top;
 	border: none;
 	text-indent: -9999px;
 	color: #FFFFFF;
@@ -210,7 +210,7 @@ hr {
 	width: 1050px;
 	height: 135px;
 	margin: 0 auto;
-	background: url(/jackzzh/images/img.png) no-repeat left top;
+	background: url(/blog/images/img.png) no-repeat left top;
 }
 
 #logo a, #logo p {
@@ -239,23 +239,23 @@ hr {
 /* Post */
 
 .post {
-	background: url(/jackzzh/images/img05.jpg) repeat-y left top;
+	background: url(/blog/images/img05.jpg) repeat-y left top;
 }
 
 .post-bgtop {
-	background: url(/jackzzh/images/img04.jpg) no-repeat left top;
+	background: url(/blog/images/img04.jpg) no-repeat left top;
 }
 
 .post-bgbtm {
 	padding: 0px 30px 20px 30px;
-	background: url(/jackzzh/images/img06.jpg) no-repeat left bottom;
+	background: url(/blog/images/img06.jpg) no-repeat left bottom;
 }
 
 .post .title {
 	height: 44px;
 	margin: 0px;
 	padding: 36px 0px 0px 0px;
-	background: url(/jackzzh/images/img11.jpg) repeat-x left bottom;
+	background: url(/blog/images/img11.jpg) repeat-x left bottom;
 }
 
 .post .title a {
@@ -325,20 +325,20 @@ hr {
 }
 
 #sidebar li {
-	background: url(/jackzzh/images/img09.jpg) repeat-y left top;
+	background: url(/blog/images/img09.jpg) repeat-y left top;
 }
 
 #sidebar li ul {
 	margin: 0px 0px;
 	padding: 0px 0px 20px 0px;
-	background: url(/jackzzh/images/img10.jpg) no-repeat left bottom;
+	background: url(/blog/images/img10.jpg) no-repeat left bottom;
 }
 
 #sidebar li li {
 	margin: -20px 30px 20px 30px;
 	padding: 8px 0px 8px 10px;
 	border-bottom: 1px solid #E0E0E0;
-	background: url(/jackzzh/images/img12.jpg) no-repeat left 13px;
+	background: url(/blog/images/img12.jpg) no-repeat left 13px;
 }
 
 #sidebar li li a {
@@ -358,7 +358,7 @@ hr {
 	height: 50px;
 	margin: 0px;
 	padding: 30px 0px 13px 30px;
-	background: url(/jackzzh/images/img08.jpg) no-repeat left top;
+	background: url(/blog/images/img08.jpg) no-repeat left top;
 	letter-spacing: -1px;
 	text-transform: lowercase;
 	font-size: 24px;
