@@ -1,0 +1,39 @@
+---
+layout: default
+title: 不实用的greenlet 
+---
+<p id="fortitle">{{ site.title }}</p>
+<pre class="preclass">
+    Lightweight concurrent programming
+    之前就听greenlet很牛，在並發上的效率很高，今天正好晚上加班，賺點補助，
+    看了一下這個據說神奇的東西。結果是令人失望的。
+    下面直接上個代碼吧
+</pre>
+ <h4>Python greenlet</h4>
+<pre class="brush: python">
+from greenlet import greenlet
+
+def test1():
+    print 12
+    gr2.switch()
+    print 34
+
+def test2():
+    print 56
+    gr1.switch()
+    print 78
+
+gr1 = greenlet(test1)
+gr2 = greenlet(test2)
+gr1.switch()
+</pre>
+<pre class="preclass">
+    居然是這個樣子的，這跟goto有什麼區別？
+    區別就是把代碼分拆整合？
+    所有的東西都要自己去調度？
+    根本沒有自動化的去分配時間片。
+    哎，看來還是多線程和多進程靠譜
+    但是呢，Python'的多線程太假了，如果沒有延時，效率與線性
+    基本沒有區別，這個叫人情何以堪。
+    我還是繼續回去高我的進程間通訊吧
+</pre>
