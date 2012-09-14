@@ -27,11 +27,11 @@
 			// Configuration related to navigation
 			fixedNavigation:		false,		// (boolean) Boolean that informs if the navigation (next and prev button) will be fixed or not in the interface.
 			// Configuration related to images
-			imageLoading:			'blog/js/imageslightbox-ico-loading.gif',		// (string) Path and the name of the loading icon
-			imageBtnPrev:			'blog/js/imageslightbox-btn-prev.gif',			// (string) Path and the name of the prev button image
-			imageBtnNext:			'blog/js/imageslightbox-btn-next.gif',			// (string) Path and the name of the next button image
-			imageBtnClose:			'blog/js/imageslightbox-btn-close.gif',		// (string) Path and the name of the close btn
-			imageBlank:				'blog/js/imageslightbox-blank.gif',			// (string) Path and the name of a blank image (one pixel)
+			imageLoading:			'/blog/js/images/lightbox-ico-loading.gif',		// (string) Path and the name of the loading icon
+			imageBtnPrev:			'/blog/js/images/lightbox-btn-prev.gif',			// (string) Path and the name of the prev button image
+			imageBtnNext:			'/blog/js/images/lightbox-btn-next.gif',			// (string) Path and the name of the next button image
+			imageBtnClose:			'/blog/js/images/lightbox-btn-close.gif',		// (string) Path and the name of the close btn
+			imageBlank:				'/blog/js/images/lightbox-blank.gif',			// (string) Path and the name of a blank image (one pixel)
 			// Configuration related to container image box
 			containerBorderSize:	10,			// (integer) If you adjust the padding in the CSS for the container, #lightbox-container-image-box, you will need to update this value
 			containerResizeSpeed:	400,		// (integer) Specify the resize duration of container image. These number are miliseconds. 400 is default.
@@ -102,7 +102,7 @@
 						</div>
 						<div id="lightbox-loading">
 							<a href="#" id="lightbox-loading-link">
-								<img src="/blog/js/imageslightbox-ico-loading.gif">
+								<img src="/blog/js/images/lightbox-ico-loading.gif">
 							</a>
 						</div>
 					</div>
@@ -115,7 +115,7 @@
 						</div>
 						<div id="lightbox-secNav">
 							<a href="#" id="lightbox-secNav-btnClose">
-								<img src="/blog/js/imageslightbox-btn-close.gif">
+								<img src="/blog/js/images/lightbox-btn-close.gif">
 							</a>
 						</div>
 					</div>
