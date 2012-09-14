@@ -3080,20 +3080,17 @@ C++对于C来说，就如同是肺癌对于肺
 程序员进化史
 
 </pre>
-<pre>
-老板:
-“乔治，我需要一个能打印'Hello World!'的程序”
-</pre>
+
 <pre class="brush: cpp">
 
-初中/高中
+//初中/高中
 
 
 10 PRINT "HELLO WORLD"
 20 END
 
 
-大学一年级
+//大学一年级
 
 
 program Hello(input, output);
@@ -3102,17 +3099,17 @@ writeln('Hello world');
 end.
 
 
-大学四年级
+//大学四年级
 
 
 (defun hello ()
 (print (list 'HELLO 'WORLD)))
 
 
-刚参加工作
+//刚参加工作
 
 
-#include <stdio.h>
+#include "stdio.h"
 main (argc, argv)
 int argc;
 char **argv; {
@@ -3120,10 +3117,10 @@ printf ("Hello World!\n");
 }
 
 
-老手
+//老手
 
 
-#include <stream.h>
+#include "stream.h"
 
 const int MAXLEN = 80;
 
@@ -3143,8 +3140,8 @@ void assign(char *chrs);
 void outstring::print() {
 int in;
 for (i=0; i<size; i++)
-cout << str[i];
-cout << "\n";
+cout 《 str[i];
+cout 《 "\n";
 }
 void outstring::assign(char* chrs) {
 int i;
@@ -3159,4 +3156,7 @@ string.assign("Hello World!");
 string.print();
 }
 </pre>
-
+<pre>
+老板:
+“乔治，我需要一个能打印'Hello World!'的程序”
+</pre>
