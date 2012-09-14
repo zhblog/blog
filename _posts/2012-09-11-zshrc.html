@@ -1,8 +1,10 @@
 ---
 layout: default
 title: 介绍zsh 
+author: zzh 
 ---
-<p id="fortitle">{{ site.title }}</p>
+<p id="fortitle"> {{ site.time | date_to_xmlschema }} </p>
+
 <pre class="preclass">
     zsh强大的自动补全能力让人侧目，Z，字母的最后一个，终极shell啊！
     更改用户的默认shell， 修改/etc/passwd 把用户下面的shell改为zsh就OK了。

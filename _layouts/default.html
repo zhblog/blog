@@ -1,12 +1,8 @@
----
-layout: default
-title: 江湖在喝酒的路上 
----
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>江湖在喝酒的路上</title>
+<title>{{ page.title }}</title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
 <link href="/blog/css/style.css" rel="stylesheet" type="text/css" media="screen" />
@@ -52,9 +48,9 @@ title: 江湖在喝酒的路上
         <div class="post">
           <div class="post-bgtop">
             <div class="post-bgbtm">
-                            <h2 class="title"><a id="titleid" href="#">TITLE</a></h2>
-                            <p class="meta"><span class="date">{{ site.posts.date }}</span> {{ site.posts.time }} <a href="#">Jack.ZH</a></p>
-                            <div class="entry">
+                <h2 class="title"><a id="titleid" href="#">{{ page.title }}</a></h2>
+                <p class="meta"> <a href="#">{{ page.author }}</a></p>
+                <div class="entry">
 
                                 {{ content }}
   
@@ -118,8 +114,8 @@ function whimg()
                 }
            }
 }
-//setTimeout("whimg()",100)
 $("#fortitle").hide()
-$("#titleid").html($("#fortitle").html())
+var ht = $(".meta").html()
+$(".meta").html($("#fortitle").html() + ht)
 </script>
 </html>
