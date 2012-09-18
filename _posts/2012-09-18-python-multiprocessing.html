@@ -42,21 +42,7 @@ if __name__ == '__main__':
     print parent_conn.recv()   # prints "[42, None, 'hello']"
     p.join()
 </pre>
-<h4>Pipes</h4>
-<pre class="brush: python">
-from multiprocessing import Process, Pipe
-
-def f(conn):
-    conn.send([42, None, 'hello'])
-    conn.close()
-
-if __name__ == '__main__':
-    parent_conn, child_conn = Pipe()
-    p = Process(target=f, args=(child_conn,))
-    p.start()
-    print parent_conn.recv()   # prints "[42, None, 'hello']"
-    p.join()
-</pre>
+</br>
 <h2>数据共享</h2>
 <h4>共享内存</h4>
 <pre class="brush: python">
@@ -78,7 +64,7 @@ if __name__ == '__main__':
     print num.value
     print arr[:]
 </pre>
-<p>具体参数含义，看<a herf="http://docs.python.org/library/array.html"></a>这里</p>
+<p>具体参数含义，看<a href="http://docs.python.org/library/array.html"></a>这里</p>
 <h4>Server process</h4>
 <pre class="brush: python">
 from multiprocessing import Process, Manager
