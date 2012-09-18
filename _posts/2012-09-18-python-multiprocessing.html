@@ -89,3 +89,138 @@ if __name__ == '__main__':
     print d
     print l
 </pre>
+<p>结合多进程SocketServer，和数据共享，写一个测试代码</p>
+<p>服务器端</p>
+<pre class="brush: python">
+#!/usr/bin/env python
+# -*- coding: UTF8 -*-
+import time
+import threading
+import thread
+import SocketServer
+
+from multiprocessing import Manager
+
+
+class AppHandler(SocketServer.BaseRequestHandler):
+    def __init__(self, request, client_address, server):
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+
+    def setup(self):
+        print("%s is connected!" % self.client_address[0])
+        yes = Application.yes
+        yes[self.client_address[0]] = self.client_address[0]
+        self.test = yes[self.client_address[0]]
+
+    def handle(self):
+        while True:
+            try:
+                recv = self.request.recv(6)
+                print self.test
+                print recv[2]  # if clinet close this is a Exception and goto Exception
+            except Exception, e:
+                print (e)
+                self.request.send("error")
+                break
+
+    def finish(self):
+        yes = Application.yes
+        yes[self.client_address[0]] = None
+        print("%s disconnected." % self.client_address[0])
+
+
+class AppServer(SocketServer.ForkingTCPServer):
+    """
+    App level TCP server with connection management.
+    """
+    stopped = False
+    allow_reuse_address = True
+
+    def __init__(self, server_address, RequestHandlerClass):
+        print "server start init"
+        SocketServer.ForkingTCPServer.__init__(self, server_address, RequestHandlerClass)
+
+    def serve_forver(self):
+        while not self.stopped:
+            self.handle_request()
+
+    def stop(self):
+        self.stopped = True
+        self.shutdown()
+        self.socket.close()
+
+    def verify_request(self, request, client_address):
+        return True
+
+    def close_request(self, request):
+        print("%d" % thread.get_ident())
+
+
+class Application():
+
+    thread = None
+    server = None
+    manager = None
+    yes = None
+
+    def __init__(self, ip, port):
+        self.port = port
+        self.ip = ip
+
+    def startup(self):
+        print("Application startup ...")
+        try:
+            Application.manager = Manager()
+            Application.yes = Application.manager.dict()
+            Application.server = AppServer((self.ip, self.port), AppHandler)
+            Application.thread = threading.Thread(name="Application server", target=Application.server.serve_forever)
+            Application.thread.start()
+        except Exception, e:
+            print(e)
+        finally:
+            while True:
+                print "while"
+                print Application.yes
+                time.sleep(3)
+
+    def shutdown(self):
+        print("Application shutdown ...")
+        try:
+            Application.server.stop()
+        except Exception, e:
+            print(e)
+
+        time.sleep(1)
+
+
+if __name__ == "__main__":
+    ip = "192.168.100.160"
+    port = 6002
+    app = Application(ip, port)
+    app.startup()
+</pre>
+<p>客户端</p>
+<pre class="brush: python">
+#!/usr/bin/env python
+# -*- coding: UTF8 -*-
+import socket
+import time
+import sys
+
+selfip = "192.168.100.4"
+if len(sys.argv) >= 2:
+    selfip = sys.argv[1]
+HOST = '192.168.100.160'  # The remote host
+PORT = 6002  # The same port as used by the server
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((selfip, 5678))
+s.connect((HOST, PORT))
+while True:
+    s.send('world!')
+    #data = s.recv(1024)
+    #print 'Received', repr(data)
+    time.sleep(1)
+s.close()	
+</pre>
+<p>收工回家</p>
+
