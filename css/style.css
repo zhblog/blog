@@ -5,7 +5,7 @@ http://www.freecsstemplates.org
 Released for free under a Creative Commons Attribution 2.5 License
 */
 a {
-	color: #424242;
+    color: #FF0000;
 }
 
 body {
@@ -461,7 +461,7 @@ hr {
    display: block;
    overflow: auto;
    background: #f4f4f4;
-   padding: 5px 10px;
+   padding: 5px 2px;
    border: 1px solid #eee;
    word-wrap:break-word; /* Internet Explorer 5.5+ */
 }
