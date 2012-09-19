@@ -1,0 +1,210 @@
+---
+layout: default
+title: Linux C(1)-hello world 
+author: zzh 
+---
+<p id="fortitle"> {{ site.time | date_to_xmlschema }} </p>
+
+<h2>1：跑起来</h2>
+<p>先把hello world跑起来</p>
+<pre class="brush:cpp;">
+#include &lt;stdio.h&gt;
+  
+int main()  
+{  
+     printf("hello world!/n");  
+     return 0;  
+}  
+  
+</pre>
+<p>保存为 ex1.c  linux终端中敲入</p>
+<pre class="brush:cpp">
+~$:make ex1  
+~$:cc -Wall -g    ex1.c   -o ex1 
+</pre>
+<p>你会发现 生成了一个ex1文件</p>
+<pre class="brush:cpp">
+~$:./ex1  
+   hello world! 
+</pre>
+<p>你会发现 生成了一个ex1文件</p>
+<pre class="brush:cpp">
+~$:./ex1  
+   hello world! 
+</pre>
+<p>OK 我们成功了</p>
+<h2>2：怎么跑起来的</h2>
+<p>但是  它到底做了什么 ？ 各个段落都干了什么？  这段我不知道怎么说了  直接命令说话  </p>
+<pre class="brush:cpp">
+~$:gcc -E ex1.c -o ex1.i   
+</pre>
+<p>-E 这是一个预处理选项，其实生成的.i文件还是C语言文件，只是把include 还有宏之类的东西做了替换 替换 </br> 
+比如 ex2.c如下：</p>
+<pre class="brush:cpp">
+#include "stdio.h"  
+#define  HELLOWORLD "hello world!"  
+  
+ int main()  
+{  
+     printf("%s\n",HELLOWORLD);  
+     return 0;  
+}  
+</pre>
+<pre class="brush:cpp"> 
+~$:gcc -E ex2.c -o ex2.i
+</pre>  
+ <p>
+HELLOWORLD 做了相应的的替换 接着下面  
+ </p>
+<pre class="brush:cpp">
+~$:gcc -S ex2.i -o ex2.s  
+ </pre>
+ <p>
+这个会把.i 文件编译成汇编文件 如果熟悉汇编语言 你可以看一下  
+ </p>
+ <pre class="brush:cpp">
+~$:gcc -c ex2.s -o ex2.o
+</pre>  
+ <p>
+上面是把汇编代码 转换成机器代码,最后:  
+ </p>
+ <pre class="brush:cpp">
+~$:gcc ex2.o -o ex2  
+</pre>
+<p>最后，在连接阶段将输入的机器代码文件*.o（与其它的机器代码文件和库文件）汇集成一个可执行的二进制代码文件。</p>
+<p>这个是整个的编译过程，然而 就如上面所说，与其它的机器代码文件和库文件，这个其他代码和库文件是怎么链接过来的呢？ </p>
+ <p>
+我们先看一下这个命令
+</p>
+<pre class="brush:cpp">
+~$:ldd ex2  
+ libc.so.6 => /lib64/libc.so.6 (0x0000003195800000)  
+ /lib64/ld-linux-x86-64.so.2 (0x0000003195400000)  
+</pre>
+<p>这个命令可以看得到上面的C文件所用到的动态连接库是什么，如果我们自己想写一个自己的动态或是静态的链接库，怎么来写？  
+OK 我们下面解决这个问题  
+比如 我们的printf函数是哪里实现的呢 是怎么来链接此函数实现的呢 </p>
+
+<h2>3：这个过程中还有什么？</h2>
+<pre class="brush:cpp">
+~$:ldd ex2  
+ libc.so.6 => /lib64/libc.so.6 (0x0000003195800000)  
+ /lib64/ld-linux-x86-64.so.2 (0x0000003195400000)  
+</pre>
+<p>奥 原来是 链接了libc.so.6实现的呢 那这个东西又是怎么链接到我们的程序呢？  
+为了弄明白这个问题，我们自己先实现一个自己的静态链接库  test1.c:</p>
+<pre class="brush:cpp">
+#include "stdio.h"  
+#define  HELLOWORLD "hello world!"  
+  
+ int main()  
+{  
+     printf("%s\n",HELLOWORLD);  
+     return 0;  
+}  
+</pre>
+ 
+<p>test2.c:</p>  
+ <pre class="brush:cpp">
+#include "stdio.h"  
+  
+void test2(int test2)  
+{  
+     printf("test2:%d\n",test2);  
+}  
+</pre>
+<p>把它们编译成.o文件</p>  
+  <pre class="brush:cpp">
+~$:cc -c test1.c  
+~$:cc -c test2.c  
+ </pre> 
+<p>会生成test1.o 和test2.o  </p>
+<p>一个头文件：</p>  
+<p>test.h：</p>  
+<pre class="brush:cpp">
+void test1(int);  
+void test2(int);  
+</pre>
+写一个他们的调用函数  
+test.c  
+<pre class="brush:cpp">
+#include "stdio.h"  
+#include "test.h"  
+  
+int main(void)  
+{  
+     test1(1);  
+     test2(2);  
+     return 0；  
+}  
+</pre>
+<pre class="brush:cpp">  
+cc -c test.c  
+cc -o test test.o test1.o test2.o  
+</pre>  
+这样会生成一个可执行文件test  
+<pre class="brush:cpp">  
+./test  
+test1:1  
+test2:2  
+</pre>
+我们可以运行了，然后我们开始做自己的静态库 libself.a  
+<pre class="brush:cpp">
+ar crv libself.a test1.o test2.o  
+a - test1.o  
+a - test2.o 
+</pre>
+我们试用一下自己的库 
+<pre class="brush:cpp">
+cc -o test test.o libself.a  
+./test 
+</pre>
+成功  
+看一下用参数  
+<pre class="brush:cpp">
+cc -o test test.o libself.a  
+./test 
+</pre>
+成功  
+如果不行 记得生成内容表 
+<pre class="brush:cpp">
+ranlib libself.a 
+</pre>
+<pre class="preclass">
+这个可以运行了 但是呢，我还是很郁闷 因为静态库有以下缺点：  
+当需要多次调用静态库的时候，内存中会存在多个静态库 占用资源  
+这个时候就需要共享库了 它成功的解决了这个问题：  
+链接方式：程序本身不包含函数代码，而是引用运行时可访问的共享代码  
+对于一个共享库 他是这样的 ：程序本身不包含函数代码，在磁盘上和内存中也仅保存一份，更新也更方便。  
+一个共享库的典型的名字为libNAME.so.N NAME为共享库的名字 N为版本号码。  
+书上说linux负责装载共享库并解析客户程序函数应用的程序（动态装载器）是ld.so.N s搜索共享库使用的
+是配置/etc/ld.so.conf 如果修改了这个文件 需要 ldconfig来处理它  
+我对动态连接库的了解也就这么多了  
+</pre>
+<p>试着自己做一下</p>
+<pre class="brush:cpp">
+gcc test12.c test2.c -fPIC -shared -o libtest.so  
+gcc test.c -L. -ltest -o test  
+./test  
+</pre>
+<p>成功，解释一下</p>
+<pre class="preclass"> 
+-shared 该选项指定生成动态连接库（让连接器生成T类型的导出符号表，有时候也生成弱连接W类型的导出符号），
+	不用该标志外部程序无法连接。相当于一个可执行文件  
+-fPIC：表示编译为位置独立的代码，不用此选项的话编译后的代码是位置相关的所以动态载入时是通过
+	代码拷贝的方式来满足不同进程的需要，而不能达到真正代码段共享的目的。  
+-L.：表示要连接的库在当前目录中  
+-ltest：编译器查找动态连接库时有隐含的命名规则，即在给出的名字
+	前面加上lib，后面加上.so来确定库的名称  
+LD_LIBRARY_PATH：这个环境变量指示动态连接器可以装载动态库的路径。  
+l 当然如果有root权限的话，可以修改/etc/ld.so.conf文件，
+	然后调用 /sbin/ldconfig来达到同样的目的，不过如果没有root权限，
+	那么只能采用输出LD_LIBRARY_PATH的方法了。  
+注意  
+	调用动态库的时候有几个问题会经常碰到，有时，明
+	明已经将库的头文件所在目录 通过 “-I” include进来了，
+	库所在文件通过 “-L”参数引导，并指定了“-l”的库名，
+	但通过ldd命令察看时，就是死活找不到你指定链接的so文件，这
+	时你要作的就是通过修改 LD_LIBRARY_PATH或者/etc/ld.so.conf
+	文件来指定动态库的目录。通常这样做就可以解决库无法链接的问题了。  
+</pre>
