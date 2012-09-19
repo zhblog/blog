@@ -3,6 +3,7 @@ layout: default
 title: 不实用的greenlet 
 author: zzh 
 ---
+
 <p id="fortitle"> {{ site.time | date_to_xmlschema }} </p>
 
 <pre class="preclass">
@@ -11,7 +12,9 @@ author: zzh
     看了一下這個據說神奇的東西。結果是令人失望的。
     下面直接上個代碼吧
 </pre>
+
  <h4>Python greenlet</h4>
+ 
 <pre class="brush: python">
 from greenlet import greenlet
 
@@ -29,6 +32,7 @@ gr1 = greenlet(test1)
 gr2 = greenlet(test2)
 gr1.switch()
 </pre>
+
 <pre class="preclass">
     居然是這個樣子的，這跟goto有什麼區別？
     區別就是把代碼分拆整合？

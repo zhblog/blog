@@ -1,0 +1,75 @@
+---
+layout: default
+title: 我的linux工常用工具 
+author: zzh 
+---
+<p id="fortitle"> {{ site.time | date_to_xmlschema }} </p>
+
+<p>linux的自由方便，给我们的开发带来了很多的便利，我只是一个愚钝的linux使用者，这里只是介绍一下我的linux经常使用的一些配置</p>
+<h2>编译器解释器等</h2>
+<pre class="preclass">
+1：LUA解释器
+	第一个接触到的脚本语言，简洁快速，粘性高，易扩展，很是喜欢，应用不够深入。
+2：Python 2.7.3
+	现在的工作就是写python，方便强大。
+3：gcc4.7
+	C Language生两仪，两仪上四象，四象生八卦，八卦生万物。
+4：go解释器
+	新生事物，跟随时代的潮流
+	
+当然，还有一些别的，比如php，比如perl（强大的perl），看个人了。
+</pre>
+<h2>WEB相关</h2>
+<pre class="preclass">
+1：lighttpd
+	一个轻量的web server，可配置性很高，支持多平台，多并发，https等，源码简单少量，开源。
+2：luci
+	lua的一个web框架，因为比较熟，还做过定制，所以一直没有扔。还有，牛逼的openwrt
+3：tornado
+	现在工作的web框架，python写的优秀框架之一
+4：nodejs and coffeescript
+	js从上到下都可以做了，这个想来就叫人兴奋，还有coffeecript规避js的种种不爽，还有比这个更爽的事情吗！	
+5：数据库： mongodb， mysql
+   mongoDB nosql数据库的杰出代表，你如果喜欢新鲜事物（也不算新鲜了）
+   你会你欢他的，如果你喜欢文档型的数据存储，你会喜欢的，如果你不了解关系性数据库，
+   你也会喜欢的。
+   mysql，关系型数据库的杰出代表，免费，开源，也是我唯一熟悉的关系性数据库。
+</pre>
+ <h2>工具集</h2>
+<pre class="brush: cpp preclass">
+1：zsh以及相关
+	我配置了一下zsh，感觉不错，强大的提示可操作性
+	我喜欢把常用的写到.zshrc里面，也许会随手写一个shell文件放到/usr/local/bin里面
+	比如，我不堪kill的痛苦，写了几行mykillpython，杀死当前终端的python进程
+	#!/bin/bash
+	str="python"
+	if [ $# == 0 ]
+	then
+		`ps | grep $str | sed  's/\(.\{6\}\).*/\1/' | xargs kill -9 `
+	else
+		`ps | grep $1 | sed  's/\(.\{6\}\).*/\1/' | xargs kill -9 `
+	fi
+2:sublime
+	对于这个工具，我是刚接触的，看来我是out了。很好很强大，只是中文输入很不给力，各种设置还不一定好使。
+	不过对工作写代码，足够用了。
+3：版本管理
+	平时的工作，我还是喜欢git，也对他最熟悉。比如这篇文章，也是git管理的，比如这个博客，也是搭建在github上
+	工作上用svn
+4：思维导图
+	xmind，免费强大，博客里面的很多图，就是用它做的
+5：笔记本
+	Evernote，强大的云笔记，可导出，可网络截取，保存格式等等，如果你是windows用户或是mac android，iso
+	强烈建议你用这个。linux没有官方的客户端，只有在浏览器里面用了。也还好。
+6：装系统
+	这个太没意思了，可我就是爱鼓捣，自己都感觉没意思
+	1：光盘刻录，linux windows都行的招数（废话）
+	2：U盘安装
+		安装windows
+			1：xp 我只用过老毛桃
+			2：win7 8 用win7下面的Windows 7 USB/DVD Download Tool 方便傻瓜牛逼的要死，自己下一个工具就可以了
+			   可以方便的安装win7 8
+		安装Linux
+			1：在linux下面使用dd 比如： dd if=ubuntu-32-XX.iso of=/dev/sdb bs=4M
+			2:在windows下面，Universal USB Installer 用这个工具制作，相信这个还是很傻瓜，方便，牛逼
+			  我试过的 ubuntu fedora opensuse centos都没的问题
+</pre>
