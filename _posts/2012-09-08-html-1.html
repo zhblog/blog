@@ -1,67 +1,204 @@
 ---
 layout: default
-title: 技术路线 
+title: css背景图片 
 author: zzh 
 ---
 <p id="fortitle"> {{ site.time | date_to_xmlschema }} </p>
 
 
 <pre class="preclass">
-  很多大牛小牛都告诉我们，作为程序员，不要禁锢自己的路线，特别是对于语言的学习，
-  但是呢，还是要有主线，我现在的技术主线根据自己的情况定一下，如下：
-  1：系统语言，C ，主要linux方面
-  2：脚本语言，Python
-  3：胶水语言，Lua
-  4：拓展语言，Go
-  
-  理由：
-  C: 这个老牌语言，牛逼了接近四十年，一定有其道理，毕业之后进入了一家嵌入式写Linux C的单位，
-     认识其魅力 认识了Linux的魅力，流传下来的经典才是真的经典，就像五千年留下来的那些文学
-     经典一样。
-  Python：强大的语言，如果你要做什么事情，快速建立模型等，Python总会没错，你甚至会有这样的
-     错觉，它是不是所有你想到的功能都能找到相应的库。
-     没有选择Ruby的原因之一是Python是我现在的工作语言。
-  Lua：我用Lua是因为其优雅，高效，粘性。
-  Go：Google力推的语言，看了点，感觉不错，也许不会红，但是，我的确不想去学习C++。
-
-  目标：
-  C：熟练使用C语言和简单的汇编，熟悉Linux内核，一般的硬件体系结构。 
-      关于项目，即使以后不用C干活，积极参与开源项目，写一个小型的操作系统，熟悉网络通信
-  Python：熟练的使用Python进行日常工作，养成记日志的习惯，网络通信，并发等，熟悉几种常见的web框架
-  Lua：熟练使用
-  Go：熟悉其使用场合和各项性能，跟随时代潮流。没准就红了。谁知道呢。奥，还一点，云计算
-
-  其他：
-  web方面：PHP？  有待观察 如果是自己的项目， Nodejs也许可以考虑 html5？  也可以看看
+Google了一下，用css控制背景图片的大小等属性的方法，大家给的建议和方法总
+是感觉不给力，一般的做法为用css更换背景图片，而我的需求是同一张图片，
+引入不同的CSS控制其展现。（说明：由于我做了一个嵌入式小板子的web，
+空间有限，图片又是比较占空间的，又的做到在不同的分辨率终端上展现不同的效果，
+SO，最好就是只用一张图片，用少量的css去控制其大小。）
+在传统的背景图片的做法是用background-image:imgurl，
+这样是无法控制其大小的（也许是我还没找到方法），所以我的想法是用z-index属性去做背景
 </pre>
- <h4>Hello World!</h4>
-<pre class="brush: cpp preclass">
+<p>demo代码及注释如下：html</p>
+<pre class="brush:xml">
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">  
+    <html class=" ext-strict"><head>  
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" >  
+    <title>WEB OS Login</title>  
+    <head>  
+    <link rel="stylesheet" href="filelogin1.css" mce_href="filelogin1.css" />  
+    <mce:script type="text/javascript" src="file/jquery.js" mce_src="file/jquery.js"></mce:script>  
+    <mce:script type="text/javascript"><!--  
+    ScreenWidth()  
+    function ScreenWidth(){  
+             var SC640="login2.css";  
+         var SC1024="login1.css";  
+         var SC1920="login1.css";  
+        if (screen.width < 641){  
+            setActiveStyleSheet(SC640);  
+        }else if (screen.width > 640 && screen.width < 1025){  
+            setActiveStyleSheet(SC1024);  
+        }else{  
+            setActiveStyleSheet(SC1920);  
+        }  
+    }  
+    function setActiveStyleSheet(title){  
+       document.getElementsByTagName("link")[0].href="file/"+title;  
+    }  
+    // --></mce:script>  
+    </head>  
+    <body>  
+    <div align="center">  
+      <div class="baifendiv"> </div>  
+       <img src="file/loginbg.png" mce_src="file/loginbg.png" />  </div>  
+    <div>  
+    <form method="post" action="#" onsubmit="return browser()" >  
+      <table class="formtable" align="center">  
+      <tr height="15%">  
+        <td> </td>  
+        <td> </td>  
+        <td> </td>  
+      </tr>  
+      <tr height="15%">  
+        <td> </td>  
+        <td> </td>  
+        <td> </td>  
+      </tr>  
+      <tr height="15%">  
+        <td> </td>  
+        <td> </td>  
+        <td> </td>  
+      </tr>  
+      <tr  height="10%">  
+        <td align="right"><label>请选择登录系统分辨率</label></td>  
+        <td><select class="screen" id="screen" name="screen" style="border:#666666; background:#CCCCCC" mce_style="border:#666666; background:#CCCCCC">  
+              <option value="default" id="scdefault" selected="selected">default</option>  
+              <option value="640">640</option>  
+              <option value="1024">1024</option>  
+              <option value="1920">1920</option>  
+        </select></td>  
+        <td rowspan="4"><span class="supported"><b>Supported Browsers</b><br> <a href="http://www.mozilla.org/download.html" mce_href="http://www.mozilla.org/download.html" target="_blank">Firefox 2+</a><br>  
+            <a href="http://www.microsoft.com/windows/downloads/ie/getitnow.mspx" mce_href="http://www.microsoft.com/windows/downloads/ie/getitnow.mspx" target="_blank">Internet Explorer 7+</a><br>  
+            <a href="http://www.opera.com/download/" mce_href="http://www.opera.com/download/" target="_blank">Opera 9+</a><br>  
+            <a href="http://www.apple.com/safari/download/" mce_href="http://www.apple.com/safari/download/" target="_blank">Safari 2+</a></span>   
+        </td>  
+      </tr>  
+      <tr   height="10%">  
+        <td align="right"><label>User name</label></td>  
+        <td><input class="usernameinput" type="text" name="username" readonly="readonly" value="admin"></td>  
+      </tr>  
+      <tr   height="10%">  
+        <td align="right"><label>Password</label></td>  
+        <td><input class="passwdinput" name="password" type="password"></td>  
+      </tr>  
+      <tr   height="10%">  
+        <td align="right"><label  style="display:none" mce_style="display:none" class="errormsg">密码错误</label></td>  
+        <td><input name="submit" type="submit" id="submitBtn" value="login" src="select2css/mac-select.gif" mce_src="select2css/mac-select.gif"></td>  
+      </tr>  
+      <tr>  
+        <td> </td>  
+        <td> </td>  
+        <td> </td>  
+      </tr>  
+    </table>  
+    </form>  
+    <div>  
+    <mce:script type="text/javascript"><!--  
+    if($.browser.msie)  
+    var version = $.browser.version;  
+    if(version<7){  
+    $("#errormsg").html("不支持IE6及以下版本");  
+    }  
+        if(screen.width < 641){  
+    　       　$("#scdefault").val("640");  
+    　   　}else if(screen.width > 640 && screen.width < 1025){  
+    　       　$("#scdefault").val("1024");  
+    　   　}else if(screen.width > 1024){  
+             $("#scdefault").val("1920");  
+    　   　}else{  
+             $("#scdefault").val("default");  
+    　   　}  
+    // --></mce:script>  
+    </body>  
+    </html>  
+</pre>
 
-C:
-
-#include &lt;stdio.h&gt;
-
-int main()
-{
-    printf("hello world!\n");
-    return 0;
+<p>login1.css:</p>
+<pre class="brush:html">
+img {
+    position: absolute;
+    z-index: -1;
+    width: 800px;
+    height: 600px;
+    margin-right: 400px;
+    margin-left: -400px;
+    margin-top: 50px;
 }
+.formtable {
+    margin-top: 32px;
+    width: 800px;
+    height: 600px;
+}
+.supported {
+    color: #ffffff;
+    font-size: 20px;
+}
+.baifendiv {
+    height: 0%;
+}
+.usernameinput {
+    width: 80px;
+    height: 25px;
+    font-size: 17px;
+}
+.passwdinput {
+    width: 80px;
+    height: 25px;
+    font-size: 17px;
+}
+.screen {
+    width: 80px;
+    height: 25px;
+    font-size: 17px;
+}
+</pre>
+<p>login2.css:</p>
 
-Python:
-
-print "hello world!"
-
-
-Lua:
-
-print "hello world!"
-
-Go:
-
-package main
-import "fmt"
-
-func main() {
-    fmt.Printf("Hello World !!! \n")
-    }
+<pre class="brush:css">
+table td { 
+    font-size: 10px;
+    font-family: "";
+}
+img { 
+    position: absolute;
+    z-index: -1; 
+    width: 500px;
+    height: 300px;
+    margin-right: 250px;
+    margin-left: -250px; 
+    margin-top: 50px;
+}
+.formtable {
+    margin-top: 30px;
+    width: 500px;
+    height: 300px;
+}
+.supported {
+    color: #ffffff;
+    font-size: 10px;
+}
+.baifendiv {
+    height: 10%;
+}
+.usernameinput {
+    width: 50px;
+    height: 17px;
+    font-size: 12px;
+}
+.passwdinput {
+    width: 50px;
+    height: 17px;
+    font-size: 12px;
+}
+.screen {
+    width: 50px;
+    height: 17px;
+    font-size: 12px;
+}
 </pre>
