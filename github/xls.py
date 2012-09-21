@@ -3,7 +3,7 @@ from xlrd import open_workbook
 import sys
 from pyExcelerator import *
 
-DAY = 5
+DAY = 3
 
 infile = "start.xlsx"
 outfile = "end.xlsx"
