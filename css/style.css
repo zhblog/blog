@@ -458,12 +458,13 @@ hr {
 }
 
 .preclass {
-   display: block;
-   overflow: auto;
-   background: #f4f4f4;
-   padding: 5px 2px;
-   border: 1px solid #eee;
-   word-wrap:break-word; /* Internet Explorer 5.5+ */
+   background-color: #E0DFCC;
+   padding: 1em;
+   margin: 2em 2em;
+   font-family: 'Courier New', Courier, monospace;
+   -moz-border-radius: 20px;
+   -webkit-border-radius: 20px;
+   border-radius: 20px;
 }
 
 
