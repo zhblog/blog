@@ -5,10 +5,61 @@ author: zzh
 ---
 <p id="fortitle"> {{ site.time | date_to_xmlschema }} </p>
 
-
-<pre class="preclass">
+<h2>
     把之前写的一个cli通用工具的代码开放了，下面是readme
+</h2>
+<pre class="preclass">
+CLI (command-line interface),也许是Linux的命令行用习惯了，对这种命令行的直观简洁界面很是有好感，再加上之前做过一个这个的东西，我就把代码整理了一下，提取出来一个相对精简功能又比较全的代码放到了这里。
+</pre>
+<h2>
+   前提 
+</h2>
+<pre class="preclass">
+    这个东西用到的主要技术是readline，bison(parser)，flex(lexer),这里不会讲他们的原理以及用法，需要的朋友自己去查，相信学过编译原理的不会陌生。这里指针对代码结构做一下简要的说明，以及程序的用途，弊端，如何扩展使用。
+</pre>
+<h2>
+   代码结构 
+</h2>
+<pre class="preclass">
+├── lexer.l              #词法文件
+├── lookup.c             #词法查找表等
+├── main.c               #主入口
+├── Makefile             #Makefile
+├── parser.y             #语法文件
+├── readline.c           #readline相关
+├── README               #README
+├── rpc_cli.c            #获取数据后...
+└── rpc_cli.h            #rpc 头文件
+
+××  1：从main开始讲：
+<pre>
+<pre class="brush:cpp">
+#include <stdio.h>
+
+extern void start_cli(char *cmd, FILE *fp);
+
+int main(int argc, char *argv[])
+{
+    start_cli(NULL,NULL);
+    return 0;
+}
+
 </pre>
 <pre class="preclass">
-    稍后奉上
+    这个只是程序的主入口，调用parser.y的start_cli方法。
+××  2：parser.y
+    还是不说parser的结构和原理.
+    在开始阶段，先把stdin的词交给测法去做，词法返回之后到语法，根据token和union，一级一级的向下形成一颗语法书。$n是第几个数值的值，数值的类型是union定义的，lexer解析的。下面会说道。
+××  3：lexer.l
+    还是不说lexer的结构和原理.
+    这个和parser是联系着的，token的定义会在这里做处理。具体请网络上查资料。
+<pre>
+
+<h2>  用途 ---做命令行接口   </h2>
+<h2>  弊端 ---不能很好的分别一些情况，比如 set number one=1 和 set number one = 1的效果是一样的，在需要严格的区分的时候很难做到这一点  </h2>
+<h2>  扩展 </h2>
+<pre class="preclass">
+    1：增加命令，在parser中
+    2：增加类型，在union中增加，并在lexer中增加相应的解析
+    3：。。。。。。
 </pre>
