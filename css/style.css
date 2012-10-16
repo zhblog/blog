@@ -320,7 +320,7 @@ hr {
 	background: url(/blog/images/img09.jpg) repeat-y left top;
 }
 
-#sidebar .lianjie li ul {
+#sidebar  li ul {
 	margin: 0px 0px;
 	padding: 0px 0px 20px 0px;
 	background: url(/blog/images/img10.jpg) no-repeat left bottom;
@@ -333,6 +333,11 @@ hr {
 	background:  none;
 	list-style: none;
 	line-height: normal;
+}
+
+#sidebar  li li {
+	border-bottom: 1px solid #E0E0E0;
+	background: url(/blog/images/img12.jpg) no-repeat left 13px;
 }
 
 #sidebar .lianjie li li {
