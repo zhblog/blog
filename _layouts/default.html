@@ -82,7 +82,7 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
           <li>
           <h2>最新文章 </h2>
             <div id="showlist">
-                <ul>
+                <ul id="treeDemo" class="ztree">
                             {% for post in site.posts %}
                             <li>{{ post.date | date_to_long_string }} <a href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
                             {% endfor %}
@@ -93,7 +93,7 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
         <ul>
           <li>
             <h2>我的链接 </h2>
-                <ul id="treeDemo" class="ztree">
+                <ul>
                     <li><a target="_blank" href="http://blog.jobbole.com">伯乐在线</a></li>
                     <li><a target="_blank" href="http://coolshell.cn/">陈皓酷壳</a></li>
                     <li><a target="_blank" href="http://9.douban.com/">豆瓣九点</a></li>

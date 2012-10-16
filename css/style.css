@@ -316,14 +316,6 @@ hr {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
-#sidebar ul {
-	margin: 0;
-	padding: 0;
-	background:  none;
-	list-style: none;
-	line-height: normal;
-}
-
 #sidebar li {
 	background: url(/blog/images/img09.jpg) repeat-y left top;
 }
