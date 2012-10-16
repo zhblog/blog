@@ -322,7 +322,7 @@ hr {
 
 #sidebar  li ul {
 	margin: 0px 0px;
-	padding: 0px 0px 0px 0px;
+	padding: -5px 0px -5px 0px;
 	background: url(/blog/images/img10.jpg) no-repeat left bottom;
 }
 
@@ -341,7 +341,7 @@ hr {
 }
 
 #sidebar  li li {
-	margin: 0px 10px 0px 15px;
+	margin: -5px 10px -5px 15px;
 	padding: 8px 0px 8px 10px;
 	background: url(/blog/images/img12.jpg) no-repeat left 13px;
 }
