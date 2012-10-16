@@ -341,7 +341,7 @@ hr {
 }
 
 #sidebar  li li {
-	margin: -20px 30px 20px 30px;
+	margin: 0px 30px 20px 30px;
 	padding: 8px 0px 8px 10px;
 	border-bottom: 1px solid #E0E0E0;
 	background: url(/blog/images/img12.jpg) no-repeat left 13px;
