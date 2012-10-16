@@ -327,6 +327,7 @@ hr {
 }
 
 #sidebar  ul {
+	padding: 0px 0px 20px 0px;
 	margin: 0;
 	padding: 0;
 	background:  none;
@@ -334,7 +335,7 @@ hr {
 	line-height: normal;
 }
 
-#sidebar .lianjie li li {
+#sidebar  li li {
 	margin: -20px 30px 20px 30px;
 	padding: 8px 0px 8px 10px;
 	border-bottom: 1px solid #E0E0E0;
