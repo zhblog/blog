@@ -10,6 +10,7 @@
 
 <link href="/blog/css/alexgorbatchev/shCore.css" rel="stylesheet" type="text/css" />
 <link href="/blog/css/alexgorbatchev/shThemeDefault.css" rel="stylesheet" type="text/css" />
+<link href="/blog/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="/blog/js/alexgorbatchev/shCore.js"></script>
 <script type="text/javascript" src="/blog/js/alexgorbatchev/shBrushJScript.js"></script>
@@ -21,6 +22,7 @@
 
 <script type="text/javascript" src="/blog/js/jquery-1.8.1.min.js"></script>
 <script type="text/javascript" src="/blog/js/jquery_lightbox.js"></script>
+<script type="text/javascript" src="/blog/js/jquery.ztree.core-3.4.js"></script>
 
 <style type="text/css">
 .imga{
@@ -159,4 +161,221 @@ var ht = $(".meta").html()
 $(".meta").html($("#fortitle").html() + ht)
 $(window.parent.document).find("title").html($("title").html())
 </script>
+<script>
+            var setting = {};
+            var node2012_09 = {name:"九月"}
+            var node2012_10 = {name:"十月"}
+            var node2012_11 = {name:"十一月"}
+            var node2012_12 = {name:"十二月"}
+
+            var node2013_01 = {name:"一月"}
+            var node2013_02 = {name:"二月"}
+            var node2013_03 = {name:"三月"}
+            var node2013_04 = {name:"四月"}
+            var node2013_05 = {name:"五月"}
+            var node2013_06 = {name:"六月"}
+            var node2013_07 = {name:"七月"}
+            var node2013_08 = {name:"八月"}
+            var node2013_09 = {name:"九月"}
+            var node2013_10 = {name:"十月"}
+            var node2013_11 = {name:"十一月"}
+            var node2013_12 = {name:"十二月"}
+
+            var monthlist = new Array("January","February","March","April","May","June","July","August","September","October","November","December")
+            var yearlist = new Array("2012","2013", "2014","2015")
+            var thisarray = new Array()
+            $("#showlist").find("li").each(function(){
+                thistext = $(this).text()
+                hreftext = $(this).find("a").attr("href")
+                datelist = thistext.split(":")[0]
+                titletext = thistext.split(":")[1]
+                daytext = datelist.split(" ")[0]
+                monthtext = datelist.split(" ")[1]
+                yeartext = datelist.split(" ")[2]
+                arr = new Array(titletext, yeartext, monthtext, daytext, hreftext)
+                if (yeartext == "2012"){
+
+                    if(monthtext == "January"){
+
+                    }
+                    else if(monthtext == "February")
+                    {
+
+                    }else if(monthtext == "March")
+                    {
+
+                    }else if(monthtext == "April")
+                    {
+
+                    }else if(monthtext == "May")
+                    {
+
+                    }else if(monthtext == "June")
+                    {
+
+                    }else if(monthtext == "July")
+                    {
+
+                    }else if(monthtext == "August")
+                    {
+
+                    }else if(monthtext == "September")
+                    {
+                        if((node2012_09["children"])){
+                            node2012_09["children"][node2012_09["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2012_09["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+
+                    }
+                    else if(monthtext == "October")
+                    {
+                        if((node2012_10["children"])){
+                            node2012_10["children"][node2012_10["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2012_10["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(monthtext == "November")
+                    {
+                        if((node2012_11["children"])){
+                            node2012_11["children"][node2012_11["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2012_11["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(monthtext == "December")
+                    {
+                        if((node2012_12["children"])){
+                            node2012_12["children"][node2012_12["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2012_12["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }
+
+                }
+                else if(yeartext == "2013")
+                {
+                    if(monthtext == "January"){
+                        if((node2013_01["children"])){
+                            node2013_01["children"][node2013_01["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_01["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(monthtext == "February")
+                    {
+                        if((node2013_02["children"])){
+                            node2013_02["children"][node2013_02["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_02["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }else if(monthtext == "March")
+                    {
+                        if((node2013_03["children"])){
+                            node2013_03["children"][node2013_03["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_03["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }else if(monthtext == "April")
+                    {
+                        if((node2013_04["children"])){
+                            node2013_04["children"][node2013_04["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_04["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }else if(monthtext == "May")
+                    {
+                        if((node2013_05["children"])){
+                            node2013_05["children"][node2013_05["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_05["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }else if(monthtext == "June")
+                    {
+                        if((node2013_06["children"])){
+                            node2013_06["children"][node2013_06["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_06["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }else if(monthtext == "July")
+                    {
+                        if((node2013_07["children"])){
+                            node2013_07["children"][node2013_07["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_07["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }else if(monthtext == "August")
+                    {
+                        if((node2013_08["children"])){
+                            node2013_08["children"][node2013_08["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_08["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }else if(monthtext == "September")
+                    {
+                        if((node2013_09["children"])){
+                            node2013_09["children"][node2013_09["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_09["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+
+                    }
+                    else if(monthtext == "October")
+                    {
+                        if((node2013_10["children"])){
+                            node2013_10["children"][node2013_10["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_10["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(monthtext == "November")
+                    {
+                        if((node2013_11["children"])){
+                            node2013_11["children"][node2013_11["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_11["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(monthtext == "December")
+                    {
+                        if((node2013_12["children"])){
+                            node2013_12["children"][node2013_12["children"].length] = {name:daytext+"-"+titletext,url:hreftext}
+                        }else
+                        {
+                            node2013_12["children"] = [{name:daytext+"-"+titletext,url:hreftext}]
+                        }
+                    }
+                }
+
+            });
+            var node2013 = {name:"2013",open:false ,children:[node2013_01,node2013_02,node2013_03,node2013_04,node2013_05,node2013_06,node2013_07,node2013_08,node2013_09,node2013_10,node2013_11,node2013_12]}
+            var node2012 = {name:"2012",open:true,children:[node2012_09,node2012_10,node2012_11,node2012_12]}
+
+            var myNode = [node2012,node2013]
+
+            
+            $(document).ready(function(){
+                $.fn.zTree.init($("#treeDemo"), setting, myNode);
+            });
+            //-->
+        </script>
+
+        <ul id="treeDemo" class="ztree">
+        </ul>
 </html>
