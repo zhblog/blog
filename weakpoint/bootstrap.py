@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # author: onesuper
 # under MIT license
 
@@ -6,6 +8,9 @@ import markdown
 import re
 import time
 import codecs
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8') 
 
 # ===========import the configs========
 f = open('config.yaml')
@@ -188,7 +193,7 @@ content += theme
 content += ''' theme</div>\n'''
 
 # ============= front page ends=====================
-content += ''' <!-- ================front page==============  -->\n<div id="popup" style="margin-top: 60px;width:380px;height:120px;color: #333;display:none;background-color:#ddd;padding: 20px;border-radius: 15px;">Press j / k to Navigate <br>F11 to FullScreen</div></div></div>'''
+content += ''' <!-- ================front page==============  -->\n<div id="popup" style="margin-top: 60px;width:380px;height:120px;color: #333;display:none;background-color:#ddd;padding: 20px;border-radius: 15px;">j / k PPT翻页<br>F11 全屏,试看!</div></div></div>'''
 
 # ==================trick here=================
 html = html.replace('<h2>', '<hr />\n<h2>')
