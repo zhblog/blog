@@ -2,8 +2,10 @@
 layout: default
 title: Python多进程 
 author: zzh 
+thisdate: 2012-09-20
+classification: script
 ---
-<p id="fortitle"> {{ site.time | date_to_xmlschema }} </p>
+<p id="fortitle"> {{ page.thisdate }} </p>
 <pre class="preclass">
 由于GIL的原因，Python不支持真正意义上的多线程
 于是转而求其次，Python使用多进程来完成并行任务。

@@ -85,13 +85,26 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
                 <ul id="treeDemo" class="ztree">
                             {% for post in site.posts %}
                             {% if post.layout == "default" %}
-                            <li>{{ post.date | date_to_long_string }} <a href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
+                            <li>{{ post.date | date_to_long_string }} <a class="{{ post.classification }}" href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
                             {% endif %}
                             {% endfor %}
                 </ul>
             </div>
           </li>
       </ul>
+      
+      <ul>
+          <li>
+          <h2>fenzhangfenlie </h2>
+            <div>
+                <ul id="treeClass" class="ztree">
+
+                </ul>
+            </div>
+          </li>
+      </ul>
+      
+      
       <div class="lianjie">
         <ul>
           <li>
@@ -204,15 +217,70 @@ $(window.parent.document).find("title").html($("title").html())
             var monthlist = new Array("January","February","March","April","May","June","July","August","September","October","November","December")
             var yearlist = new Array("2012","2013", "2014","2015")
             var thisarray = new Array()
+            
+            var webnode = {open:false,name:"web"}
+            var livenode = {open:false,name:"live"}
+            var othernode = {open:false,name:"other"}
+            var scriptnode = {open:false,name:"script"}
+            var linuxnode = {open:false,name:"linux"} 
+            
             $("#showlist").find("li").each(function(){
                 thistext = $(this).text()
                 hreftext = $(this).find("a").attr("href")
+                classification = $(this).find("a").attr("class")
                 datelist = thistext.split(":")[0]
                 titletext = thistext.split(":")[1]
                 daytext = datelist.split(" ")[0]
                 monthtext = datelist.split(" ")[1]
                 yeartext = datelist.split(" ")[2]
                 arr = new Array(titletext, yeartext, monthtext, daytext, hreftext)
+                if(classification == "live")
+                    {
+                        if((livenode["children"])){
+                            livenode["children"][livenode["children"].length] = {name:datelist+":"+titletext,url:hreftext}
+                        }else
+                        {
+                            livenode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
+                        }
+                    }else if(classification == "other")
+                    {
+                        if((othernode["children"])){
+                            othernode["children"][othernode["children"].length] = {name:datelist+":"+titletext,url:hreftext}
+                        }else
+                        {
+                            othernode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
+                        }
+                    }else if(classification == "web")
+                    {
+                        if((webnode["children"])){
+                            webnode["children"][webnode["children"].length] = {name:datelist+":"+titletext,url:hreftext}
+                        }else
+                        {
+                            webnode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(classification == "linux")
+                    {
+                        if((linuxnode["children"])){
+                            linuxnode["children"][linuxnode["children"].length] = {name:datelist+":"+titletext,url:hreftext}
+                        }else
+                        {
+                            linuxnode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(classification == "script")
+                    {
+                        if((scriptnode["children"])){
+                            scriptnode["children"][scriptnode["children"].length] = {name:datelist+":"+titletext,url:hreftext}
+                        }else
+                        {
+                            scriptnode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
+                        }
+                    }
+                
+                
+                
+                
                 if (yeartext == "2012"){
 
                     if(monthtext == "January"){
@@ -388,9 +456,11 @@ $(window.parent.document).find("title").html($("title").html())
             var node2012 = {name:"2012",open:true,children:[node2012_12,node2012_11,node2012_10,node2012_09]}
 
             var myNode = [node2013,node2012]
+            var cNode = [linuxnode,scriptnode,webnode,livenode,othernode]
             
             $(document).ready(function(){
                 $.fn.zTree.init($("#treeDemo"), setting, myNode);
+                $.fn.zTree.init($("#treeClass"), setting, cNode);
             });
         </script>
 
