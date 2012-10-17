@@ -224,33 +224,12 @@ classification: linux
     <!-- =========================SLIDE==========================-->
     
 <h2>3. 编写模块的命令规则</h2>
-<pre><code># Chapter 1
-
-## It is a headline
-* first
-* second
-* third
-
-## Yet another headline
-It is a lovely day.
-</code></pre>
-<p><a href="weakpoint.md">markdown of this slideshow</a></p>
-
-    <!-- ====================================================== -->
-    </div></div>
-
-
-
-
-
-
-    
-    
-    <div class="paper"><div class="paper-container">
-    <!-- =========================SLIDE==========================-->
-    
-<h2>4. Build slides by typing 'python bootstrap.py'</h2>
-<pre><code>$ python bootstrap.py
+<pre><code>- cmd: debug &lt;int:integer&gt;
+  help: debug no help
+  web: yes
+  file: yes
+  debug: no
+  rpc: cli_set_debug_flag
 </code></pre>
 
     <!-- ====================================================== -->
@@ -266,11 +245,33 @@ It is a lovely day.
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>5. Deploy them to Github Pages</h2>
-<pre><code>$ git checkout -- orphan gh-pages
-$ git add .
-$ git commit -m 'First page commit for my slides'
-$ git push origin gh-pages
+<h2>4. 命令解读</h2>
+<pre><code>cmd:命令过规则
+help：提示的字符串
+web：是否支持web
+file：是否支持配置导入
+debug：是不是内部命令
+rpc：此命令的解析函数名称
+</code></pre>
+
+    <!-- ====================================================== -->
+    </div></div>
+
+
+
+
+
+
+    
+    
+    <div class="paper"><div class="paper-container">
+    <!-- =========================SLIDE==========================-->
+    
+<h2>5. 命令规则解读</h2>
+<pre><code>&lt;&gt;:必选项，可包含其他形式
+[]:可选项，可包含其他方式
+{}:可重复选项，多选多
+|：多选一
 </code></pre>
 
     <!-- ====================================================== -->
@@ -301,12 +302,11 @@ $ git push origin gh-pages
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>$ \LaTeX $</h2>
-<p><em>This is inline:</em> $ e^{ix} = \cos x + i\;\sin x $</p>
-<p>And what's more:</p>
-<p>$$
-P_k= \frac{np(np-p)\dots(np-kp+p)}{k!}      \frac  {  {(1-p)^{-\frac{1}{p}} }^{-np}}   {(1-p)^{k}}
-$$</p>
+<h2>加法和减法</h2>
+<ul>
+<li>删除部分规则</li>
+<li>增加新的规则</li>
+</ul>
 
     <!-- ====================================================== -->
     </div></div>
@@ -336,11 +336,11 @@ $$</p>
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>Libraries</h2>
+<h2>json的不爽</h2>
 <ol>
-<li><a href="http://pyyaml.org/">PyYAML</a></li>
-<li><a href="http://freewisdom.org/projects/python-markdown/">Markdown in Python</a></li>
-<li><a href="http://bxslider.com/">bxslider</a></li>
+<li>对树形结构的支持不好 </li>
+<li>命令多的时候很不好处理命名问题</li>
+<li>rpc的解析很是不好玩</li>
 </ol>
 
     <!-- ====================================================== -->
@@ -356,10 +356,11 @@ $$</p>
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>More Reading</h2>
+<h2>LUA</h2>
 <ul>
-<li><a href="http://blog.chengyichao.info/2012/06/17/slideshow-in-markdown/">用Markdown写幻灯片，用浏览器展示</a></li>
-<li><a href="http://blog.chengyichao.info/2012/07/07/weakpoint-v1">WeakPoint v1.0</a></li>
+<li>快速，胶水</li>
+<li>解释起小，可以移植</li>
+<li>编写快速</li>
 </ul>
     <!-- ====================================================== -->
     </div></div>

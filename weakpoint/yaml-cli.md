@@ -35,28 +35,17 @@
 ## 1. 代码结构
 
 
-├── check.c
-├── cJSON.c
-├── dispatcher.c
-├── file
-│   ├── CMD1.yaml
-│   ├── CMD2.yaml
-│   ├── CMD3.yaml
-│   ├── regex
-│   ├── root.yaml
-├── include
-│   ├── cJSON.h
-│   ├── cli_def.h
-│   └── cli.h
-├── main.c
-├── Makefile
-├── re2val.c
-├── readline.c
-└── script
-    ├── write_cli_rpc.c.py
-    ├── write_json.py
-    ├── write_rpc.h.py
-    └── write_web.py
+    ├── check.c
+    ├── dispatcher.c
+    ├── file
+    │   ├── CMD3.yaml
+    │   ├── regex
+    │   ├── root.yaml
+    ├── main.c
+    ├── re2val.c
+    ├── readline.c
+    └── script
+        └── write_web.py
 
 
 ## 2. 增加模块 
@@ -70,59 +59,53 @@
 
 ## 3. 编写模块的命令规则 
 
-	# Chapter 1
+    - cmd: debug <int:integer>
+      help: debug no help
+      web: yes
+      file: yes
+      debug: no
+      rpc: cli_set_debug_flag
 	
-	## It is a headline
-	* first
-	* second
-	* third
 	
-	## Yet another headline
-	It is a lovely day.
-	
-[markdown of this slideshow](weakpoint.md)
 
-## 4. Build slides by typing 'python bootstrap.py'
+## 4. 命令解读 
 
-    $ python bootstrap.py
- 
+    cmd:命令过规则
+    help：提示的字符串
+    web：是否支持web
+    file：是否支持配置导入
+    debug：是不是内部命令
+    rpc：此命令的解析函数名称
 
-## 5. Deploy them to Github Pages
+## 5. 命令规则解读
 
 
-    $ git checkout -- orphan gh-pages
-    $ git add .
-    $ git commit -m 'First page commit for my slides'
-    $ git push origin gh-pages
-
+    <>:必选项，可包含其他形式
+    []:可选项，可包含其他方式
+    {}:可重复选项，多选多
+    |：多选一
 
 
 # 完善
 
-## $ \LaTeX $
-
-*This is inline:* $ e^{ix} = \cos x + i\;\sin x $
-
-And what's more:
-
-
-$$
-P_k= \frac{np(np-p)\dots(np-kp+p)}{k!}      \frac  {  {(1-p)^{-\frac{1}{p}} }^{-np}}   {(1-p)^{k}}
-$$
-
+## 加法和减法 
+    
+* 删除部分规则
+* 增加新的规则
 
 # 接下来
 
 
-## Libraries
+## json的不爽
 
-1. [PyYAML](http://pyyaml.org/)
-2. [Markdown in Python](http://freewisdom.org/projects/python-markdown/)
-3. [bxslider](http://bxslider.com/)
+1. 对树形结构的支持不好 
+2. 命令多的时候很不好处理命名问题
+3. rpc的解析很是不好玩
 
 
 
-## More Reading
+## LUA
 
-* [用Markdown写幻灯片，用浏览器展示](http://blog.chengyichao.info/2012/06/17/slideshow-in-markdown/)
-* [WeakPoint v1.0](http://blog.chengyichao.info/2012/07/07/weakpoint-v1)
+* 快速，胶水
+* 解释起小，可以移植
+* 编写快速
