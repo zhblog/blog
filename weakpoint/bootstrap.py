@@ -193,7 +193,7 @@ content += theme
 content += ''' theme</div>\n'''
 
 # ============= front page ends=====================
-content += ''' <!-- ================front page==============  -->\n<div id="popup" style="margin-top: 60px;width:380px;height:120px;color: #333;display:none;background-color:#ddd;padding: 20px;border-radius: 15px;">j / k PPT翻页<br>F11 全屏,试看!</div></div></div>'''
+content += ''' <!-- ================front page==============  -->\n<div id="popup" style="margin-top: 60px;width:380px;height:120px;color: #333;display:none;background-color:#ddd;padding: 20px;border-radius: 15px;">j / k PPT翻页<br>F11 全屏</br>试试看!</div></div></div>'''
 
 # ==================trick here=================
 html = html.replace('<h2>', '<hr />\n<h2>')
