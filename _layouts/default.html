@@ -95,6 +95,22 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
       <div class="lianjie">
         <ul>
           <li>
+          <h2>我的PPT </h2>
+            <div >
+                <ul>
+                            {% for post in site.posts %}
+                            {% if post.layout == "point" %}
+                            <li>{{ post.date | date_to_long_string }} <a href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
+                            {% endif %}
+                            {% endfor %}
+                </ul>
+            </div>
+          </li>
+      </ul>
+  </div> 
+      <div class="lianjie">
+        <ul>
+          <li>
             <h2>我的链接 </h2>
                 <ul>
                     <li><a target="_blank" href="http://blog.jobbole.com">伯乐在线</a></li>
