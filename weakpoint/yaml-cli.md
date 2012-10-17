@@ -34,7 +34,7 @@
 
 ## 1. 代码结构
 
-.
+
 ├── check.c
 ├── cJSON.c
 ├── dispatcher.c
@@ -57,6 +57,9 @@
         ├── write_json.py
             ├── write_rpc.h.py
                 └── write_web.py
+
+
+
 
 ## 2. 增加模块 
 
