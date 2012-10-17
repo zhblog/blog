@@ -54,11 +54,9 @@
 ├── readline.c
 └── script
     ├── write_cli_rpc.c.py
-        ├── write_json.py
-            ├── write_rpc.h.py
-                └── write_web.py
-
-
+    ├── write_json.py
+    ├── write_rpc.h.py
+    └── write_web.py
 
 
 ## 2. 增加模块 
