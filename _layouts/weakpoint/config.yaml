@@ -1,0 +1,23 @@
+filename: weakpoint.md
+theme: clean
+googlefonts: Eater
+google-analytics: UA-33272534-1
+disqus:
+
+
+meta:
+  title: MyPoint
+  subtitle: This is a test
+  author: jack.zh
+  organization: SELF
+  gravatar: True
+  contact:
+    email: git.zhang@gmail.com
+    sinaweibo: 九月张郎
+    github: zhblog
+    
+slide:
+  navi: true
+  ribbon: true
+  latex: true
+  
