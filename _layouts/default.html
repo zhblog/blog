@@ -84,7 +84,9 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
             <div id="showlist">
                 <ul id="treeDemo" class="ztree">
                             {% for post in site.posts %}
+                            {% if post.layout == "default" %}
                             <li>{{ post.date | date_to_long_string }} <a href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
+                            {% endif %}
                             {% endfor %}
                 </ul>
             </div>
