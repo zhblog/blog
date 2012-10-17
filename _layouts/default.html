@@ -367,10 +367,9 @@ $(window.parent.document).find("title").html($("title").html())
 
             });
             var node2013 = {name:"2013",open:false ,children:[node2013_12,node2013_11,node2013_10,node2013_09,node2013_08,node2013_07,node2013_06,node2013_05,node2013_04,node2013_03,node2013_02,node2013_01]}
-            var node2012 = {name:"2012",open:true,children:[node2012_12,node2012_12,node2012_10,node2012_09]}
+            var node2012 = {name:"2012",open:true,children:[node2012_12,node2012_11,node2012_10,node2012_09]}
 
             var myNode = [node2013,node2012]
-
             
             $(document).ready(function(){
                 $.fn.zTree.init($("#treeDemo"), setting, myNode);
