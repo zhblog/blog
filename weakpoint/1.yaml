@@ -1,4 +1,4 @@
-filename: yaml-cli.md
+filename: weakpoint.md
 theme: clean
 googlefonts: Eater
 google-analytics: UA-33272534-1
@@ -6,10 +6,10 @@ disqus:
 
 
 meta:
-  title: YAML-CLI
-  subtitle: 基于yaml的自动化CLI
+  title: MyPoint
+  subtitle: This is a test
   author: jack.zh
-  organization: 学无止境
+  organization: SELF
   gravatar: True
   contact:
     email: git.zhang@gmail.com
