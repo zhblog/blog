@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>{{ page.title }}</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="/blog/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/blog/css/jquery_lightbox.css" rel="stylesheet" type="text/css" media="screen" />
+
+<link href="/blog/css/alexgorbatchev/shCore.css" rel="stylesheet" type="text/css" />
+<link href="/blog/css/alexgorbatchev/shThemeDefault.css" rel="stylesheet" type="text/css" />
+<link href="/blog/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/blog/js/alexgorbatchev/shCore.js"></script>
+<script type="text/javascript" src="/blog/js/alexgorbatchev/shBrushJScript.js"></script>
+<script type="text/javascript" src="/blog/js/alexgorbatchev/shBrushCss.js"></script>
+<script type="text/javascript" src="/blog/js/alexgorbatchev/shBrushXml.js"></script>
+<script type="text/javascript" src="/blog/js/alexgorbatchev/shBrushPython.js"></script>
+<script type="text/javascript" src="/blog/js/alexgorbatchev/shBrushCpp.js"></script>
+<script type="text/javascript" src="/blog/js/alexgorbatchev/shBrushBash.js"></script>
+
+<script type="text/javascript" src="/blog/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="/blog/js/jquery_lightbox.js"></script>
+<script type="text/javascript" src="/blog/js/jquery.ztree.core-3.4.js"></script>
+
+<style type="text/css">
+.imga{
+  border: 1px solid #12e3e3e;
+  border-width: 5px 5px 5px 5px;
+  }
+</style>
+<script type="text/javascript">
+          $(function() {
+                $('.aimg').lightBox();
+        });
+
+        SyntaxHighlighter.config.clipboardSwf = 'http://alexgorbatchev.com/pub/sh/current/scripts/clipboard.swf';
+        SyntaxHighlighter.all();
+</script>
+</head>
+<body>
+<div id="logo">
+  <p> <a href="http://zhblog.github.com/blog/">张郎的Blog</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;江湖在喝酒的路上</p>
+</div>
+<hr />
+<!-- end #logo -->
+<div id="page">
+  <div id="page-bgtop">
+    <div id="page-bgbtm">
+      <div id="content">
+        <div class="post">
+          <div class="post-bgtop">
+            <div class="post-bgbtm">
+                <h2 class="title"><a id="titleid" href="#">{{ page.title }}</a></h2>
+                <p class="meta"> <a href="#">{{ page.author }}</a></p>
+                <div class="entry">
+
+                                {{ content }}
+                                
+                    </br><p>
+                    联系我：git.zhang@gmail.com
+                    </p>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'zzhblog'; // 注意，短域名
+/* * * 下面这些不需要改动 * * */
+(function() {
+  var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+  dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<div id="footer">
+  <p>Copyright (c) © 2012 GitHub Inc. All rights reserved. <a href="http://blog.sina.com.cn/zzh250/">江湖</a>.</p>
+</div>
+<!-- end #footer -->
+</body>
+<script type="text/javascript">
+$(".addimg").each(function(){
+        html = "<a class='aimg' href='/blog/jimg/"+this.id+"'><img class='imga' style='width:570px' src='/blog/jimg/"+this.id+"' ></img></a>"
+        $(this).html(html)
+      });
+
+function whimg()
+{
+     imga = $(".imga")
+         if(imga){
+               wt = (imga.width())
+               ht = (imga.height())
+               if (wt > 550)
+               {
+                      imga.width(550)
+                }
+           }
+}
+$("#fortitle").hide()
+var ht = $(".meta").html()
+$(".meta").html($("#fortitle").html() + ht)
+$(window.parent.document).find("title").html($("title").html())
+</script>
+
+</html>
