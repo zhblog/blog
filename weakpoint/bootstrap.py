@@ -41,9 +41,9 @@ content = '''
     <title>''' 
 content += title
 content += '''</title>
-    <link rel="stylesheet" href="weakpoint/core/weakpoint.css">
-    <script src="weakpoint/third/jquery.js" type="text/javascript"></script>
-    <script src="weakpoint/third/jquery.bxSlider.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/blog/weakpoint/core/weakpoint.css">
+    <script src="/blog/weakpoint/third/jquery.js" type="text/javascript"></script>
+    <script src="/blog/weakpoint/third/jquery.bxSlider.min.js" type="text/javascript"></script>
     <script type="text/javascript">
   $(document).ready(function(){
     bxslide = $('#slider1').bxSlider({
@@ -77,7 +77,7 @@ if googlefonts:
 # ===================theme=====================
 if theme:
     content +='''    
-    <link rel="stylesheet" href="weakpoint/theme/'''
+    <link rel="stylesheet" href="/blog/weakpoint/theme/'''
     content += theme
     content += '''.css">\n'''
 
@@ -136,7 +136,7 @@ content += '''<div class="meta">'''
 
 if gravatar_enable and email:
     import urllib, hashlib
-    gravatar_url = "weakpoint/img/ubuntu-gril.jpg"
+    gravatar_url = "/blog/weakpoint/img/ubuntu-gril.jpg"
     content += '<img style="float:left;margin:15px;" class="avatar"src="' + gravatar_url +'" alt="avatar" width="180" height="140"/>'
 
 
@@ -224,7 +224,7 @@ content += '''
     </div>
     </div>
     </div>
-    <script type="text/javascript" src="weakpoint/core/weakpoint.js"></script>
+    <script type="text/javascript" src="/blog/weakpoint/core/weakpoint.js"></script>
     <script type="text/javascript">var weakpoint = new weakPoint(); weakpoint.init();</script>'''
 
     
@@ -243,6 +243,6 @@ content += '''
 
 
 # =================write file=====================
-fslide = codecs.open('dex.html', mode="w", encoding="utf8")
+fslide = codecs.open('point.html', mode="w", encoding="utf8")
 fslide.write(content)
 fslide.close()
