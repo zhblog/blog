@@ -28,13 +28,16 @@ h1,  h3 {
     font: bold 21px/1.0 "Verdana", sans-serif;
     background: #583799;
     text-align: center;
-    width:100%;
+    width:82%;
     color: #fff;
     padding-top: 5px;
     padding-bottom: 7px;
-    margin-top:40px;
+    margin-top:0px;
+    margin-left:61px;
     margin-bottom:16px;
     background-color: #777777;
+    text-align:center;
+    border-radius: 4px;
 }
 
 h1 {
@@ -478,7 +481,7 @@ hr {
 
 .preclass {
     background-color: #E0DFCC;
-    margin: 2em 2em;
+    margin: 2em 0.5em;
     font-family: 'Courier New', Courier, monospace;
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
