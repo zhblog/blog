@@ -3,42 +3,55 @@
 Design by Free CSS Templates
 http://www.freecsstemplates.org
 Released for free under a Creative Commons Attribution 2.5 License
-*/
+ */
 a {
     color: #FF0000;
 }
 
 body {
-	margin: 20px 0px 0px 0px;
-	padding: 0;
-	background: #191919 url(/blog/images/img07.jpg) no-repeat right top;
-	font-family: Tahoma, Geneva, sans-serif;
-	font-size: 13px;
-	color: #424242;
+    margin: 20px 0px 0px 0px;
+    padding: 0;
+    background: #191919 url(/blog/images/img07.jpg) no-repeat right top;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 13px;
+    color: #424242;
 }
 
-h1, h2, h3 {
-	margin: 0;
-	font-family: Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: #424242;
+h1,  h3 {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    color: #424242;
+}
+
+.entry h2 {
+    font: bold 21px/1.0 "Verdana", sans-serif;
+    background: #583799;
+    text-align: center;
+    width:100%;
+    color: #fff;
+    padding-top: 5px;
+    padding-bottom: 7px;
+    margin-top:40px;
+    margin-bottom:16px;
+    background-color: #777777;
 }
 
 h1 {
-	font-size: 44px;
+    font-size: 44px;
 }
 
 h2 {
-	font-size: 18px;
+    font-size: 18px;
 }
 
 h3 {
 }
 
 p, ul, ol {
-	margin-top: 0;
-	line-height: 240%;
-	text-align: justify;
+    margin-top: 0;
+    line-height: 240%;
+    text-align: justify;
 }
 
 ul, ol {
@@ -49,41 +62,41 @@ blockquote {
 
 
 a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 a img {
-	border: none;
+    border: none;
 }
 
 img.left {
-	float: left;
-	margin: 7px 30px 0 0;
+    float: left;
+    margin: 7px 30px 0 0;
 }
 
 img.right {
-	float: right;
-	margin: 7px 0 0 30px;
+    float: right;
+    margin: 7px 0 0 30px;
 }
 
 hr {
-	display: none;
+    display: none;
 }
 
 .list1 {
 }
 
 .list1 li {
-	float: left;
-	line-height: normal;
+    float: left;
+    line-height: normal;
 }
 
 .list1 li img {
-	margin: 0 30px 30px 0;
+    margin: 0 30px 30px 0;
 }
 
 .list1 li.alt img {
-	margin-right: 0;
+    margin-right: 0;
 }
 
 #wrapper {
@@ -92,9 +105,9 @@ hr {
 /* Header */
 
 #header {
-	width: 1050px;
-	height: 70px;
-	margin: 0px auto;
+    width: 1050px;
+    height: 70px;
+    margin: 0px auto;
 }
 
 /* Menu */
@@ -103,36 +116,36 @@ hr {
 }
 
 #menu ul {
-	margin: 0;
-	padding: 8px 0px 0px 0px;
-	list-style: none;
-	line-height: normal;
+    margin: 0;
+    padding: 8px 0px 0px 0px;
+    list-style: none;
+    line-height: normal;
 }
 
 #menu li {
-	display: block;
-	float: left;
+    display: block;
+    float: left;
 }
 
 #menu a {
-	display: block;
-	float: left;
-	height: 28px;
-	background: #424242;
-	margin-right: 3px;
-	padding: 8px 30px 0px 35px;
-	letter-spacing: -1px;
-	text-decoration: none;
-	text-align: center;
-	text-transform: lowercase;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	font-weight: normal;
-	color: #FFFFFF;
+    display: block;
+    float: left;
+    height: 28px;
+    background: #424242;
+    margin-right: 3px;
+    padding: 8px 30px 0px 35px;
+    letter-spacing: -1px;
+    text-decoration: none;
+    text-align: center;
+    text-transform: lowercase;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    color: #FFFFFF;
 }
 
 #menu a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 #menu li.current_page_item {
@@ -147,240 +160,240 @@ hr {
 /* Search */
 
 #search {
-	float: right;
-	padding: 10px 10px 0px 0px;
+    float: right;
+    padding: 10px 10px 0px 0px;
 }
 
 #search form {
-	float: right;
-	margin: 0;
-	padding: 4px 0px 0 0;
+    float: right;
+    margin: 0;
+    padding: 4px 0px 0 0;
 }
 
 #search fieldset {
-	margin: 0;
-	padding: 0;
-	border: none;
+    margin: 0;
+    padding: 0;
+    border: none;
 }
 
 #search input {
-	float: left;
-	font: 12px Georgia, "Times New Roman", Times, serif;
+    float: left;
+    font: 12px Georgia, "Times New Roman", Times, serif;
 }
 
 #search-text {
-	width: 213px;
-	height: 28px;
-	padding: 6px 0 0 7px;
-	border: none;
-	background: url(/blog/images/img02.jpg) no-repeat left top;
-	color: #000000;
+    width: 213px;
+    height: 28px;
+    padding: 6px 0 0 7px;
+    border: none;
+    background: url(/blog/images/img02.jpg) no-repeat left top;
+    color: #000000;
 }
 
 #search-submit {
-	width: 82px;
-	height: 28px;
-	margin-left: 10px;
-	padding: 0px 5px;
-	background: url(/blog/images/img.jpg) no-repeat left top;
-	border: none;
-	text-indent: -9999px;
-	color: #FFFFFF;
+    width: 82px;
+    height: 28px;
+    margin-left: 10px;
+    padding: 0px 5px;
+    background: url(/blog/images/img.jpg) no-repeat left top;
+    border: none;
+    text-indent: -9999px;
+    color: #FFFFFF;
 }
 
 /* Page */
 
 #page {
-	width: 1030px;
-	margin: 0px auto;
-	padding: 10px 10px 10px 10px;
-	background: #E1E1E1;
+    width: 1030px;
+    margin: 0px auto;
+    padding: 10px 10px 10px 10px;
+    background: #E1E1E1;
 }
 
 #page-bgtop {
 }
 
 #page-bgbtm {
-	overflow: hidden;
+    overflow: hidden;
 }
 
 /** LOGO */
 
 #logo {
-	width: 1050px;
-	height: 100px;
-	margin: 0 auto;
-	background: url(/blog/images/img2.png) no-repeat left top;
-	/*background: url(/blog/images/img.jpg) no-repeat left top;*/
+    width: 1050px;
+    height: 100px;
+    margin: 0 auto;
+    background: url(/blog/images/img2.png) no-repeat left top;
+    /*background: url(/blog/images/img.jpg) no-repeat left top;*/
     /*background-image: url('/blog/images/header.png');*/
 }
 
 #logo a, #logo p {
-	color: #000000;
-	font-family: Georgia, "Times New Roman", Times, serif;
-	font-size: 13px;
+    color: #000000;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 13px;
 }
 
 #logo p {
-	padding: 0px 0px 0px 150px;
+    padding: 0px 0px 0px 150px;
 }
 
 
 #banner {
-	padding-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 /* Content */
 
 #content {
-	float: right;
-	width: 720px;
-	padding: 0px 0px 0px 0px;
+    float: right;
+    width: 720px;
+    padding: 0px 0px 0px 0px;
 }
 
 /* Post */
 
 .post {
-	background: url(/blog/images/img05.jpg) repeat-y left top;
+    background: url(/blog/images/img05.jpg) repeat-y left top;
 }
 
 .post-bgtop {
-	background: url(/blog/images/img04.jpg) no-repeat left top;
+    background: url(/blog/images/img04.jpg) no-repeat left top;
 }
 
 .post-bgbtm {
-	padding: 0px 30px 20px 30px;
-	background: url(/blog/images/img06.jpg) no-repeat left bottom;
+    padding: 0px 30px 20px 30px;
+    background: url(/blog/images/img06.jpg) no-repeat left bottom;
 }
 
 .post .title {
-	height: 44px;
-	margin: 0px;
-	padding: 36px 0px 0px 0px;
-	background: url(/blog/images/img11.jpg) repeat-x left bottom;
+    height: 44px;
+    margin: 0px;
+    padding: 36px 0px 0px 0px;
+    background: url(/blog/images/img11.jpg) repeat-x left bottom;
 }
 
 .post .title a {
-	letter-spacing: -2px;
-	text-decoration: none;
-	text-transform: lowercase;
-	font-size: 36px;
-	color: #424242;
+    letter-spacing: -2px;
+    text-decoration: none;
+    text-transform: lowercase;
+    font-size: 36px;
+    color: #424242;
 }
 
 .post .title a:hover {
-	color: #1D3788;
+    color: #1D3788;
 }
 
 .post .meta {
-	margin-left: 2px;
-	padding: 4px 30px 2px 0px;
-	text-transform: uppercase;
-	font-family: Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	font-size: 13px;
-	color: #424242;
+    margin-left: 2px;
+    padding: 4px 30px 2px 0px;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 13px;
+    color: #424242;
 }
 
 .post .meta span {
-	margin: 0px;
+    margin: 0px;
 }
 
 .post .meta a {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .post .entry {
-	padding: 10px 0px 0px 0px;
+    padding: 10px 0px 0px 0px;
 }
 
 .post .comments {
-	display: block;
-	width: 120px;
-	height: 18px;
-	margin: 0px;
-	padding: 3px 0px 0px 40px;
-	background: #90BF35;
-	border: 1px solid #5F817E;
-	text-decoration: none;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	text-decoration: none;
-	font-weight: bold;
-	color: #FFFFFF;
+    display: block;
+    width: 120px;
+    height: 18px;
+    margin: 0px;
+    padding: 3px 0px 0px 40px;
+    background: #90BF35;
+    border: 1px solid #5F817E;
+    text-decoration: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #FFFFFF;
 }
 
 /* Sidebar */
 
 #sidebar {
-	float: left;
-	width: 310px;
-	font-family: Arial, Helvetica, sans-serif;
+    float: left;
+    width: 310px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #sidebar  li {
-	background: url(/blog/images/img09.jpg) repeat-y left top;
+    background: url(/blog/images/img09.jpg) repeat-y left top;
 }
 
 #sidebar  li ul {
-	margin: 0px 0px;
-	padding: -5px 0px -5px 0px;
+    margin: 0px 0px;
+    padding: -5px 0px -5px 0px;
 }
 
 #sidebar   ul {
-	padding: 0px 0px 0px 0px;
-	margin: 10;
-	padding: 0;
-	background:  none;
-	list-style: none;
-	line-height: normal;
+    padding: 0px 0px 0px 0px;
+    margin: 10;
+    padding: 0;
+    background:  none;
+    list-style: none;
+    line-height: normal;
 }
 
 #sidebar  li li {
-	border-bottom: 1px solid #E0E0E0;
-	background: url(/blog/images/img12.jpg) no-repeat left 13px;
+    border-bottom: 1px solid #E0E0E0;
+    background: url(/blog/images/img12.jpg) no-repeat left 13px;
 }
 
 #sidebar  li li {
-	margin: -5px 10px -5px 15px;
-	padding: 8px 0px 8px 10px;
-	background: url(/blog/images/img12.jpg) no-repeat left 13px;
+    margin: -5px 10px -5px 15px;
+    padding: 8px 0px 8px 10px;
+    background: url(/blog/images/img12.jpg) no-repeat left 13px;
 }
 
 #sidebar  li li a {
-	font-weight: normal;
+    font-weight: normal;
 }
 
 #sidebar  li li a:hover {
-	color: #424242;
+    color: #424242;
 }
 
 #sidebar p {
-	margin: 0;
-	padding: 0px 14px;
+    margin: 0;
+    padding: 0px 14px;
 }
 
 #sidebar h2 {
-	height: 50px;
-	margin: 0px;
-	padding: 30px 0px 13px 30px;
-	background: url(/blog/images/img08.jpg) no-repeat left top;
-	letter-spacing: -1px;
-	text-transform: lowercase;
-	font-size: 24px;
-	font-weight: normal;
-	color: #424242;
+    height: 50px;
+    margin: 0px;
+    padding: 30px 0px 13px 30px;
+    background: url(/blog/images/img08.jpg) no-repeat left top;
+    letter-spacing: -1px;
+    text-transform: lowercase;
+    font-size: 24px;
+    font-weight: normal;
+    color: #424242;
 }
 
 #sidebar p {
-	line-height: 200%;
+    line-height: 200%;
 }
 
 #sidebar a {
-	text-align: left;
-	text-decoration: none;
-	font-weight: bold;
-	color: #666666;
+    text-align: left;
+    text-decoration: none;
+    font-weight: bold;
+    color: #666666;
 }
 
 /* Calendar */
@@ -389,75 +402,75 @@ hr {
 }
 
 #calendar caption {
-	padding-bottom: 5px;
-	font-weight: bold;
+    padding-bottom: 5px;
+    font-weight: bold;
 }
 
 #calendar table {
-	width: 100%;
-	border-collapse: collapse;
-	border-bottom: 1px solid #24130F;
-	border-left: 1px solid #24130F;
-	border-right: 1px solid #24130F;
+    width: 100%;
+    border-collapse: collapse;
+    border-bottom: 1px solid #24130F;
+    border-left: 1px solid #24130F;
+    border-right: 1px solid #24130F;
 }
 
 #calendar thead th {
-	padding: 5px 0;
-	text-align: center;
-	border-top: 1px solid #24130F;
-	border-left: 1px solid #24130F;
-	background: #24130F;
+    padding: 5px 0;
+    text-align: center;
+    border-top: 1px solid #24130F;
+    border-left: 1px solid #24130F;
+    background: #24130F;
 }
 
 #calendar tbody td {
-	padding: 5px 0;
-	text-align: center;
-	border-top: 1px solid #24130F;
-	border-left: 1px solid #24130F;
-	border-bottom: 1px solid #24130F;
+    padding: 5px 0;
+    text-align: center;
+    border-top: 1px solid #24130F;
+    border-left: 1px solid #24130F;
+    border-bottom: 1px solid #24130F;
 }
 
 #calendar tfoot td {
-	padding: 5px;
-	border-left: 1px solid #24130F;
-	border-bottom: 1px solid #24130F;
+    padding: 5px;
+    border-left: 1px solid #24130F;
+    border-bottom: 1px solid #24130F;
 }
 
 #calendar tfoot #next {
-	border-top: 1px solid #24130F;
-	text-align: right;
+    border-top: 1px solid #24130F;
+    text-align: right;
 }
 
 #calendar tfoot #prev {
-	border-top: 1px solid #24130F;
+    border-top: 1px solid #24130F;
 }
 
 #calendar .pad {
-	border-bottom: 1px solid #24130F;
+    border-bottom: 1px solid #24130F;
 }
 
 #calendar #today {
-	background: #24130F;
+    background: #24130F;
 }
 
 /* Footer */
 
 #footer {
-	width: 1020px;
-	height: 100px;
-	margin: 0 auto;
-	padding: 0;
+    width: 1020px;
+    height: 100px;
+    margin: 0 auto;
+    padding: 0;
 }
 
 #footer-bgcontent {
 }
 
 #footer p {
-	margin: 0;
-	padding: 30px 0px 0px 0px;
-	text-align: center;
-	line-height: normal;
-	font-size: 12px;
+    margin: 0;
+    padding: 30px 0px 0px 0px;
+    text-align: center;
+    line-height: normal;
+    font-size: 12px;
 }
 
 #footer a {
@@ -474,7 +487,7 @@ hr {
     border: 1px solid #eee;
     word-wrap:break-word; /* Internet Explorer 5.5+ */
     white-space: pre-wrap; /* Firefox */
-	font-size: 14px;
+    font-size: 14px;
 }
 
 
