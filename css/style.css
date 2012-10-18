@@ -207,7 +207,7 @@ hr {
 /* Page */
 
 #page {
-    width: 1030px;
+    width: 1040px;
     margin: 0px auto;
     padding: 10px 10px 10px 10px;
     background: #E1E1E1;
@@ -223,7 +223,7 @@ hr {
 /** LOGO */
 
 #logo {
-    width: 1050px;
+    width: 1058px;
     height: 100px;
     margin: 0 auto;
     background: url(/blog/images/img2.png) no-repeat left top;
