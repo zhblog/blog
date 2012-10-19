@@ -14,6 +14,14 @@ classification: script
     代码比较乱，看见的人就别深究了。
 </pre>
  <h4>Hello World!</h4>
+ <p>说明一下，不知道什么原因，在写cell的时候它有个限制</p>
+ <pre class="codepre"><code>
+ assert col1 < col2, '%d < %d is false'%(col1, col2)
+ </code></pre>
+ <p>代码的位置大概是在</p>
+ <pre class="codepre"><code>
+ python2.7/dist-packages/pyExcelerator/Cell.py
+ </code></pre>
 <pre class="brush:python">
 #!/usr/bin/python
 
