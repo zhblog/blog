@@ -1,0 +1,4 @@
+1:下载软件包 http://code.google.com/p/go/downloads/list 
+2：最新的安装包， go1.0.3.linux-386.tar.gz 
+tar jxvf go1.0.3.linux-386.tar.gz
+项目主页：http://golang.org/
