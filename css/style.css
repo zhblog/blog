@@ -503,8 +503,7 @@ hr {
     border-width: 1px;
     border-color: rgb(16,48,0);
     border-style: solid;
-    padding: 0.6em;
-    padding-left: 1em;
+    padding: 0em 1em 1em 1em;
     margin-left: 2%;
     margin-right: 2%;
     background-color: rgb(16,48,0);
