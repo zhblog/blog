@@ -9,7 +9,7 @@ classification: linux
 
 <h2>1：跑起来</h2>
 <p>先把hello world跑起来</p>
-<pre class="brush:cpp;">
+<pre class="codepre;">
 #include &lt;stdio.h&gt;
   
 int main()  
@@ -20,29 +20,29 @@ int main()
   
 </pre>
 <p>保存为 ex1.c  linux终端中敲入</p>
-<pre class="brush:cpp">
+<pre class="codepre">
 ~$:make ex1  
 ~$:cc -Wall -g    ex1.c   -o ex1 
 </pre>
 <p>你会发现 生成了一个ex1文件</p>
-<pre class="brush:cpp">
+<pre class="codepre">
 ~$:./ex1  
    hello world! 
 </pre>
 <p>你会发现 生成了一个ex1文件</p>
-<pre class="brush:cpp">
+<pre class="codepre">
 ~$:./ex1  
    hello world! 
 </pre>
 <p>OK 我们成功了</p>
 <h2>2：怎么跑起来的</h2>
 <p>但是  它到底做了什么 ？ 各个段落都干了什么？  这段我不知道怎么说了  直接命令说话  </p>
-<pre class="brush:cpp">
+<pre class="codepre">
 ~$:gcc -E ex1.c -o ex1.i   
 </pre>
 <p>-E 这是一个预处理选项，其实生成的.i文件还是C语言文件，只是把include 还有宏之类的东西做了替换 替换 </br> 
 比如 ex2.c如下：</p>
-<pre class="brush:cpp">
+<pre class="codepre">
 #include "stdio.h"  
 #define  HELLOWORLD "hello world!"  
   
@@ -52,25 +52,25 @@ int main()
      return 0;  
 }  
 </pre>
-<pre class="brush:cpp"> 
+<pre class="codepre"> 
 ~$:gcc -E ex2.c -o ex2.i
 </pre>  
  <p>
 HELLOWORLD 做了相应的的替换 接着下面  
  </p>
-<pre class="brush:cpp">
+<pre class="codepre">
 ~$:gcc -S ex2.i -o ex2.s  
  </pre>
  <p>
 这个会把.i 文件编译成汇编文件 如果熟悉汇编语言 你可以看一下  
  </p>
- <pre class="brush:cpp">
+ <pre class="codepre">
 ~$:gcc -c ex2.s -o ex2.o
 </pre>  
  <p>
 上面是把汇编代码 转换成机器代码,最后:  
  </p>
- <pre class="brush:cpp">
+ <pre class="codepre">
 ~$:gcc ex2.o -o ex2  
 </pre>
 <p>最后，在连接阶段将输入的机器代码文件*.o（与其它的机器代码文件和库文件）汇集成一个可执行的二进制代码文件。</p>
@@ -78,7 +78,7 @@ HELLOWORLD 做了相应的的替换 接着下面
  <p>
 我们先看一下这个命令
 </p>
-<pre class="brush:cpp">
+<pre class="codepre">
 ~$:ldd ex2  
  libc.so.6 => /lib64/libc.so.6 (0x0000003195800000)  
  /lib64/ld-linux-x86-64.so.2 (0x0000003195400000)  
@@ -88,14 +88,14 @@ OK 我们下面解决这个问题
 比如 我们的printf函数是哪里实现的呢 是怎么来链接此函数实现的呢 </p>
 
 <h2>3：这个过程中还有什么？</h2>
-<pre class="brush:cpp">
+<pre class="codepre">
 ~$:ldd ex2  
  libc.so.6 => /lib64/libc.so.6 (0x0000003195800000)  
  /lib64/ld-linux-x86-64.so.2 (0x0000003195400000)  
 </pre>
 <p>奥 原来是 链接了libc.so.6实现的呢 那这个东西又是怎么链接到我们的程序呢？  
 为了弄明白这个问题，我们自己先实现一个自己的静态链接库  test1.c:</p>
-<pre class="brush:cpp">
+<pre class="codepre">
 #include "stdio.h"  
 #define  HELLOWORLD "hello world!"  
   
@@ -107,7 +107,7 @@ OK 我们下面解决这个问题
 </pre>
  
 <p>test2.c:</p>  
- <pre class="brush:cpp">
+ <pre class="codepre">
 #include "stdio.h"  
   
 void test2(int test2)  
@@ -116,20 +116,20 @@ void test2(int test2)
 }  
 </pre>
 <p>把它们编译成.o文件</p>  
-  <pre class="brush:cpp">
+  <pre class="codepre">
 ~$:cc -c test1.c  
 ~$:cc -c test2.c  
  </pre> 
 <p>会生成test1.o 和test2.o  </p>
 <p>一个头文件：</p>  
 <p>test.h：</p>  
-<pre class="brush:cpp">
+<pre class="codepre">
 void test1(int);  
 void test2(int);  
 </pre>
 写一个他们的调用函数  
 test.c  
-<pre class="brush:cpp">
+<pre class="codepre">
 #include "stdio.h"  
 #include "test.h"  
   
@@ -140,36 +140,36 @@ int main(void)
      return 0；  
 }  
 </pre>
-<pre class="brush:cpp">  
+<pre class="codepre">  
 cc -c test.c  
 cc -o test test.o test1.o test2.o  
 </pre>  
 这样会生成一个可执行文件test  
-<pre class="brush:cpp">  
+<pre class="codepre">  
 ./test  
 test1:1  
 test2:2  
 </pre>
 我们可以运行了，然后我们开始做自己的静态库 libself.a  
-<pre class="brush:cpp">
+<pre class="codepre">
 ar crv libself.a test1.o test2.o  
 a - test1.o  
 a - test2.o 
 </pre>
 我们试用一下自己的库 
-<pre class="brush:cpp">
+<pre class="codepre">
 cc -o test test.o libself.a  
 ./test 
 </pre>
 成功  
 看一下用参数  
-<pre class="brush:cpp">
+<pre class="codepre">
 cc -o test test.o libself.a  
 ./test 
 </pre>
 成功  
 如果不行 记得生成内容表 
-<pre class="brush:cpp">
+<pre class="codepre">
 ranlib libself.a 
 </pre>
 <pre class="preclass">
@@ -184,7 +184,7 @@ ranlib libself.a
 我对动态连接库的了解也就这么多了  
 </pre>
 <p>试着自己做一下</p>
-<pre class="brush:cpp">
+<pre class="codepre">
 gcc test12.c test2.c -fPIC -shared -o libtest.so  
 gcc test.c -L. -ltest -o test  
 ./test  
