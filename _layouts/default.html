@@ -113,30 +113,8 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
             </div>
           </li>
       </ul>
-      <ul>
-          <li>
-          <h2>作者分类</h2>
-            <div>
-                <ul id="onlySelf" class="ztree">
-
-                </ul>
-            </div>
-          </li>
-      </ul>
       
       <ul>
-          <li>
-          <h2>我的PPT </h2>
-                <ul>
-                            {% for post in site.posts %}
-                            {% if post.layout == "point" %}
-                            <li>{{ post.date | date_to_long_string }} <a href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
-                            {% endif %}
-                            {% endfor %}
-                </ul>
-          </li>
-      </ul>
-        <ul>
           <li>
           <h2>ONLY FOR ME </h2>
                 <div id="melist">
@@ -150,6 +128,20 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
                 </div>
           </li>
       </ul>
+     
+      <ul>
+          <li>
+          <h2>我的PPT </h2>
+                <ul>
+                            {% for post in site.posts %}
+                            {% if post.layout == "point" %}
+                            <li>{{ post.date | date_to_long_string }} <a href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
+                            {% endif %}
+                            {% endfor %}
+                </ul>
+          </li>
+      </ul>
+        
   
       <div class="lianjie">
         <ul>
@@ -527,12 +519,12 @@ $(window.parent.document).find("title").html($("title").html())
             var myNode = [node2012]
             var cNode = [linuxnode,scriptnode,webnode,livenode,othernode]
             var authorNode = [zzhnode,reservednode]
-            var myNode = [menode]
+            var selfNode = [menode]
             $(document).ready(function(){
                 $.fn.zTree.init($("#treeDemo"), setting, myNode);
                 $.fn.zTree.init($("#treeClass"), setting, cNode);
                 $.fn.zTree.init($("#treeAuthor"), setting, authorNode);
-                $.fn.zTree.init($("#onlySelf"), setting, myNode);
+                $.fn.zTree.init($("#onlySelf"), setting, selfNode);
             });
         </script>
         
