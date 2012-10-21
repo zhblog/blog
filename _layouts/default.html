@@ -239,6 +239,7 @@ $(window.parent.document).find("title").html($("title").html())
             
             var reservednode = {open:false,name:"转载"}
             var zzhnode = {open:false,name:"张志鹤"}
+            var lgthwnode = {open:false,name:"LGTHW"}
 
 
             
@@ -268,6 +269,15 @@ $(window.parent.document).find("title").html($("title").html())
                         }else
                         {
                             reservednode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
+                        }
+                    }
+                    else if(author == "lgthw")
+                    {
+                        if((lgthwnode["children"])){
+                            lgthwnode["children"][lgthwnode["children"].length] = {name:datelist+":"+titletext,url:hreftext}
+                        }else
+                        {
+                            lgthwnode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
                         }
                     }
 
@@ -518,7 +528,7 @@ $(window.parent.document).find("title").html($("title").html())
             //var myNode = [node2013,node2012]
             var myNode = [node2012]
             var cNode = [linuxnode,scriptnode,webnode,livenode,othernode]
-            var authorNode = [zzhnode,reservednode]
+            var authorNode = [zzhnode,lgthwnode,reservednode]
             var selfNode = [menode]
             $(document).ready(function(){
                 $.fn.zTree.init($("#treeDemo"), setting, myNode);
