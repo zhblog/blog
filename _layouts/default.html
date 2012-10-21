@@ -124,11 +124,9 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
           </li>
       </ul>
       
-      <div class="lianjie">
-        <ul>
+      <ul>
           <li>
           <h2>我的PPT </h2>
-            <div >
                 <ul>
                             {% for post in site.posts %}
                             {% if post.layout == "point" %}
@@ -136,7 +134,22 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
                             {% endif %}
                             {% endfor %}
                 </ul>
-            </div>
+          </li>
+      </ul>
+      
+      <div class="lianjie">
+        <ul>
+          <li>
+          <h2>ONLY FOR ME </h2>
+                <div id="melist">
+                <ul id="onlySelf" class="ztree">>
+                            {% for post in site.posts %}
+                            {% if post.layout == "self" %}
+                           <li>{{ post.date | date_to_long_string }} <a title="{{ post.author }}" class="{{ post.classification }}" href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li> 
+                            {% endif %}
+                            {% endfor %}
+                </ul>
+                </div>
           </li>
       </ul>
   </div> 
@@ -175,15 +188,6 @@ var disqus_shortname = 'zzhblog'; // 注意，短域名
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
 
 
 <div id="footer">
@@ -510,6 +514,39 @@ $(window.parent.document).find("title").html($("title").html())
                 $.fn.zTree.init($("#treeDemo"), setting, myNode);
                 $.fn.zTree.init($("#treeClass"), setting, cNode);
                 $.fn.zTree.init($("#treeAuthor"), setting, authorNode);
+            });
+        </script>
+        
+        
+        
+        <script>
+            var setting = {};
+            var menode = {open:false,name:"SELF"}
+            $("#melist").find("li").each(function(){
+                thistext = $(this).text()
+                hreftext = $(this).find("a").attr("href")
+                classification = $(this).find("a").attr("class")
+                author = $(this).find("a").attr("title")
+                datelist = thistext.split(":")[0]
+                titletext = thistext.split(":")[1]
+                daytext = datelist.split(" ")[0]
+                monthtext = datelist.split(" ")[1]
+                yeartext = datelist.split(" ")[2]
+                arr = new Array(titletext, yeartext, monthtext, daytext, hreftext)
+                        if((menode["children"])){
+                            menode["children"][menode["children"].length] = {name:datelist+":"+titletext,url:hreftext}
+                        }else
+                        {
+                            menode["children"] = [{name:datelist+":"+titletext,url:hreftext}]
+                        }
+                   
+
+
+                    
+            var myNode = [menote]
+           
+            $(document).ready(function(){
+                $.fn.zTree.init($("#onlySelf"), setting, myNote);
             });
         </script>
 </html>
