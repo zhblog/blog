@@ -1,0 +1,58 @@
+---
+layout: default
+title: FIX LINUX BUG 
+author: zzh
+thisdate: 2012-10-21
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+ 在多系统（CentOS-6.3|Ubuntu-12.10|Deepin-12.06）启动Ubuntu-12.10的时候出现boot error environment block too small
+ 解决问题的是这个
+</pre>
+<pre class="codepre"><code>
+sudo rm /boot/grub/grubenv
+sudo dpkg-reconfigure grub-pc
+</code></pre>
+
+<pre class="preclass">
+ Python测试效率的问题，写了一个直观的时间函数，放这里吧 
+</pre>
+<pre class="codepre"><code>
+#!/usr/bin/python
+# -*- coding: UTF8 -*-
+
+from decimal import *
+from datetime import date
+import datetime 
+
+
+def timediff(timestart, timestop):  
+    t  = (timestop-timestart)  
+    time_day = t.days  
+    s_time = t.seconds  
+    ms_time = t.microseconds / 1000000  
+    usedtime = int(s_time + ms_time)  
+    time_hour = usedtime / 60 / 60  
+    time_minute = (usedtime - time_hour * 3600 ) / 60  
+    time_second =  usedtime - time_hour * 3600 - time_minute * 60  
+    time_micsecond = (t.microseconds - t.microseconds / 1000000) / 1000  
+    retstr = "%d day %d hours %d minutes %d seconds %d millisecondsds"  %(time_day, time_hour, time_minute, time_second, time_micsecond)  
+    return retstr  
+
+def decitest(for1, for2): 
+    starttime  = datetime.datetime.now()
+    for j in range(for1):
+        getcontext().prec = 5 
+        ll = Decimal(1) / Decimal(3)
+        for i in range(for2):
+            ll = ll + Decimal(i) / Decimal(i + 1)
+    endtime  = datetime.datetime.now()
+    return timediff(starttime, endtime)
+
+
+if __name__ == "__main__":
+    print decitest(100, 10000)
+</code></pre>
+
