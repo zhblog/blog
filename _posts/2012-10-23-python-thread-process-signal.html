@@ -1,0 +1,122 @@
+---
+layout: default
+title: Python线程与进程-subprocess
+author: zzh
+thisdate: 2012-10-23
+classification: script
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+    由于要做把一个多线程改成多进程，看一下相关方面的东西，总结一下，主要是以下几个相关的标准库
+    1：subprocess
+    2：signal
+    3：threading
+    4：multiprocessing
+    这个是第一个signal
+    下面的代码我只在基于ubuntu的deepin12.06(Linux zzh 3.2.0-32-generic #51-Ubuntu SMP Wed Sep 26 21:32:50 UTC 2012 i686 athlon i386 GNU/Linux)上测试过，由于signal是一个操作系统特性，所以不保证其他系统可行
+</pre>
+<h2>signal</h2>
+<h3>signal 接受信号</h3>
+<pre class="codepre"><code>
+import signal
+import os
+import time
+
+def receive_signal(signum, stack):
+    print 'Received:', signum
+
+# Register signal handlers
+signal.signal(signal.SIGUSR1, receive_signal)
+signal.signal(signal.SIGUSR2, receive_signal)
+
+# Print the process ID so it can be used with 'kill'
+# to send this program signals.
+print 'My PID is:', os.getpid()
+
+while True:
+    print 'Waiting...'
+    time.sleep(3)
+</code></pre>
+<h3>传递信号可以在shell中操作一些命令</h3>
+
+<pre class="codepre"><code>
+kill -USR1 $pid
+kill -USR2 $pid
+kill -INT $pid
+</code></pre>
+<h3>signal 获取注册的处理函数</h3>
+<pre class="codepre"><code>
+#SIG_ING 如果信号被忽略
+#SIG_DFL 如果使用默认行为
+#None from C
+import signal
+
+def alarm_received(n, stack):
+    return
+
+signal.signal(signal.SIGALRM, alarm_received)
+
+signals_to_names = dict(
+    (getattr(signal, n), n)
+    for n in dir(signal)
+    if n.startswith('SIG') and '_' not in n
+    )
+
+for s, name in sorted(signals_to_names.items()):
+    handler = signal.getsignal(s)
+    if handler is signal.SIG_DFL:
+        handler = 'SIG_DFL'
+    elif handler is signal.SIG_IGN:
+        handler = 'SIG_IGN'
+    print '%-10s (%2d):' % (name, s), handler
+</code></pre>
+
+<h3>signal 发送信号</h3>
+<pre class="codepre"><code>
+    使用os.kill()可以发送信号，前面有介绍
+</code></pre>
+
+
+<h3>signal 闹钟</h3>
+<pre class="codepre"><code>
+#2秒就after了
+import signal
+import time
+
+def receive_alarm(signum, stack):
+    print 'Alarm :', time.ctime()
+
+# Call receive_alarm in 2 seconds
+signal.signal(signal.SIGALRM, receive_alarm)
+signal.alarm(2)
+
+print 'Before:', time.ctime()
+time.sleep(4)
+print 'After :', time.ctime()
+</code></pre>
+
+
+<h3>signal 忽略信号</h3>
+<pre class="codepre"><code>
+import signal
+import os
+import time
+
+def do_exit(sig, stack):
+    raise SystemExit('Exiting')
+
+signal.signal(signal.SIGINT, signal.SIG_IGN)
+signal.signal(signal.SIGUSR1, do_exit)
+
+print 'My PID:', os.getpid()
+
+signal.pause()#当接受到键盘的时候，signal.SIG_IGN给忽略了
+</code></pre>
+
+
+<h3>signal 与线程</h3>
+<pre class="preclass">
+signal一般不能跟线程很好的合作，因为操作系统的特性，只能主线程接收得到信号，关于这个，以后再研究:
+</pre>
+<pre class="codepre"><code>
