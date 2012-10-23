@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Python线程与进程-subprocess
+title: Python线程与进程-signal
 author: zzh
 thisdate: 2012-10-23
 classification: script
@@ -13,7 +13,7 @@ classification: script
     2：signal
     3：threading
     4：multiprocessing
-    这个是第一个signal
+    这个是第二个signal
     下面的代码我只在基于ubuntu的deepin12.06(Linux zzh 3.2.0-32-generic #51-Ubuntu SMP Wed Sep 26 21:32:50 UTC 2012 i686 athlon i386 GNU/Linux)上测试过，由于signal是一个操作系统特性，所以不保证其他系统可行
 </pre>
 <h2>signal</h2>
@@ -119,4 +119,3 @@ signal.pause()#当接受到键盘的时候，signal.SIG_IGN给忽略了
 <pre class="preclass">
 signal一般不能跟线程很好的合作，因为操作系统的特性，只能主线程接收得到信号，关于这个，以后再研究:
 </pre>
-<pre class="codepre"><code>
