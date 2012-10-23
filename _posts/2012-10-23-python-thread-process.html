@@ -1,0 +1,212 @@
+---
+layout: default
+title: Python线程与进程-subprocess
+author: zzh
+thisdate: 2012-10-23
+classification: script
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+    由于要做把一个多线程改成多进程，看一下相关方面的东西，总结一下，主要是以下几个相关的标准库
+    1：subprocess
+    2：signal
+    3：threading
+    4：multiprocessing
+    这个是第一个subprocess
+</pre>
+<h2>subprocess</h2>
+<h3>subprocess 运行外部命令</h3>
+<pre class="codepre"><code>
+#有check的位当shell执行返回值不为0的时候会抛出subprocess.CalledProcessError的异常
+#带shell=True的subprocess会创建一个中间shell进程，由这个进程运行命令
+#stderr是错误的定向
+import subprocess
+subprocess.call(["ls", "-la"])
+subprocess.check_call(["ls", "-la"])
+subprocess.check_call(["ls", "-lalkhg"])
+subprocess.check_output("ls -al", shell=True)
+subprocess.check_output("ls -al", 
+                        shell=True,
+                        stderr=STDOUT)
+</code></pre>
+
+<pre class="preclass">
+ call check_call check_output都是Pope的包装器，Pope其实会更强，stdin，stdout， stderr之类的都可以设置，这里不讨论
+</pre>
+
+<h3>subprocess 直接处理管道</h3>
+<pre class="codepre"><code>
+import subprocess
+print "start"
+# OUT: start
+proc = subprocess.Popen('cat -; echo "to stderr" 1>&2',
+        shell=True,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,)
+msg = "through stdin to stdout\n"
+stdout_value, stderr_value = proc.communicate(msg)
+print stdout_value
+# OUT: through stdin to stdout
+# OUT: to stderr
+print stderr_value
+# OUT: None
+</code></pre>
+
+<h3>subprocess 连接管道段</h3>
+<pre class="codepre"><code>
+import subprocess as sp
+
+cat = sp.Popen(['cat', 'll.py'], stdout=sp.PIPE,)
+grep = sp.Popen(['grep', 'sub::'], stdin=cat.stdout, stdout=sp.PIPE,)
+cut = sp.Popen(['cut', '-f', '3', '-d:'], stdin=grep.stdout, stdout=sp.PIPE,)
+end_value = cut.stdout
+print "out:"
+for line in end_value:
+    print line.strip()
+#this is mean "cat ll.py | grep "sub" | cut -f 3 -d:"
+</code></pre>
+
+<h3>subprocess 与其他命令交互</h3>
+<pre class="codepre"><code>
+#辅助程序repeater.py
+import sys
+
+sys.stderr.write('repeater.py: starting\n')
+sys.stderr.flush()
+
+while True:
+    next_line = sys.stdin.readline()
+    if not next_line:
+        break
+    sys.stdout.write(next_line)
+    sys.stdout.flush()
+
+sys.stderr.write('repeater.py: exiting\n')
+sys.stderr.flush()
+</code></pre>
+<pre class="codepre"><code>
+#注意打印exiting的位置
+import subprocess
+
+print 'One line at a time:'
+proc = subprocess.Popen('python repeater.py', 
+                        shell=True,
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        )
+for i in range(5):
+    proc.stdin.write('%d\n' % i)
+    output = proc.stdout.readline()
+    print output.rstrip()
+remainder = proc.communicate()[0]
+print remainder
+
+print
+print 'All output at once:'
+proc = subprocess.Popen('python repeater.py', 
+                        shell=True,
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        )
+for i in range(5):
+    proc.stdin.write('%d\n' % i)
+
+output = proc.communicate()[0]
+print output
+</code></pre>
+
+<h3>进程间传递信号</h3>
+<pre class="codepre"><code>
+#文件名：signal_child.py
+#目的：子进程，为USR信号建立一个信号处理反馈
+import os
+import signal
+import time
+import sys
+
+pid = os.getpid()
+received = False
+
+def signal_usr1(signum, frame):
+    "Callback invoked when a signal is received"
+    global received
+    received = True
+    print 'CHILD %6s: Received USR1' % pid
+    sys.stdout.flush()
+
+print 'CHILD %6s: Setting up signal handler' % pid
+sys.stdout.flush()
+signal.signal(signal.SIGUSR1, signal_usr1)
+print 'CHILD %6s: Pausing to wait for signal' % pid
+sys.stdout.flush()
+time.sleep(3)
+
+if not received:
+    print 'CHILD %6s: Never received signal' % pid
+</code></pre>
+
+<pre class="codepre"><code>
+#父进程代码：
+#下面的代码向子进程发送信号会失败，因为不知道子进程的pid
+import os
+import signal
+import subprocess
+import tempfile
+import time
+import sys
+
+script = '''#!/bin/sh
+echo "Shell script in process $$"
+set -x
+python signal_child.py
+'''
+script_file = tempfile.NamedTemporaryFile('wt')
+script_file.write(script)
+script_file.flush()
+
+proc = subprocess.Popen(['sh', script_file.name], close_fds=True)
+print 'PARENT      : Pausing before signaling %s...' % proc.pid
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling child %s' % proc.pid
+sys.stdout.flush()
+os.kill(proc.pid, signal.SIGUSR1)
+time.sleep(3)
+</code></pre>
+<pre class="codepre"><code>
+#当kill失败的时候，可以运用killpg，组级别的kill
+import os
+import signal
+import subprocess
+import tempfile
+import time
+import sys
+
+script = '''#!/bin/sh
+echo "Shell script in process $$"
+set -x
+python signal_child.py
+'''
+script_file = tempfile.NamedTemporaryFile('wt')
+script_file.write(script)
+script_file.flush()
+
+def show_setting_sid():
+    print 'Calling os.setsid() from %s' % os.getpid()
+    sys.stdout.flush()
+    os.setsid()
+
+proc = subprocess.Popen(['sh', script_file.name], 
+                        close_fds=True,
+                        preexec_fn=show_setting_sid,
+                        )
+print 'PARENT      : Pausing before signaling %s...' % proc.pid
+sys.stdout.flush()
+time.sleep(1)
+print 'PARENT      : Signaling process group %s' % proc.pid
+sys.stdout.flush()
+os.killpg(proc.pid, signal.SIGUSR1)
+time.sleep(3)
+</code></pre>
