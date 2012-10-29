@@ -28,15 +28,16 @@ h1,  h3 {
     font: bold 21px/1.0 "Verdana", sans-serif;
     background: #583799;
     text-align: center;
-    width:82%;
+    width:100%;
     color: #fff;
     padding-top: 5px;
+    padding-left: 15px;
     padding-bottom: 7px;
     margin-top:0px;
-    margin-left:61px;
-    margin-bottom:16px;
+    margin-left:0px;
+    margin-bottom:15px;
     background-color: #777777;
-    text-align:center;
+    text-align:left;
     border-radius: 4px;
 }
 
