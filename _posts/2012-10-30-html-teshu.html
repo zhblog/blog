@@ -10,9 +10,8 @@ classification: script
 <pre class="preclass">
 	为了方便写博客里面的一些code，找了一个特殊字符html对照表
 </pre>
-<h1>HTML特殊转义字符列表</h1>
-
-<H2>最常用的字符实体<br />Character Entities</H2>
+<pre class="preclass">
+<H2>最常用的字符实体Character Entities</H2>
 
 <TABLE width="400">
 <TBODY>
@@ -845,7 +844,7 @@ HTML 4.01 支持 ISO 8859-1 (Latin-1) 字符集。
 <TD>&amp;diams;</TD>
 <TD>&amp;#9830;</TD></TR></TBODY></TABLE>
 
-<h2>重要的国际标记<br />markup-significant and internationalization characters</h2>
+<h2>重要的国际标记markup-significant and internationalization characters</h2>
 
 <TABLE width="778">
 <TBODY>
@@ -969,17 +968,16 @@ HTML 4.01 支持 ISO 8859-1 (Latin-1) 字符集。
 <TD class="key">€</TD>
 <TD>&amp;euro;</TD>
 <TD>&amp;#8364;</TD></TR></TBODY></TABLE>
-
+</pre>
 <h2>编码转换(to Unicode）</h3>
-<p><strong>Js版 </strong></p>
 <pre class="codepre">
 <code>
-		test = "你好abc"
+	 test = "你好abc"
      str = ""
-     for( i=0;    i<test.length; i++ )
+     for( i=0;i&lt;test.length; i++ )
      {
       temp = test.charCodeAt(i).toString(16);
-      str    += "\\u"+ new Array(5-String(temp).length).join("0") +temp;
+      str += "\\u"+ new Array(5-String(temp).length).join("0") +temp;
      }
      document.write (str)
 </code>
