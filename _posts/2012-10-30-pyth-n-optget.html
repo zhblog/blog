@@ -1,0 +1,70 @@
+---
+layout: default
+title: Python命令行解析 
+author: zzh
+thisdate: 2012-10-30
+classification: script
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+    因为在大学实习的时候最开始写过一个仿真的ls，最开始苦逼的if else解析命令行，后来才知道getopt，现在用Python做一个模拟器，初始化的时候也想不用配置，直接后面带参数，就总结了一下标准库里面的一些提供的实现方式
+</pre>
+<h2>不自己写代码了，也不粘贴自己的代码了，给一些官网的链接</h2>
+<pre class="preclass">
+    1:getopt            见 <a href="http://docs.python.org/2/library/getopt.html">here</a>
+    2:optparse          见 <a href="http://docs.python.org/2/library/optparse.html">here</a>
+    3:argparse          见 <a href="http://docs.python.org/2/library/optparse.html">here</a>
+    4:readline          见 <a href="http://docs.python.org/2/library/readline.html">here</a>
+    5:getpass           见 <a href="http://docs.python.org/2/library/getpass.html">here</a>
+    6:cmd               见 <a href="http://docs.python.org/2/library/cmd.html">here</a>
+    7:shlex             见 <a href="http://docs.python.org/2/library/shlex.html">here</a>
+    8:ConfigParser      见 <a href="http://docs.python.org/2/library/configparser.html">here</a>
+</pre>
+<h2>最后还是上一段C 的getopt吧</h2>
+<pre class="codepre">
+<code>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char **argv)
+{
+    int result;
+
+    opterr = 0; 
+
+    while( (result = getopt(argc, argv, "ab:c::")) != -1 )
+    {
+        switch(result)
+        {
+            case 'a':
+                printf("option=a, optopt=%c, optarg=%s\n", optopt, optarg);
+                break;
+            case 'b':
+                printf("option=b, optopt=%c, optarg=%s\n", optopt, optarg);
+                break;
+            case 'c':
+                printf("option=c, optopt=%c, optarg=%s\n", optopt, optarg);
+                break;
+            case '?':
+                printf("result=?, optopt=%c, optarg=%s\n", optopt, optarg);
+                break;
+            default:
+                printf("default, result=%c\n",result);
+                break;
+        }
+        printf("argv[%d]=%s\n", optind, argv[optind]);
+    }
+    printf("result=-1, optind=%d\n", optind); 
+
+    for(result = optind; result < argc; result++)
+        printf("-----argv[%d]=%s\n", result, argv[result]);
+
+    for(result = 1; result < argc; result++)
+        printf("\nat the end-----argv[%d]=%s\n", result, argv[result]);
+    return 0;
+}
+</code>
+</pre>
+
