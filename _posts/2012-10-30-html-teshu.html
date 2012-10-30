@@ -972,14 +972,14 @@ HTML 4.01 支持 ISO 8859-1 (Latin-1) 字符集。
 <h2>编码转换(to Unicode）</h3>
 <pre class="codepre">
 <code>
-	 test = "你好abc"
-     str = ""
-     for( i=0;i&lt;test.length; i++ )
-     {
-      temp = test.charCodeAt(i).toString(16);
-      str += "\\u"+ new Array(5-String(temp).length).join("0") +temp;
-     }
-     document.write (str)
+	test = "你好abc"
+	str = ""
+	for( i=0;i&lt;test.length; i++ )
+	{
+		temp = test.charCodeAt(i).toString(16);
+		str += "\\u"+ new Array(5-String(temp).length).join("0") +temp;
+	}
+	document.write (str)
 </code>
 </pre>
 
