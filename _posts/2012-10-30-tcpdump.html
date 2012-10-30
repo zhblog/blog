@@ -1,0 +1,114 @@
+---
+layout: default
+title: tcpdump
+author: zzh
+thisdate: 2012-10-30
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+    tcpdump抓包分析工具 还是很好用的，针对Tcp通讯过程做一个记录,对照tcp通讯过程
+</pre>
+<h2>介绍tcpdump</h2>
+<pre class="preclass">
+  man一下，介绍的很清楚
+  在进行网络测试的时候,我们经常需要进行抓包的工作,当然有许多测试工具可以使用,比如sniffer, ethreal等.但最为方便和简单得就非TCPDump莫属. Linux的发行版里基本都包括了这个工具. TCPDump将网络接口设置成混杂模式以便捕获到达的每一个数据包.下面给出TCPDump的部分常用选项:
+	-i <interface> 指定监听的网络接口
+	-v指定详细模式输出详细的报文信息
+	-vv指定更详细模式输出更详细的报文信息
+	-x指定以16进制数格式显示数据包
+	-X规定以ASCII码格式显示输出
+	-n规定在捕获过程中不需向DNS查询IP地址
+	-F <file> 从指定文件中读取表达式
+	-D显示可用网络接口
+	-s <length> 设置捕获数据包的长度
+ TCPDump的表达式:
+	默认情况下TCPDump将捕获所有到达网络的数据包.这并不是我们想要的,因此就必须通过表达式来限制不必要的流量,只输出我们需要监听的数据包.
+  1.类型限定词
+	类型限定词有: host, port和net. host用来指定主机或目的地址,port指定端口,net可以用来指定某一子网. 如:
+	tcpdump 'port 80' 监听80端口
+	tcpdump 'net 192.168.1' 监听子网192.168.1.0
+	tcpdump 'net 192.168.1.0/24'
+  2.逻辑运算符
+	逻辑运算符有AND,OR和NOT. ()可将多个表达式组合起来.
+	tcpdump 'port 80 and (host 192.168.1.10 or host 192.168.1.11)'
+	监听主机192.168.1.10 或192.168.1.11的80端口.
+  3.传输方向限定词
+	关键词src指定源地址,dst指定目的地址
+	tcpdump 'port 80 and (src 192.168.1.10 or src 192.168.1.11)'
+	tcpdump 'dst port 25'
+  4.协议限定词
+	用来捕获特定协议的数据包有: ether(Ethernet), TCP,UDP,ICMP,IP,ip6(IPv6),ARP,rarp(reverse ARP)等.
+  5.原语
+	原语主要有: 算术运算符(+,-,*,/,>,<,>=,<=,!=等), broadcast, gateway, greater, less.
+	broadcast捕获广播数据包, greater和less相当于>=和<=.
+	小例子：
+	//本机20000端口通讯数据抓包
+	tcpdump -s 0 -i lo port 20000 -w /tmp/20000.pcap
+	//10.8.2.181:7001端口通讯数据抓包
+	tcpdump -i eth0 -s 0 host 10.8.2.181 and port 7001  -w /tmp/syrk.pcap
+</pre>
+
+<h2>介绍tcp通讯-三次握手</h2>
+<pre class="preclass">
+所谓三次握手(Three-way Handshake)，是指建立一个TCP连接时，需要客户端和服务器总共发送3个包。三次握手的目的是连接服务器指定端口，建立TCP连接,并同步连接双方的序列号和确认号并交换 TCP 窗口大小信息.在socket编程中，客户端执行connect()时。将触发三次握手。
+</pre>
+<h3>命令</h3>
+<p class="addimg" id="tcp3.png"></p>
+
+<pre class="preclass">
+第一次握手:客户端发送一个TCP的SYN标志位置1的包指明客户打算连接的服务器的端口，以及初始序号X,保存在包头的序列号(Sequence Number)字段里。
+</pre>
+<p class="addimg" id="tcp3-1.png"></p>
+
+
+<pre class="preclass">
+第二次握手:服务器发回确认包(ACK)应答。即SYN标志位和ACK标志位均为1同时，将确认序号(Acknowledgement Number)设置为客户的I S N加1以.即X+1。
+
+</pre>
+<p class="addimg" id="tcp3-2.png"></p>
+
+<pre class="preclass">
+第三次握手.客户端再次发送确认包(ACK) SYN标志位为0,ACK标志位为1.并且把服务器发来ACK的序号字段+1,放在确定字段中发送给对方.并且在数据段放写ISN的+1
+</pre>
+<p class="addimg" id="tcp3-3.png"></p>
+
+<h2>SYN攻击</h2>
+<pre class="preclass">
+在三次握手过程中，服务器发送SYN-ACK之后，收到客户端的ACK之前的TCP连接称为半连接(half-open connect).此时服务器处于Syn_RECV状态.当收到ACK后，服务器转入ESTABLISHED状态.Syn攻击就是 攻击客户端 在短时间内伪造大量不存在的IP地址，向服务器不断地发送syn包，服务器回复确认包，并等待客户的确认，由于源地址是不存在的，服务器需要不断的重发直 至超时，这些伪造的SYN包将长时间占用未连接队列，正常的SYN请求被丢弃，目标系统运行缓慢，严重者引起网络堵塞甚至系统瘫痪。Syn攻击是一个典型的DDOS攻击。检测SYN攻击非常的方便，当你在服务器上看到大量的半连接状态时，特别是源IP地址是随机的，基本上可以断定这是一次SYN攻击.在Linux下可以如下命令检测是否被Syn攻击
+netstat -n -p TCP | grep SYN_RECV
+一般较新的TCP/IP协议栈都对这一过程进行修正来防范Syn攻击，修改tcp协议实现。主要方法有SynAttackProtect保护机制、SYN cookies技术、增加最大半连接和缩短超时时间等.但是不能完全防范syn攻击。
+</pre>
+
+<h2>介绍tcp通讯-四次挥手</h2>
+<pre class="preclass">
+TCP的连接的拆除需要发送四个包，因此称为四次挥手(four-way handshake)。客户端或服务器均可主动发起挥手动作，在socket编程中，任何一方执行close()操作即可产生挥手操作。
+</pre>
+<p class="addimg" id="tcp4.jpg"></p>
+
+<h2>抓包解释</h2>
+<h3>命令</h3>
+<pre class="codepre">
+<code>
+sudo tcpdump -i eth1 tcp port 6002
+</code>
+</pre>
+<h3>抓到的包</h3>
+<pre class="codepre">
+<code>
+1:三次握手
+15:16:28.243056 IP 192.168.1.4.64547 > zzh.local.x11-2: Flags [S], seq 3591482379, win 8192, options [mss 1024], length 0
+15:16:28.243090 IP zzh.local.x11-2 > 192.168.1.4.64547: Flags [S.], seq 3375148518, ack 3591482380, win 14600, options [mss 1460], length 0
+15:16:28.245052 IP 192.168.1.4.64547 > zzh.local.x11-2: Flags [.], ack 1, win 8192, length 0
+2：正常通讯
+15:16:28.251058 IP 192.168.1.4.64547 > zzh.local.x11-2: Flags [.], seq 1:1025, ack 1, win 8192, length 1024
+15:16:28.251119 IP zzh.local.x11-2 > 192.168.1.4.64547: Flags [.], ack 1025, win 16384, length 0
+3：四次挥手
+15:16:28.251210 IP zzh.local.x11-2 > 192.168.1.4.64547: Flags [R.], seq 1, ack 1025, win 16384, length 0
+15:16:28.255032 IP 192.168.1.4.64547 > zzh.local.x11-2: Flags [P.], seq 1025:2049, ack 1, win 8192, length 1024
+15:16:28.255054 IP zzh.local.x11-2 > 192.168.1.4.64547: Flags [R], seq 3375148519, win 0, length 0
+15:16:28.273042 IP 192.168.1.4.64548 > zzh.local.x11-2: Flags [S], seq 3591945419, win 8192, options [mss 1024], length 0
+</code>
+</pre>
+
