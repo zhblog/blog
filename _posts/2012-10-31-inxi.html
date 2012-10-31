@@ -1,0 +1,65 @@
+---
+layout: default
+title: inxi介绍 
+author: zzh
+thisdate: 2012-10-31
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+    还cat /proc/cpuinfo然后各种sed grep吗？ 你out了，看看inxi吧，老强大的脚本了！
+</pre>
+<pre class="preclass">
+	here<a href="https://code.google.com/p/inxi/">inxi</a>
+</pre>
+<h3>命令</h3>
+<pre class="codepre">
+<code>
+  wget -c https://inxi.googlecode.com/svn/trunk/inxi
+  chmod +x inxi
+  sudo cp inxi /usr/local/bin/
+  inxi -c0 -v7
+</code>
+</pre>
+<h3>显示如下</h3>
+<pre class="codepre">
+<code>
+Resuming in non X mode: glxinfo not found. For package install advice run: inxi --recommends
+System:    Host: zzh Kernel: 3.2.0-32-generic i686 (32 bit, gcc: 4.6.3) 
+           Desktop: Gnome info: gnome-shell dm: lightdm Distro: LinuxDeepin 12.06 precise
+Machine:   Mobo: Gigabyte model: GA-78LMT-S2P Bios: Award version: F2 date: 04/08/2011
+CPU:       Quad core AMD Athlon II X4 640 (-MCP-) cache: 2048 KB flags: (lm nx sse sse2 sse3 sse4a svm) bmips: 24106.6 
+           Clock Speeds: 1: 800.00 MHz 2: 800.00 MHz 3: 800.00 MHz 4: 800.00 MHz
+Graphics:  Card: Advanced Micro Devices [AMD] nee ATI RS780L [Radeon HD 3000] bus-ID: 01:05.0 chip-ID: 1002:9616 
+           X.org: 1.11.3 drivers: ati,radeon (unloaded: fbdev,vesa) Resolution: 176x45 
+Audio:     Card: Advanced Micro Devices [AMD] nee ATI SBx00 Azalia (Intel HDA) 
+           driver: snd_hda_intel bus-ID: 00:14.2 chip-ID: 1002:4383 
+           Sound: Advanced Linux Sound Architecture ver: 1.0.24
+Network:   Card: Realtek RTL8111/8168B PCI Express Gigabit Ethernet controller 
+           driver: r8169 ver: 2.3LK-NAPI port: de00 bus-ID: 02:00.0 chip-ID: 10ec:8168
+           IF: eth0 state: up speed: 100 Mbps duplex: full mac: 50:e5:49:66:fd:09
+           WAN IP: 221.232.174.127 IF: eth0 ip: 192.168.100.161 ip-v6: fe80::52e5:49ff:fe66:fd09 
+           IF: eth1 ip: 192.168.1.254 ip-v6: fe80::210:13ff:fe50:aa9f 
+Drives:    HDD Total Size: 500.1GB (10.0% used)
+           1: id: /dev/sda model: WDC_WD5000AAKX size: 500.1GB serial: WD-WCAYUT218988 
+           Optical: No optical drives detected.
+Partition: ID: / size: 97G used: 6.3G (7%) fs: ext4 dev: /dev/sda5 
+           label: N/A uuid: d6f86013-bb13-4bc5-9e79-c57e92f24bf0
+           ID: /home size: 97G used: 41G (44%) fs: ext4 dev: /dev/sda6 
+           label: N/A uuid: 1d510b03-7d37-4549-8b98-673c81d5b9f9
+           ID: swap-1 size: 5.24GB used: 0.00GB (0%) fs: swap dev: /dev/sda3 
+           label: N/A uuid: 1734f35f-7969-48c8-89e2-2098229afecb
+RAID:      System: supported: N/A
+           No RAID devices detected - /proc/mdstat and md_mod kernel raid module present
+           Unused Devices: none
+Unmounted: ID: /dev/sda1 size: 104.86G label: _CentOS-6.3-i386 uuid: 5a0af0bc-80b0-4264-b36c-b57d8da6ef81 
+           ID: /dev/sda2 size: 104.86G label: N/A uuid: bb4698ca-c1b0-49b9-97c9-e3bc9b631b1c 
+           ID: /dev/sda7 size: 10.00G label: N/A uuid: fdb6e3ee-b2c0-4d5a-ac68-b84d36a03355 
+           ID: /dev/sda8 size: 10.00G label: N/A uuid: 33827136-bae5-4d8d-a99f-e7f5f46a7e7e 
+           ID: /dev/sda9 size: 4.85G label: N/A uuid: 13b14cc6-885c-4074-bad1-71334cd7e575 
+Sensors:   None detected - is lm-sensors installed and configured?
+Info:      Processes: 154 Uptime: 4:56 Memory: 1718.1/2770.2MB Runlevel: 2 Gcc sys: 4.6.3 Client: Shell inxi: 1.8.20
+</code>
+</pre>
+
