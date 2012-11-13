@@ -1,0 +1,33 @@
+---
+layout: default
+title: scrot介绍 
+author: zzh
+thisdate: 2012-11-13
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+    ubuntu强大的截图工具<a href="http://freecode.com/projects/scrot">scrot</a>
+</pre>
+<h3>命令</h3>
+<pre class="codepre">
+<code>
+  sudo apt-get install scrot
+</code>
+</pre>
+<h3>简单的用法</h3>
+<pre class="codepre">
+<code>
+scrot 的使 用格式为：
+scrot [参数（options）] [文件名(filename)]，截下的图片自动保存在主目录下.
+1：scrot scrot.png          [抓取桌面命令] 该命令将当前的整个桌面抓取下来。
+2：scrot -bs scrot.png      [抓取窗口命令] b参数表示带边框窗体,s可以让用户选择所要抓取的是何窗口。
+3：scrot -s scrot.png       [抓取区域] 抓取鼠标选定区域
+4：scrot -cd 10 scrot.png   [延时抓取] 延时抓取,d表示延时,c倒计时,10是秒
+5：scrot -t 20% scrot.png   [生成缩图] t表示要生成缩略图,20%表示缩略图的比例
+6：scrot -q 70 scrot.png    [更改品质] 选项q用于更改所抓图像的品质，其数值介于1-100之间，默认为75
+7：scrot /文件路径/文件名      [操作抓图] 该命令将抓取的图像移动到指定的地方
+</code>
+</pre>
+

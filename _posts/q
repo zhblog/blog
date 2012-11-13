@@ -1,0 +1,148 @@
+---
+layout: self
+title: 备注存档 
+author: zzh
+thisdate: 2012-11-08
+classification: script
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<h2>开关盖问题</h2>
+
+<p>1：更改 中的collector.py的changeSystemStatus代码，转递DID,而不是原来的（0，0），这样有利于以后的扩展，比如可以比较方便的获知开盖的DC，代码如下：</p>
+<pre class="codepre">
+  <code>
+    def changeSystemStatus(self, status):
+        logger.info("collector lid status changed....staus%d" % status)
+        if self.manager.mgmt:
+            self.manager.mgmt.newAlarm(self.dc.did, 1, status, True, True)
+</code></pre>
+
+<p>2：在map.js中，约283行，更新代码：</p>
+<pre class="codepre">
+  <code>
+        var o = 'PA-'+did+'-'+pid;
+        var node = Ifpms.Map.nodes[o];
+        if ( node.xobj.did == did && ( pid == 0 || node.xobj.pid == pid) && status != 7 && status != 8) {
+            node.status = status;
+            node.elem.childNodes[0].setAttribute("class","device " + node_status_css_class[status]);
+            node.elem.childNodes[0].setAttribute("status",node_status_css_class[status]);
+            if(status==4 || status==6){
+                if(node.timer){
+                    window.clearInterval(node.timer);
+                }
+                var nodefoo=Ifpms.Map.nodes[o];
+                nodefoo.timer=window.setInterval(function(){
+                    nodefoo.blinkLink(nodefoo);
+                },100);
+            }else{
+                window.clearInterval(node.timer);
+            }
+        }</code></pre>
+  <p>保证其在changeStatus中开关盖报警不显示在面板上，面板的PA颜色和状态不改变。</p>
+
+
+<p>3：更改alarm_management.js 约130行，更新showCurrentPage，代码如下：</p>
+<pre class="codepre">
+  <code>
+        var td3=alarmmgmt.makeTD(this.list[start+i].did);
+        if (this.list[start+i].aid == 7 || this.list[start+i].aid == 8){
+          td3=alarmmgmt.makeTD("---");
+        }
+        tr.appendChild(td3);
+        var td4=alarmmgmt.makeTD(this.list[start+i].pid);
+        if (this.list[start+i].aid == 7 || this.list[start+i].aid == 8){
+          td4=alarmmgmt.makeTD("---");
+        }
+        tr.appendChild(td4);</code></pre>
+  <p>在开关盖中告警的DID，再点击告警列表的时候，PID和DID为“---”</p>
+
+4：更改protectionArea.js 约140行，更新changeStatus，代码如下：
+<pre class="codepre">
+  <code>
+  changeStatus : function(did, pid, status) {
+    var itemid = '';
+    if (pid != 0 && status != 7 && status != 8) {
+      itemid = 'item-PA-'+did+'-'+pid;
+      jsdump(itemid+" status is "+ node_status_css_class[status]);
+      var elem = document.getElementById(itemid);
+      jsdump(itemid+" xobj status is "+ node_status_css_class[elem.xobj.status] + "("+elem.xobj.status+")");
+      if (elem) {
+        elem.setAttribute("class",node_status_css_class[status]);
+        elem.refresh();
+      }      
+    } 
+  }</code></pre>
+  <p>在开关盖的时候不更新右侧的PA列表状态</p>
+
+  <p>注：在这四条的更改下，可以正确的在报警列表和右下角的五条告警中加载告警记录，但是右侧的PA状态列表和面板上的PA不会做相应的状态更改显示</p>
+
+
+
+<h2>IFPSWBUG-144</h2>
+<pre class="preclass">
+光纤周界I系列缺陷
+管理软件与采集之间的TCP连接断开问题汇总跟踪 (IFPSWBUG-163)
+【功能问题】出现一块采集卡上的两个防区一直显示断开的问题，可以ping通，并且重启采集卡连接依然不正常，重启管理软后件连接正常</pre>
+
+<p>在nsIPyifpmsDC.py大概533行，更改代码为：</p>
+<pre class="codepre">
+  <code>
+            self.used_ids.remove(did)
+            if self._serv and dc.product_type != 4:
+                self._serv.remove_dc(dc_ipaddr)</code></pre>
+</p>当dc.product_type != 4，即当为wav的时候不更新_ips列表</p>
+
+<p>经测试，重复出错步骤，没有出现链接不上</p>
+
+
+<h2>V1.2断开问题</h2>
+
+<p>在deTcpServ.py中：</p>
+<p>1：声明全局变量：</p>
+<pre class="codepre">
+  <code>
+    iplist = []</code></pre>
+    <p>目的：维护已经连接的下位机ip列表</p>
+<p>2：包头while获取：</p>
+<pre class="codepre">
+  <code>
+            recv_head = ""
+            while len(recv_head) < self.HEAD_SIZE:
+                recv_t = self.request.recv(self.HEAD_SIZE - len(recv_head))
+                if not recv_t:
+          #logger.info(self.client_address[0] + "connection is close.")
+                    continue
+                    #raise ErrorConnect("can not recv head!")
+                else:
+                    recv_head = recv_head + recv_t</code></pre>
+    <p>目的：屏蔽包头获取长度不对的断开</p>
+<p>3：在setup中：</p>
+<pre class="codepre">
+  <code>
+  iplist.append(self.client_address[0])</code></pre>
+  <p>目的：增加当前线程的下位机IP</p>
+<p>4：在finish中：</p>
+<pre class="codepre">
+  <code>
+  iplist.remove(self.client_address[0])</code></pre>
+  <p>目的：删除当前线程的下位机IP</p>
+<p>5：在verify_request中：</p>
+<pre class="codepre">
+  <code>
+        if client_address[0] in iplist:
+            logger.info("laile laile deny %s", client_address)
+            return False
+        else:
+            if client_address[0] in self._ips:  # and self._ips[client_address[0]] == 0:
+                self._ips[client_address[0]] = self._ips[client_address[0]] + 1
+                self._socks[id(request)] = client_address[0]
+                logger.info("allow %s", client_address)
+                return True
+            else:
+                logger.info("deny %s", client_address)
+                #logger.info("ips.haskey(%s)=%s, num=%d"%(client_address[0],self._ips.has_key(client_address[0]),self._ips[client_address[0]]))
+                return False</code></pre>
+  <p>目的：当请求链接的下位机IP存在于当前运行的线程列表，则不允许链接，保证一个下位机只启动一个线程</p>
+
+<p>总体效果：解决了因包头长度不正确而导致的连接重连。所有的连接断开均为tcptimeout。timeout导致的连接断开暂时考虑为上位机处理数据性能问题。</p>
