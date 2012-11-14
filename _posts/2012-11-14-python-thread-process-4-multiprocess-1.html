@@ -16,12 +16,12 @@ classification: script
     这个是第四个mutilprocess-1
 </pre>
 <h2>mutilprocess</h2>
-<h3>mutilprocess简介</h3>
+<h2>mutilprocess简介</h2>
 <pre class="preclass">
 像线程一样管理进程，这个是mutilprocess的核心，他与threading很是相像，对多核CPU的利用率会比threading好的多。
 </pre>
 
-<h3>简单的创建进程</h3>
+<h2>简单的创建进程</h2>
 <pre class="codepre"><code>
 import multiprocessing
 
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         p.start()
 </code></pre>
 
-<h3>确定当前的进程，即是给进程命名，方便标识区分，跟踪</h3>
+<h2>确定当前的进程，即是给进程命名，方便标识区分，跟踪</h2>
 <pre class="codepre"><code>
 import multiprocessing
 import time
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     worker_2.start()
     service.start()</code></pre>
 
-<h3>守护进程</h3>
+<h2>守护进程</h2>
 <pre class="preclass">
 守护进程就是不阻挡主程序退出，自己干自己的
 mutilprocess.setDaemon(True)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 </code></pre>
 
 
-<h3>终止进程</h3>
+<h2>终止进程</h2>
 <pre class="preclass">
 最好使用 poison pill，强制的使用terminate()
 注意 terminate之后要join，使其可以更新状态
@@ -135,12 +135,12 @@ if __name__ == '__main__':
     print 'JOINED:', p, p.is_alive()
 </code></pre>
 
-<h3>pass</h3>
+<h2>pass</h2>
 <pre class="codepre"><code>
 pass
 </code></pre>
 
-<h3>进程的退出状态</h3>
+<h2>进程的退出状态</h2>
 <pre class="preclass">
 1: == 0 未生成任何错误
 2:> 0   进程有一个错误，并以该错误码退出
@@ -183,7 +183,7 @@ if __name__ == '__main__':
 </code></pre>
 
 
-<h3>日志</h3>
+<h2>日志</h2>
 <pre class="preclass">
 方便的调试，可以用logging
 </pre>
@@ -205,7 +205,7 @@ if __name__ == '__main__':
     p.join()
 </code></pre>
 
-<h3>派生进程</h3>
+<h2>派生进程</h2>
 <pre class="preclass">
 利用class来创建进程，定制子类
 </pre>
@@ -228,7 +228,7 @@ if __name__ == '__main__':
         j.join()
 </code></pre>
 
-<h3>进程间传递消息</h3>
+<h2>进程间传递消息</h2>
 <pre class="preclass">
 这一块我之前结合SocketServer写过一点，见<a href="http://zhblog.github.com/blog/2012/09/18/python-multiprocessing.html" >Python多进程</a>
 一般的情况是Queue来传递。
@@ -335,7 +335,7 @@ if __name__ == '__main__':
         num_jobs -= 1
 </code></pre>
 
-<h3>进程间信号传递</h3>
+<h2>进程间信号传递</h2>
 <pre class="preclass">
 Event提供一种简单的方法，可以在进程间传递状态信息。事件可以切换设置和未设置状态。通过使用一个可选的超时值，时间对象的用户可以等待其状态从未设置变为设置。
 </pre>
