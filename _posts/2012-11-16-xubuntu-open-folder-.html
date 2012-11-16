@@ -1,0 +1,17 @@
+---
+layout: default
+title: xubuntu打开文件夹速度慢
+author: zzh
+thisdate: 2012-11-16
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<pre class="preclass">
+    启动xubuntu之后，第一次打开文件夹很慢，差不多要等十几秒
+    最后发现改掉一处就好了
+    sudo vim /usr/share/gvfs/mounts/network.mount
+    AutoMount=true
+    改为：
+    AutoMount=false
+</pre>
