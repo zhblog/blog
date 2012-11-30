@@ -125,6 +125,22 @@
 							</div>
 						</li>
 					</ul>
+					
+					
+										<ul class="overflow">
+						<li>
+							<h2>最新文章</h2>
+							<div id="showlist">
+								<ul id="hello" class="ztree">
+									{% for post in site.posts %} {% if post.layout == "default" %}
+									<li>{{ post.date | date_to_long_string }} <a
+										title="{{ post.author }}" class="{{ post.classification }}"
+										href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li>
+									{% endif %} {% endfor %}
+								</ul>
+							</div>
+						</li>
+					</ul>
 
 					<ul class="overflow">
 						<li>
@@ -739,7 +755,7 @@
 	var authorNode = [ zzhnode, lgthwnode, reservednode ]
 	var selfNode = [ menode ]
 	$(document).ready(function() {
-		$.fn.zTree.init($("#treeDemo"), setting, myNode);
+		$.fn.zTree.init($("#hello"), setting, myNode);
 		$.fn.zTree.init($("#treeClass"), setting, cNode);
 		$.fn.zTree.init($("#treeAuthor"), setting, authorNode);
 		$.fn.zTree.init($("#onlySelf"), setting, selfNode);
