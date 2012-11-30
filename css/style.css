@@ -28,15 +28,16 @@ h1,  h3 {
     font: bold 21px/1.0 "Verdana", sans-serif;
     background: #583799;
     text-align: center;
-    width:100%;
-    color: #fff;
+    width:95%;
+    color: #111;
     padding-top: 5px;
-    padding-left: 15px;
+    padding-left: 10px;
     padding-bottom: 7px;
     margin-top:0px;
-    margin-left:0px;
+    margin-left:10px;
+    margin-right:10px;
     margin-bottom:15px;
-    background-color: #777777;
+    background-color: #999999;
     text-align:left;
     border-radius: 4px;
 }
@@ -199,7 +200,6 @@ hr {
     height: 28px;
     margin-left: 10px;
     padding: 0px 5px;
-    background: url(/blog/images/img.jpg) no-repeat left top;
     border: none;
     text-indent: -9999px;
     color: #FFFFFF;
@@ -208,7 +208,7 @@ hr {
 /* Page */
 
 #page {
-    width: 1150px;
+    width: 1040px;
     margin: 0px auto;
     padding: 10px 10px 10px 10px;
     background: #E1E1E1;
@@ -251,23 +251,16 @@ hr {
 
 #content {
     float: right;
-    width: 720px;
+    width: 830px;
     padding: 0px 0px 0px 0px;
 }
 
 /* Post */
 
-.post {
-    background: url(/blog/images/img05.jpg) repeat-y left top;
-}
 
-.post-bgtop {
-    background: url(/blog/images/img04.jpg) no-repeat left top;
-}
 
 .post-bgbtm {
     padding: 0px 30px 20px 30px;
-    background: url(/blog/images/img06.jpg) no-repeat left bottom;
 }
 
 .post .title {
@@ -381,7 +374,6 @@ hr {
     height: 40px;
     margin: 0px;
     padding: 10px 0px 2px 10px;
-    background: url(/blog/images/img08.jpg) no-repeat left top;
     letter-spacing: -1px;
     text-transform: lowercase;
     font-size: 24px;
@@ -482,7 +474,6 @@ hr {
 
 .preclass {
     background-color: #E0DFCC;
-    margin: 2em 0.5em;
     font-family: 'Courier New', Courier, monospace;
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
