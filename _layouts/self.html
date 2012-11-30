@@ -302,7 +302,7 @@ $("#showlist").find("li").each(function() {
 					}
 				}
 				if(flag == 1){
-					dateNodes[i].children.push({name:monthtext,children:[{name:daytext,url:hreftext}]})
+					dateNodes[i].children.push({name:monthtext,children:[{name:daytext + ":" + titletext,url:hreftext}]})
 				}
 			}
 		}
