@@ -253,496 +253,122 @@
 	$(window.parent.document).find("title").html($("title").html())
 </script>
 <script>
-	var setting = {};
-	var node2012_09 = {
-		open : false,
-		name : "九月"
-	}
-	var node2012_10 = {
-		open : false,
-		name : "十月"
-	}
-	var node2012_11 = {
-		open : false,
-		name : "十一月"
-	}
-	var node2012_12 = {
-		open : false,
-		name : "十二月"
-	}
+var setting = {};
 
-	var node2013_01 = {
-		open : true,
-		name : "一月"
-	}
-	var node2013_02 = {
-		open : true,
-		name : "二月"
-	}
-	var node2013_03 = {
-		open : true,
-		name : "三月"
-	}
-	var node2013_04 = {
-		open : true,
-		name : "四月"
-	}
-	var node2013_05 = {
-		open : true,
-		name : "五月"
-	}
-	var node2013_06 = {
-		open : true,
-		name : "六月"
-	}
-	var node2013_07 = {
-		open : true,
-		name : "七月"
-	}
-	var node2013_08 = {
-		open : true,
-		name : "八月"
-	}
-	var node2013_09 = {
-		open : true,
-		name : "九月"
-	}
-	var node2013_10 = {
-		open : true,
-		name : "十月"
-	}
-	var node2013_11 = {
-		open : true,
-		name : "十一月"
-	}
-	var node2013_12 = {
-		open : true,
-		name : "十二月"
-	}
+var monthlist = new Array("January", "February", "March", "April", "May",
+		"June", "July", "August", "September", "October", "November",
+		"December")
 
-	var monthlist = new Array("January", "February", "March", "April", "May",
-			"June", "July", "August", "September", "October", "November",
-			"December")
-	var yearlist = new Array("2012", "2013", "2014", "2015")
-	var thisarray = new Array()
 
-	var webnode = {
-		open : false,
-		name : "web"
-	}
-	var livenode = {
-		open : false,
-		name : "生活"
-	}
-	var othernode = {
-		open : false,
-		name : "其他"
-	}
-	var scriptnode = {
-		open : false,
-		name : "script"
-	}
-	var linuxnode = {
-		open : false,
-		name : "linux"
-	}
-
-	var reservednode = {
-		open : false,
-		name : "转载"
-	}
-	var zzhnode = {
-		open : false,
-		name : "张志鹤"
-	}
-	var lgthwnode = {
-		open : false,
-		name : "LGTHW"
-	}
-
-	$("#showlist").find("li").each(function() {
-		thistext = $(this).text()
-		hreftext = $(this).find("a").attr("href")
-		classification = $(this).find("a").attr("class")
-		author = $(this).find("a").attr("title")
-		datelist = thistext.split(":")[0]
-		titletext = thistext.split(":")[1]
-		daytext = datelist.split(" ")[0]
-		monthtext = datelist.split(" ")[1]
-		yeartext = datelist.split(" ")[2]
-		arr = new Array(titletext, yeartext, monthtext, daytext, hreftext)
-		if (author == "zzh") {
-			if ((zzhnode["children"])) {
-				zzhnode["children"][zzhnode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				zzhnode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
-		} else if (author == "reserved") {
-			if ((reservednode["children"])) {
-				reservednode["children"][reservednode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				reservednode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
-		} else if (author == "lgthw") {
-			if ((lgthwnode["children"])) {
-				lgthwnode["children"][lgthwnode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				lgthwnode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
+function youf(arr,val){
+	for(i=0;i<arr.length;i++){
+		if(arr[i]==val){
+			return true;
 		}
+	}
+	return false;
+}
 
-		if (classification == "live") {
-			if ((livenode["children"])) {
-				livenode["children"][livenode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				livenode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
-		} else if (classification == "other") {
-			if ((othernode["children"])) {
-				othernode["children"][othernode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				othernode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
-		} else if (classification == "web") {
-			if ((webnode["children"])) {
-				webnode["children"][webnode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				webnode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
-		} else if (classification == "linux") {
-			if ((linuxnode["children"])) {
-				linuxnode["children"][linuxnode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				linuxnode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
-		} else if (classification == "script") {
-			if ((scriptnode["children"])) {
-				scriptnode["children"][scriptnode["children"].length] = {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				}
-			} else {
-				scriptnode["children"] = [ {
-					name : datelist + ":" + titletext,
-					url : hreftext
-				} ]
-			}
-		}
+authors = new Array()
+authorNodes = new Array()
 
-		if (yeartext == "2012") {
+lives = new Array()
+liveNodes = new Array()
 
-			if (monthtext == "January") {
+dates = new Array()
+dateNodes = new Array()
 
-			} else if (monthtext == "February") {
-
-			} else if (monthtext == "March") {
-
-			} else if (monthtext == "April") {
-
-			} else if (monthtext == "May") {
-
-			} else if (monthtext == "June") {
-
-			} else if (monthtext == "July") {
-
-			} else if (monthtext == "August") {
-
-			} else if (monthtext == "September") {
-				if ((node2012_09["children"])) {
-					node2012_09["children"][node2012_09["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
+$("#showlist").find("li").each(function() {
+	thistext = $(this).text()
+	hreftext = $(this).find("a").attr("href")
+	datelist = thistext.split(":")[0]
+	titletext = thistext.split(":")[1]
+	daytext = datelist.split(" ")[0]
+	monthtext = datelist.split(" ")[1]
+	//日期列表开始
+	yeartext = datelist.split(" ")[2]
+	if (!(youf(dates,yeartext))){
+		dates.push(yeartext)
+		dateNodes.push({open : false,name:yeartext,children:[{name:monthtext,children:[{name:daytext,url:hreftext}]}]})
+	}else{
+		for (i = 0; i<dates.length;i++){
+			if(yeartext == dateNodes[i].name){
+				flag = 1
+				for(j = 0; j<dateNodes[i].children.length; j++){
+					if (monthtext == dateNodes[i].children[j].name){
+						dateNodes[i].children[j].children.push({name:daytext + ":" + titletext,url:hreftext})
+						flag = 0
+						break
 					}
-				} else {
-					node2012_09["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
 				}
-
-			} else if (monthtext == "October") {
-				if ((node2012_10["children"])) {
-					node2012_10["children"][node2012_10["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2012_10["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "November") {
-				if ((node2012_11["children"])) {
-					node2012_11["children"][node2012_11["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2012_11["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "December") {
-				if ((node2012_12["children"])) {
-					node2012_12["children"][node2012_12["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2012_12["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			}
-
-		} else if (yeartext == "2013") {
-			if (monthtext == "January") {
-				if ((node2013_01["children"])) {
-					node2013_01["children"][node2013_01["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_01["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "February") {
-				if ((node2013_02["children"])) {
-					node2013_02["children"][node2013_02["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_02["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "March") {
-				if ((node2013_03["children"])) {
-					node2013_03["children"][node2013_03["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_03["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "April") {
-				if ((node2013_04["children"])) {
-					node2013_04["children"][node2013_04["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_04["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "May") {
-				if ((node2013_05["children"])) {
-					node2013_05["children"][node2013_05["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_05["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "June") {
-				if ((node2013_06["children"])) {
-					node2013_06["children"][node2013_06["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_06["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "July") {
-				if ((node2013_07["children"])) {
-					node2013_07["children"][node2013_07["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_07["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "August") {
-				if ((node2013_08["children"])) {
-					node2013_08["children"][node2013_08["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_08["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "September") {
-				if ((node2013_09["children"])) {
-					node2013_09["children"][node2013_09["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_09["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-
-			} else if (monthtext == "October") {
-				if ((node2013_10["children"])) {
-					node2013_10["children"][node2013_10["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_10["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "November") {
-				if ((node2013_11["children"])) {
-					node2013_11["children"][node2013_11["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_11["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
-				}
-			} else if (monthtext == "December") {
-				if ((node2013_12["children"])) {
-					node2013_12["children"][node2013_12["children"].length] = {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					}
-				} else {
-					node2013_12["children"] = [ {
-						name : daytext + "-" + titletext,
-						url : hreftext
-					} ]
+				if(flag == 1){
+					dateNodes[i].children.push({name:monthtext,children:[{name:daytext,url:hreftext}]})
 				}
 			}
 		}
-
-	});
-
-	var menode = {
-		open : false,
-		name : "SELF"
 	}
-	$("#melist").find("li").each(function() {
-		thistext = $(this).text()
-		hreftext = $(this).find("a").attr("href")
-		classification = $(this).find("a").attr("class")
-		author = $(this).find("a").attr("title")
-		datelist = thistext.split(":")[0]
-		titletext = thistext.split(":")[1]
-		daytext = datelist.split(" ")[0]
-		monthtext = datelist.split(" ")[1]
-		yeartext = datelist.split(" ")[2]
-		arr = new Array(titletext, yeartext, monthtext, daytext, hreftext)
-		if ((menode["children"])) {
-			menode["children"][menode["children"].length] = {
-				name : datelist + ":" + titletext,
-				url : hreftext
+	//日期列表结束
+
+	//作者列表开始
+	author = $(this).find("a").attr("title")
+	if (!(youf(authors,author))){
+		authors.push(author)
+		authorNodes.push({open : false,name:author,children:[{name:datelist + ":" + titletext,url:hreftext}]})
+	}else{
+		for (i = 0; i<authors.length;i++){
+			if(author == authorNodes[i].name){
+				authorNodes[i].children.push({name:datelist + ":" + titletext,url:hreftext})
 			}
-		} else {
-			menode["children"] = [ {
-				name : datelist + ":" + titletext,
-				url : hreftext
-			} ]
 		}
-	});
-
-	var node2013 = {
-		name : "2013",
-		open : false,
-		children : [ node2013_12, node2013_11, node2013_10, node2013_09,
-				node2013_08, node2013_07, node2013_06, node2013_05,
-				node2013_04, node2013_03, node2013_02, node2013_01 ]
 	}
-	//var node2012 = {name:"2012",open:true,children:[node2012_12,node2012_11,node2012_10,node2012_09]}
-	var node2012 = {
-		name : "2012",
-		open : true,
-		children : [ node2012_12,node2012_11, node2012_10, node2012_09 ]
+	//作者列表结束
+	//分类列表开始
+	classification = $(this).find("a").attr("class")
+	if (!(youf(lives,classification))){
+		lives.push(classification)
+		liveNodes.push({open : false,name:classification,children:[{name:datelist + ":" + titletext,url:hreftext}]})
+	}else{
+		for (i = 0; i<lives.length;i++){
+			if(classification == liveNodes[i].name){
+				liveNodes[i].children.push({name:datelist + ":" + titletext,url:hreftext})
+			}
+		}
 	}
+	//分类列表结束
 
-	//var myNode = [node2013,node2012]
-	var myNode = [ node2012 ]
-	var cNode = [ linuxnode, scriptnode, webnode, livenode, othernode ]
-	var authorNode = [ zzhnode, lgthwnode, reservednode ]
-	var selfNode = [ menode ]
-	$(document).ready(function() {
-		$.fn.zTree.init($("#treeDemo"), setting, myNode);
-		$.fn.zTree.init($("#treeClass"), setting, cNode);
-		$.fn.zTree.init($("#treeAuthor"), setting, authorNode);
-		$.fn.zTree.init($("#onlySelf"), setting, selfNode);
-	});
+var menode = {
+	open : false,
+	name : "SELF"
+}
+$("#melist").find("li").each(function() {
+	thistext = $(this).text()
+	hreftext = $(this).find("a").attr("href")
+	classification = $(this).find("a").attr("class")
+	author = $(this).find("a").attr("title")
+	datelist = thistext.split(":")[0]
+	titletext = thistext.split(":")[1]
+	daytext = datelist.split(" ")[0]
+	monthtext = datelist.split(" ")[1]
+	yeartext = datelist.split(" ")[2]
+	arr = new Array(titletext, yeartext, monthtext, daytext, hreftext)
+	if ((menode["children"])) {
+		menode["children"][menode["children"].length] = {
+			name : datelist + ":" + titletext,
+			url : hreftext
+		}
+	} else {
+		menode["children"] = [ {
+			name : datelist + ":" + titletext,
+			url : hreftext
+		} ]
+	}
+});
+
+$(document).ready(function() {
+	$.fn.zTree.init($("#treeDemo"), setting, dateNodes);
+	$.fn.zTree.init($("#treeClass"), setting, liveNodes);
+	$.fn.zTree.init($("#treeAuthor"), setting, authorNodes);
+	$.fn.zTree.init($("#onlySelf"), setting, selfNode);
+});
 </script>
 </html>
