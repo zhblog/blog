@@ -289,7 +289,7 @@ $("#showlist").find("li").each(function() {
 	yeartext = datelist.split(" ")[2]
 	if (!(youf(dates,yeartext))){
 		dates.push(yeartext)
-		dateNodes.push({open : false,name:yeartext,children:[{name:monthtext,children:[{name:daytext,url:hreftext}]}]})
+		dateNodes.push({open : false,name:yeartext,children:[{name:monthtext,children:[{name:daytext + ":" + titletext,url:hreftext}]}]})
 	}else{
 		for (i = 0; i<dates.length;i++){
 			if(yeartext == dateNodes[i].name){
