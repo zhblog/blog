@@ -208,7 +208,7 @@ hr {
 /* Page */
 
 #page {
-    width: 1040px;
+    width: 1150px;
     margin: 0px auto;
     padding: 10px 10px 10px 10px;
     background: #E1E1E1;
@@ -331,7 +331,7 @@ hr {
 
 #sidebar {
     float: left;
-    width: 310px;
+    width: 200px;
     font-family: Arial, Helvetica, sans-serif;
 }
 
