@@ -115,7 +115,7 @@
 						<li>
 							<h2>最新文章</h2>
 							<div id="showlist">
-								<ul id="treeDemo" class="ztree">
+								<ul id="treeDemo" class="ztree overflows">
 									{% for post in site.posts %} {% if post.layout == "default" %}
 									<li>{{ post.date | date_to_long_string }} <a
 										title="{{ post.author }}" class="{{ post.classification }}"
@@ -130,7 +130,7 @@
 						<li>
 							<h2>分类列表</h2>
 							<div>
-								<ul id="treeClass" class="ztree">
+								<ul id="treeClass" class="ztree overflows">
 
 								</ul>
 							</div>
@@ -141,7 +141,7 @@
 						<li>
 							<h2>作者分类</h2>
 							<div>
-								<ul id="treeAuthor" class="ztree">
+								<ul id="treeAuthor" class="ztree overflows">
 
 								</ul>
 							</div>
@@ -152,7 +152,7 @@
 						<li>
 							<h2>ONLY FOR ME</h2>
 							<div id="melist">
-								<ul id="onlySelf" class="ztree">
+								<ul id="onlySelf" class="ztree overflows">
 									> {% for post in site.posts %} {% if post.layout == "self" %}
 									<li>{{ post.date | date_to_long_string }} <a
 										title="{{ post.author }}" class="{{ post.classification }}"
@@ -166,7 +166,7 @@
 					<ul class="overflow">
 						<li>
 							<h2>我的PPT</h2>
-							<ul>
+							<ul class="overflows">
 								{% for post in site.posts %} {% if post.layout == "point" %}
 								<li>{{ post.date | date_to_long_string }} <a
 									href="{{ site.baseurl }}{{ post.url }}">:{{ post.title }}</a></li>
@@ -180,7 +180,7 @@
 						<ul>
 							<li>
 								<h2>我的链接</h2>
-								<ul>
+								<ul class="overflows">
 									<li><a target="_blank" href="http://blog.jobbole.com">伯乐在线</a></li>
 									<li><a target="_blank" href="http://coolshell.cn/">陈皓酷壳</a></li>
 									<li><a target="_blank" href="http://9.douban.com/">豆瓣九点</a></li>
