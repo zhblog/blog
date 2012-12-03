@@ -329,7 +329,7 @@ hr {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#sidebar .overflow{
+#sidebar .overflows{
     overflow:auto;
     overflow-y: hidden
 }
