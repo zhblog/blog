@@ -9,15 +9,13 @@ classification: 数据库
 
 <h2>1.导入CSV格式的数据</h2>
 <pre class="preclass">
- user.csv文件的内容如下：
- </pre>
+ user.csv文件的内容如下:</pre>
 <pre class="codepre"><code>
  _id,name,age
  ObjectID(4eed9f9ca939118694cf05e4),"ming",10
  ObjectID(4ef1f3cf3bd18218e6bdfa31),"lisi",20</code></pre>
    <pre class="preclass">
-  可以通过如下方式把user.csv中的数据导入localdb数据库的user集合中：
- </pre>
+  可以通过如下方式把user.csv中的数据导入localdb数据库的user集合中：</pre>
 <pre class="codepre"><code>
 mongoimport -d localdb -c user --type csv --file user.csv --headerline --upsert</code></pre>
 
