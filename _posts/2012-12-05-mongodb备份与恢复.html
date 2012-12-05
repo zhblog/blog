@@ -1,0 +1,22 @@
+---
+layout: default
+title: MongoDB的备份（mongodump）与恢复（mongorestore）
+author: zzh
+thisdate: 2012-12-05
+classification: 数据库
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<h2>一、备份</h2>
+<pre class="preclass">
+mongorestore -h dbhost -d dbname –directoryperdb dbdirectory
+-h：MongoDB所在服务器地址
+
+-d：需要恢复的数据库实例，例如：test，当然这个名称也可以和备份时候的不一样，比如test2
+
+–directoryperdb：备份数据所在位置，例如：/data0/backup/test，这里为什么要多加一个test，而不是备份时候的backup，读者自己查看提示吧!
+
+–drop：恢复的时候，先删除当前数据，然后恢复备份的数据。就是说，恢复后，备份后添加修改的数据都会被删除，慎用哦!
+</pre>
+<pre class="codepre"><code>
+/homejack/db/mongodb-linux-x86_64-2.2.0/bin/mongorestore -h 192.168.100.161:27017 -d ifpms --directoryperdb /home/jack/ifpms</code></pre>
