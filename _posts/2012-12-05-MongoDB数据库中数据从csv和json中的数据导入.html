@@ -1,0 +1,44 @@
+---
+layout: default
+title: MongoDB从csv和json中的数据导入
+author: zzh
+thisdate: 2012-12-05
+classification: 数据库
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<h2>1.导入CSV格式的数据</h2>
+<pre class="preclass">
+ user.csv文件的内容如下：
+ </pre>
+<pre class="codepre"><code>
+ _id,name,age
+   ObjectID(4eed9f9ca939118694cf05e4),"ming",10
+   ObjectID(4ef1f3cf3bd18218e6bdfa31),"lisi",20</code></pre>
+   <pre class="preclass">
+  可以通过如下方式把user.csv中的数据导入localdb数据库的user集合中：
+ </pre>
+<pre class="codepre"><code>
+mongoimport -d localdb -c user --type csv --file user.csv --headerline --upsert</code></pre>
+
+<h2>2.导入json格式的数据</h2>
+<pre class="preclass">
+user.dat文件中数据为json格式，内容为：</pre>
+<pre class="codepre"><code>
+  { "_id" : "ObjectID(4eed9f9ca939118694cf05e4)", "name" : "ming", "age" : 10 }
+  { "_id" : "ObjectID(4ef1f3cf3bd18218e6bdfa31)", "name" : "lisi", "age" : 20 }</code></pre>
+  
+  <pre class="preclass">
+可以通过以下方式导入该数据：</pre>
+<pre class="codepre"><code>
+mongoimport -d localdb -c user user.dat</code></pre>
+
+<h2>3.参数含义</h2>
+<pre class="preclass">
+-d    指定把数据导入到哪一个数据库中 
+-c    指定把数据导入到哪一个集合中 
+--type    指定导入的数据类型 
+--file       指定从哪一个文件中导入数据
+--headerline    仅适用于导入csv,tsv格式的数据，表示文件中的第一行作为数据头
+--upsert  以新增或者更新的方式来导入数据</pre>
+   
