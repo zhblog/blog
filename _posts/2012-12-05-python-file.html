@@ -1,0 +1,353 @@
+---
+layout: default
+title: Python 文件操作
+author: zzh
+thisdate: 2012-12-05
+classification: script
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<h2>目录</h2>
+<pre class="preclass">
+创建目录: os.mkdir('testDirectory')
+删除目录: os.rmdir('testDirectory')
+创建多级目录: os.makedirs ('I/will/show/you/how/deep/the/rabbit/hole/goes') !!!爽啊
+批量删除目录在创建的文件夹中没有添加任何东西，就可以一次性将它们全部删除
+os.removedirs ('I/will/show/you/how/deep/the/rabbit/hole/goes')
+列出一个目录的内容
+</pre>
+<pre class="codepre"><code>
+import os
+ 
+for fileName in os.listdir ( '/' ):
+    print fileName
+</code></pre>
+<pre class="preclass">
+删除非空目录
+</pre>
+<pre class="codepre"><code>
+import shutil
+shutil.rmtree(dir)
+</code></pre>
+
+<h2>遍历文件夹和文件</h2>
+<pre class="preclass">
+os.walk返回一个三元组.其中dirnames是所有文件夹名字(不包含路径),filenames是所有文件的名字
+</pre>
+<pre class="codepre"><code>
+rootdir = r"~/"
+for parent, dirnames, filenames in os.walk(rootdir):
+    #case 1:
+    for dirname in dirnames:
+        print "parent is:" + parent
+        print "dirname is:" + dirname
+    #case 2
+    for filename in filenames:
+        print "parent is:" + parent
+        print "filename with full path :" + os.path.join(parent, filename)
+</code></pre>
+
+<h2>分割路径和文件名</h2>
+<pre class="codepre"><code>
+import os.path
+ 
+spath= r"~/"
+ 
+# case 1:
+p,f=os.path.split(spath);
+print "dir is:"+p
+print "file is:"+f
+ 
+# case 2:
+drv,left=os.path.splitdrive(spath);
+print "driver is:"+drv
+print "left is:"+left
+# case 3:
+f,ext=os.path.splitext(spath);
+print "f is:"+f
+print "ext is:"+ext
+</code></pre>
+<h2>读写文本文件</h2>
+<pre class="codepre"><code>
+#-*- coding:utf-8 -*-
+fp = open('test.txt', 'w'); # r, w, a, 可配套 +(读和写方式) ,b(以二进制方式读写如 rb, wb ab)
+fp.write('写一个文本文件.\n我是第二行.')
+ 
+#读
+fp = open ('test.txt', 'r')
+print fp.read() #读所有 ps: read(int x) 读指定长度
+print fp.tell() #文件当前指针位置
+fp.seek (0) #文件指针移动（0到文件头）
+print fp.readline() #读一行
+fp.seek (0)
+lstLines = fp.readlines() #将文件读入到 List 中
+for fileLine in lstLines:
+    print(fileLine),
+fp.close()
+</code></pre>
+
+
+<h2>从现有文件中获取信息与修改文件最后修改时间</h2>
+<pre class="preclass">
+使用“os”模块和“stat”模块可以获取文件的基本信息
+</pre>
+<pre class="codepre"><code>
+#-*- coding:utf-8 -*-
+import os
+import stat
+import time
+ 
+filename = 'test.txt'
+fileStats = os.stat(filename)
+fileMode = fileStats[stat.ST_MODE]
+fileInfo = {
+            'Size' : fileStats[ stat.ST_SIZE],
+            'LastModified' : time.ctime(fileStats[stat.ST_MTIME]),
+            'LastAccessed' : time.ctime(fileStats[stat.ST_ATIME]),
+            'CreationTime' : time.ctime(fileStats[stat.ST_CTIME]),
+            'Mode' : fileMode
+            }
+ 
+for infoField, infoValue in fileInfo.items():
+    print infoField, ':' , infoValue
+ 
+if stat.S_ISREG ( fileStats [ stat.ST_MODE ] ):
+    print 'Regular file.'
+elif stat.S_ISDIR ( fileStats [ stat.ST_MODE ] ):
+    print 'Directory.'
+elif stat.S_ISLNK ( fileStats [ stat.ST_MODE ] ):
+    print 'Shortcut.'
+elif stat.S_ISSOCK ( fileStats [ stat.ST_MODE ] ):
+    print 'Socket.'
+elif stat.S_ISFIFO ( fileStats [ stat.ST_MODE ] ):
+    print 'Named pipe.'
+elif stat.S_ISBLK ( fileStats [ stat.ST_MODE ] ):
+    print 'Block special device.'
+elif stat.S_ISCHR ( fileStats [ stat.ST_MODE ] ):
+    print 'Character special device.'
+ 
+#修改文件时间戳
+TimeForChange = '2012-12-05 17:51:21'
+ConverTime = time.mktime(time.strptime(TimeForChange,'%Y-%m-%d %H:%M:%S') )
+times=(ConverTime,ConverTime)
+#进行修改
+os.utime(filename, times)
+</code></pre>
+
+<pre class="preclass">
+处理指定扩展名文件 方法一：
+</pre>
+<pre class="codepre"><code>
+#-*- coding:utf-8 -*-
+import fnmatch
+import os
+ 
+for fileName in os.listdir ('./'):
+    # yp*.txt “fnmatch”模块支持正则表达式 [0-9].txt
+    if fnmatch.fnmatch(fileName,'*.txt'):
+        fp = open(fileName)
+        txt = fp.read();
+        print(txt)
+        fp.close();
+    elif fnmatch.fnmatch(fileName, '*.py'):
+        print(fileName)
+</code></pre>
+<pre class="preclass">
+方法二
+</pre>
+<pre class="codepre"><code>
+import glob
+for fileName in glob.glob ('*.txt' ):
+    print(fileName)
+</code></pre>
+<pre class="preclass">
+文件与对象数据编组（序列化）
+</pre>
+<pre class="codepre"><code>
+import cPickle as p #as 名字空间别名
+#import pickle as p
+shoplistfile = 'shoplist.data'
+shoplist = ['apple', 'mango', 'carrot']
+# Write to the file
+f = file(shoplistfile, 'w')
+p.dump(shoplist, f) # 导出对象到文件,是完整的导出，不像php中的 serialize 没有函数程式
+f.close()
+del shoplist # 销毁对象
+# 取文件中对象
+f = file(shoplistfile)
+storedlist = p.load(f)
+print storedlist
+</code></pre>
+
+
+<h2>创建“虚拟”文件</h2>
+<pre class="preclass">
+创建文件并将其保存在内存中
+</pre>
+<pre class="codepre"><code>
+import cStringIO
+import StringIO
+ 
+fp = cStringIO.StringIO ("sdfdfsf")
+print fp.read() # "To Kill a Mockingbid"
+ 
+fp = StringIO.StringIO( "Let freedom ring" )
+print fp.read() # "Let freedom ring."
+fp.close()
+</code></pre>
+
+
+<h2>文件流</h2>
+<pre class="codepre"><code>
+#-*- coding:utf-8 -*-
+import sys
+#读流
+sys.stdin = open('test.txt','r')
+print(sys.stdin.read())
+sys.stdin.close();
+#写流
+sys.stdout = open('test.txt','a')
+sys.stdout.write("OK");
+sys.stdout.close();
+#异常流 ps: 可用来做日志
+sys.stderr = open('record.log','a')
+print undefinevar
+sys.stderr.close()
+</code></pre>
+
+<h2>Config 与 INI 文件</h2>
+<pre class="codepre"><code>
+import sys
+import getopt
+import ConfigParser
+try:
+    opts,argv = getopt.getopt(sys.argv[1:],'c:',['config='])
+    for keys,value in opts:
+        if keys in ('-c','--config'):
+            cut = value
+except:
+    print 'no config param'
+    exit()
+#cut = './config.ini'
+cfg = ConfigParser.ConfigParser()
+cfg.readfp(open(cut))
+print cfg.get('MySql','server')
+print cfg.getint('MySql','port') #getfloat,getboolean{"1", "yes", "true","on"}
+cfg.set('MySql','username','root')
+print cfg.get('MySql','username')
+'''
+config = ConfigParser.RawConfigParser()
+config.add_section('Section1')
+config.set('Section1', 'int', '15')
+config.set('Section1', 'bool', 'true')
+config.set('Section1', 'float', '3.1415')
+config.set('Section1', 'baz', 'fun')
+config.set('Section1', 'bar', 'Python')
+config.set('Section1', 'foo', '%(bar)s is %(baz)s!')
+with open('./example.cfg', 'wb') as configfile:
+    config.write(configfile)'''
+</code></pre>
+
+<h2>手册明细</h2>
+<pre class="preclass">
+文件操作的基本思路: file创建文件句柄-->处理文件-->close()关闭文件句柄
+1.关于文件的缓冲区疑问(什么是缓冲区?有什么用?)
+2.如果文件读取完之后文件指针会处于文件末.也就是说没有内容了.如果需重新读取那就的重新打开一次文件
+3.文件的创建、读写、修改(使用内建模块的file类实现)
+①:创建文件/打开文件--file(name[,mode[,buffering]])//同名方法open()功能与参数与这个file()相同
+这个函数用于打开文件name,mode是打开文件的模式(r,r+,w,w+,a,a+),buffering则是缓冲设置(0,1,n)返回一个文件操作对象
+
+mode:(默认是r)
+r 只读,以模式打开文件后不能写入,如果文件不存在则返回错误信息
+r+ 读写,既能读取又能写入,文件不存在抛出异常,以此模式打开文件不会清空原有内容,但是写入后会先清空原内容再写入
+w 写入,以此模式打开文件后会清空原文件内容,如果文件不存在则自动创建
+w+ 同上(具体不同现不了解)
+a 写入,不同于w,此模式打开文件不会清空原文件内容,而是在原有内容上追加写入的内容,文件不存在自动创建
+a+ 读写,同上(具体不同现不了解)
+buffering:(默认是0)
+0,不开启缓冲
+1,开启行缓冲
+大于1的数值则表示开启指定数值大小的缓冲区(单位是byte)
+
+②:文件读写/文件修改--read([size])、readline([size])、readlines([size])、write(string)、writelines(sequence_of_strings)
+
+read([size])         读取文件中的size字节大小的内容返回为字符串,默认是读取整个文件
+readline([size])      按行读取文件的内容,也就是说每次操作读取一行,但指定size后每次行读取操作只读取size字节大小的剩下的行内容下次操作继续按size字节大小读取,返回字符串
+readlines([size]) 同上,唯一不同的是此函数一次把文件所有行内容以列表返回,列表的每个元素就是文件每一行
+write(string)         写入字符串string到文件中
+writelines(seqence_of_string)     写入字符串序列到文件中
+
+file类的常用属性:
+
+close                   文件的打开与关闭状态,如果文件句柄没关闭返回False,已关闭则返回True
+encoding            文件的编码类型
+mode                  文件的打开模式
+name                 文件名称
+newlines             文件的换行模式
+
+file类的常用方法:
+
+flush()              把缓冲区写入磁盘
+close()              关闭文件句柄,释放句柄指针
+read([size])       读取文件中size字节大小的内容以字符串返回
+readline([size])     按行返回文件内容,即每次操作读取一样,如果指定size则每次行只操作size字节的读取,下次操作继续读取剩下行内容
+readlines([size])    按序列返回文件的每行内容,如果指定size则表示每行读取size字节返回,行的剩下内容继续按size字节进行读取
+seek[offset[,whence]]     以whence指定的数值为参照移动文件句柄的指针offset个位置(默认1),whence(默认0)为0表示从文件头开始,1表示从当前位置开始,2表示从文件末开始
+tell()                  返回文件指针当前的位置
+next()                手动操作一次文件的读取,此时文件指针会移动一位
+trumcate([size]) 删除size字节的内容--(?从文件头开始删除?)
+write(string)     把字符串string写入到文件中
+writelines(sequence_of_string)    把字符串序列写入到文件中
+4.文件的复制、移动、删除、重命名
+
+
+os模块常用文件处理函数:
+
+access(path,mode) 按mode权限访问path指定的文件
+chmod(path,mode)   改变path指定的文件访问权限为mode
+open(filename,flag[,mode]) 按mode的权限打开文件,mode默认为0777(可进行读、写、执行操作)
+remove(path)       删除path指定的文件
+rename(old,new)    重命名目录或文件,old为原文件或目录名称,new为新文件或目录名称
+stat(path)         返回path指定文件的所有属性
+fstat(path)        返回打开文件的所有属性
+lseek(fd,pos,how) 设置文件的当前位置,返回文件当前位置的字节数
+startfile(filepath[,operation]) 以文件的关联程序打开文件
+tmpfile()          在系统的临时目录创建一个临时文件
+
+os.path模块中的常用函数:
+
+abspath(path)      返回path所在的绝对路径
+dirname(path)      返回path的目录名称
+exists(path)       判断path是否存在,存在返回True,反之False
+getatime(filename) 返回filename的最后访问时间
+getctime(filename) 返回filename的创建时间
+getmtime(filename) 返回filename的最后修改时间
+getsize(filename) 返回filename的大小
+isabs(path)        判断path是否为绝对路径,是返回True(就算path不存在)反之False
+isdir(path)        判断path是否为目录,是返回True反之False(如果path不存在也返回False哦)
+isfile(path)       判断path是否问文件,是返回True反之False(如果path不存在也返回False哦)
+split(path)        对path进行路径分割,返回一个以路径、非路径这个两个元素组成的元组
+splitext(path)     从path中分割扩展名名称返回两个元素的元组(非扩展名名称、扩展名名称)
+splitdrive(path)   从path中分割驱动器名称返回两个元素的元组(驱动器名称、非驱动器名称)
+walk(top,func,arg) 遍历目录，与os.walk()功能相同
+
+文件的复制:
+>>> import shutil
+>>> shutil.copyfile('d:/src/test.txt','d:/dst/test.txt')
+#使用shutil模块的copyfile(src,dst)方法复制src中的文件为dst,上面从d:/src/复制test.txt到d:/dst/目录中
+
+文件的移动:
+>>> import shutil
+>>> shutil.move('d:/code/test.txt','d:/')
+#使用shutil模块的move(src,dst)方法移动src到dst,上面移动了test.txt到d盘根目录中
+
+文件重命名:
+>>> import os
+>>> os.rename('d:/code/test.txt','d:/code/test2.txt')
+#使用os模块的rename(old,new)方法对原文件或目录old重命名为new(重命名也间接的移动文件哦!)
+
+文件的删除:
+>>> import os
+>>> os.remove('d:/code/test.txt')
+#使用了os模块的rename(path)方法删除path指定的文件,这里删除了d:/code/目录中的test.txt文件
+</pre>
