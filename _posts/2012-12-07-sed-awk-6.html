@@ -1,0 +1,239 @@
+---
+layout: default
+title: sed-高级命令2
+author: reserved
+thisdate: 2012-12-07
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+<p>这个是在网上看到的一篇文章，原文在<a href="http://kodango.me/tag/sed-and-awk">这里</a>,保留下来顺便学习和帮助已有查阅</p>
+<p><a href="http://kodango.me/httpkodango-mesed-and-awk-notes-part-4" title="Sed&amp;awk笔记之sed篇：高级命令（一）">上一篇</a>中
+介绍了N/D/P三个命令，它们可以形成多行的模式空间，在一点程度上弥补了单行模式空间的不足，我们用sed编辑文本的能力又进了一步。模式空间是
+sed内部维护的一个缓存空间，它存放着读入的一行或者多行内容。但是模式空间的一个限制是无法保存模式空间中被处理的行，因此sed又引入了另外一个缓
+存空间——模式空间（Hold Space）。</p>
+<h3>保持空间</h3>
+<p>保持空间用于保存模式空间的内容，模式空间的内容可以复制到保持空间，同样地保持空间的内容可以复制回模式空间。sed提供了几组命令用来完成复制的工作，其它命令无法匹配也不能修改模式空间的内容。</p>
+<p>操作保持空间的命令如下所示：</p>
+<p class="addimg" id="sed/sed7.png"></p>
+<p><span id="more-1069"></span>这几组命令提供了保存、取回以及交换三个动作，交换命令比较容易理解，保存命令和取回命令都有大写和小写两种形式，这两种形式的区别是小写的是将会覆盖目的空间的内容，而大写的是将内容追加到目的空间，追加的内容和原有的内容是以\n分隔。</p>
+<h3>基本使用</h3>
+<p>我们随便试试这几个命令，假设有如下测试文本:</p>
+<pre class="codepre"><code>
+$ cat text
+1
+2
+11
+22
+111
+222</code></pre>
+<p>1. 首先，仅使用h/H或者g/G命令：</p>
+<p>使用h命令：</p>
+<pre class="codepre"><code>
+$ sed 'h' text
+1
+2
+11
+22
+111
+222</code></pre>
+<p>使用G命令：</p>
+<pre class="codepre"><code>
+$ sed 'G' text
+1
+
+2
+
+11
+
+22
+
+111
+
+222</code></pre>
+<p>前者返回的结果正常，因为复制到保持空间的内容并没有取回；后者每一行的后面都多了一个空行，原因是每行都会从保持空间取回一行，追加（大写的G）到模式空间的内容之后，以\n分隔。</p>
+<p>2. 使用x命令交换空间</p>
+<pre class="codepre"><code>
+$ sed 'x' text
+
+1
+2
+11
+22
+111</code></pre>
+<p>命令执行后，发现前面多了一个空行并且最后一行不见了。我在前面一直强调sed命令用好，要有用大脑回顾命令执行过程的能力：</p>
+<p>* 当读入第一行的时候，模式空间中的内容是第一行的内容，而保持空间是空的，这个时候交换两个空间，导致模式空间为空，保持空间为第一行的内容，因此输出为空行；<br>
+* 当读入下一行之后，模式空间为第2行的内容，保持空间为第一行的内容，交换后输出第1行的内容；<br>
+* 依次读入每一行，输出上一行的内容；<br>
+* 直到最后一行被读入到模式空间，交换后输出倒数第二行的内容，而最后一行的内容并没有输出，此时命令执行结束。</p>
+<h3>深入使用</h3>
+<p>上面的例子简单地介绍了保持空间命令的基本使用方法，这些命令单个使用可能效果不大，但是组合起来的效果是非常好的。</p>
+<p>1.第一个例子： 使用逗号拼接行</p>
+<pre class="codepre"><code>
+$ sed 'H;$!d;${x;s/^\n//;s/\n/,/g}' text
+1,11,2,11,22,111,222</code></pre>
+<p>上面的命令执行过程是这样的，使用H将每一行都追加到保持空间，这里利用d命令打断常规的命令执行流程，让sed继续读入新的一行，直接到将最后一行都放到保持空间。这个时候使用x命令将保持空间的内容交换到模式空间，模式空间的内容现在是这样的：<code>\n1\n11\n2\n11\n22\n111\n222</code>。替换的步骤分成两个，首先去掉首个回车符，然后把剩余的回车符替换成逗号。</p>
+<p>其实上面的过程可以包装成一个常用的函数：</p>
+<pre class="codepre"><code>
+$ function join_lines()
+&gt; {
+&gt;    sed 'H;$!d;${x;s/^\n//;s/\n/,/g}' $1
+&gt; }
+$ join_lines text
+1,11,2,11,22,111,222</code></pre>
+<p>进一步，我们可以让分隔符可以通过参数设置，另外一方面删除文件名的参数，而改成常见的过滤器命令形式（即通过管道传递输入）：</p>
+<pre class="codepre"><code>
+$ function join_lines()
+&gt; {
+&gt;     local delim=${1:-,}
+&gt;     sed 'H;$!d;${x;s/^\n//;s/\n/'$delim'/g}'
+&gt; }
+$ cat text | join_lines ';'
+1;11;2;11;22;111;222</code></pre>
+<p>但是如果我们要用&amp;作为符号，就会出现问题:</p>
+<pre class="codepre"><code>
+$ cat text | join_lines '&amp;'
+1
+11
+2
+11
+22
+111
+222</code></pre>
+<p>上面并没有&amp;作为分隔符，这是因为&amp;是元字符，表示匹配的部分，这里刚好是回车符\n。因此我们需要对分隔符进行转义：</p>
+<pre class="codepre"><code>
+$ function join_lines()
+&gt; {
+&gt;      local delim=${1:-,}
+&gt;      sed 'H;$!d;${x;s/^\n//;s/\n/\'$delim'/g}'
+&gt; } 
+$ cat text | join_lines '&amp;'
+1&amp;11&amp;2&amp;11&amp;22&amp;111&amp;222</code></pre>
+<p>2.第二个例子：将语句中的特定单词转换成大写</p>
+<p>现在有这样的文本，有许多类似这样的find the Match statement语句，其中Match是语句的名称，但是这个单词的大小写不统一，有些地方是小写的，有些地方是首字符大写，现在我们要做的是把这个单词统一转换成大写。</p>
+<p>容易联想到的是<a href="http://kodango.me/sed-and-awk-notes-part-3" title="Sed&amp;awk笔记之sed篇：基础命令">Sed&amp;awk笔记之sed篇：基础命令</a>中介绍的y命令，利用y命令确实可以做到小写转换成大写，转换的命令是这样的：</p>
+<pre class="codepre"><code>
+y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/</code></pre>
+<p>但是y命令是会把模式空间的所有内容都转换，这样不能满足我们的需求。但是我们可以利用保持空间保存当前行，然后处理模式空间中的内容：</p>
+<pre class="codepre"><code>
+/the .* statement/{
+h
+s/.*the \(.*\) statement.*/\1/
+y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/
+G
+s/\(.*\)\n\(.*the \).*\( statement.*\)/\2\1\3/
+}</code></pre>
+<p>老规矩一条一条过上面的命令，为了方便说明，每个命令解释后我都会给出当前模式空间和保持空间的内容。</p>
+<p>首先找到需要处理的行（假设当前行为find the Match statement）。</p>
+<pre class="codepre"><code>
+Pattern space: find the Match statement</code></pre>
+<p>将当前行保存到保持空间：</p>
+<pre class="codepre"><code>
+Pattern space: find the Match statement
+Hold space: find the Match statement</code></pre>
+<p>然后利用替换命令获取需要处理的单词：</p>
+<pre class="codepre"><code>
+Pattern space: Match
+Hold space: find the Match statement</code></pre>
+<p>然后通过转换命令将其转换成大写：</p>
+<pre class="codepre"><code>
+Pattern space: MATCH
+Hold space: find the Match statement</code></pre>
+<p>现在再利用G命令将保持空间的内容追加到模式空间最后：</p>
+<pre class="codepre"><code>
+Pattern space: MATCH\nfind the Match statement
+Hold space: find the Match statement</code></pre>
+<p>最后再次利用替换命令处理下：</p>
+<pre class="codepre"><code>
+Pattern space: find the MATCH statement
+Hold space: find the Match statement</code></pre>
+<h3>流程控制</h3>
+<p>一般情况下，sed是将编辑命令从上到下依次应用到读入的行上，但是像d/n/D/N命令都能够在一定程度上改变默认的执行流程，甚至利用N/D
+/P三个命令可以形成一个强大的循环处理流程。除此之外，其实sed还提供了分支命令(b)和测试(test)两个命令来控制流程，这两个命令可以跳转到
+指定的标签（label）位置继续执行命令。标签是以冒号开头的标记，如下例中的:top标签：</p>
+<pre class="codepre"><code>
+:top
+command1
+command2
+/pattern/b top
+command3</code></pre>
+<p>当执行到<code>/pattern/b top</code>时，如果匹配pattern，则跳转到:top标签所在的位置，继续执行下一个命令command1。</p>
+<p>如果没有指定标签，则将控制转移到脚本的结尾处。也许这只是一个默认的行为，但是有时候如果用得好也是非常有用的，例如:</p>
+<pre class="codepre"><code>
+/pattern/b
+command 1
+command 2
+command 3</code></pre>
+<p>当执行到<code>/pattern/b</code>时，如果匹配pattern，则跳转到最后。这种情况下匹配pattern的行可以避开执行后续的命令，被排除在外。</p>
+<p>下一个例子中，我们利用分支命令的跳转效果达到类似if语句的效果：</p>
+<pre class="codepre"><code>
+command1
+/pattern/b end
+command2
+:end
+command3</code></pre>
+<p>当执行到<code>/pattern/b end</code>时，如果匹配pattern，则跳转到:end标签所在的位置，跳过command2而不执行。</p>
+<p>进一步地，利用两个分支命令可以达到if..else的分支效果：</p>
+<pre class="codepre"><code>
+command1
+/pattern/b dothree
+command2
+b
+:dothree
+command3</code></pre>
+<p>这个例子中，当执行到<code>/pattern/b dothree</code>时，若匹配pattern则中转到:dothree标签，此时执行command3；若不匹配，则执行command2，并且跳转到最后。</p>
+<p>上面的例子都是用到了分支命令，分支命令的跳转是无条件的。而与之相对的是测试命令，测试命令的跳转是有条件的，当且仅当当前行发生成功的替换时才跳转。</p>
+<p>为了说明测试命令的用法，我们用它来实现前文定义过的join_lines函数：</p>
+<pre class="codepre"><code>
+$ sed ':a;$!N;s/\n/,/;ta' text
+1,11,2,11,22,111,222</code></pre>
+<p>在最前面我们添加了一个标签:a，然后在再最后面利用测试命令跳转到该标签。可能，你会觉得这里也可以用分支命令，但是事实上分支命令会导致死循环，因为在它里他没有结束的条件。</p>
+<p>但是测试命令就不同了，这一点直到最后才体现出来。当最后一行被N命令读入之后，回车替换成逗号，此时ta继续跳转到最开头，因为所有行都已经被读入，所以$!不匹配，同时模式空间中的回车已经全部被替换成逗号，所以替换也不会发生。之前我们说过，当<strong>且仅当当前行发生成功的替换时测试命令才跳转。</strong>所以此时跳转不会发生，退出sed命令。</p>
+<p>我们可以利用<a href="http://aurelio.net/sedsed/">sedsed</a>这个工具来验证上面的过程，sedsed可以用来调试sed脚本。</p>
+<pre class="codepre" line="1">$ ./sedsed -d -e ':a;$!N;s/\n/,/;ta' text
+PATT:1$
+HOLD:$
+COMM::a
+COMM:$ !N
+PATT:1\n11$
+HOLD:$
+COMM:s/\n/,/
+PATT:1,11$
+HOLD:$
+COMM:t a
+COMM:$ !N
+PATT:1,11\n2$
+HOLD:$
+...
+...
+COMM:$ !N
+PATT:1,11,2,11,22,111,222\n1111$
+HOLD:$
+COMM:s/\n/,/
+PATT:1,11,2,11,22,111,222,1111$
+HOLD:$
+COMM:t a
+COMM:$ !N
+PATT:1,11,2,11,22,111,222,1111$
+HOLD:$
+COMM:s/\n/,/
+PATT:1,11,2,11,22,111,222,1111$
+HOLD:$
+COMM:t a
+PATT:1,11,2,11,22,111,222,1111$
+HOLD:$
+1,11,2,11,22,111,222,1111</code></pre>
+<p>看第27行替换命令发生的时候，此时模式空间的内容为<code>PATT:1,11,2,11,22,111,222,1111$</code>，因此替换失败，ta命令不会发生跳转，脚本执行退出。</p>
+<p>而如果在这里把测试命令换成分支命令，整个执行过程就会陷入死循环了:</p>
+<pre class="codepre"><code>
+COMM:b a
+COMM:$ !N
+PATT:1,11,2,11,22,111,222,1111$
+HOLD:$
+COMM:s/\n/,/
+PATT:1,11,2,11,22,111,222,1111$
+HOLD:$
+COMM:b a
+COMM:$ !N
+PATT:1,11,2,11,22,111,222,1111$</code></pre>
+<h3>高级命令总结</h3>
+<p>到此为止，所有高级命令的用法就已经介绍完了。最后一段内容由于时间的关系，写得比较仓促。高级命令的用法比起基础命令相对复杂一点，而且容易出错，需要十分小心，如果不确定可以用上面介绍的<a href="http://aurelio.net/sedsed/">sedsed</a>工具来调式下，而且便于加深各种命令行为的理解。</p>
