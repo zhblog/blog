@@ -37,8 +37,7 @@ classification: linux
 <p>1. 给每一行添加行号，并且行号与行的非空白内容之间以制表符（t）分隔（保证左对齐）</p>
 <p>类似：</p>
 <pre class="codepre">1   aaa
-20  aaa
-</pre>
+20  aaa</pre>
 <p>相应的命令如下：</p>
 <pre class="codepre">sed '=' test.txt | sed 'N;s/s*ns*/t/'</pre>
 <p>解释：首先要取出并打印行号，可以用＝命令打印行号，但是此时行号与行内容不在同一行输出，因此需要将标准输出重定向再次使用sed命令处理。使用
@@ -47,8 +46,7 @@ Next命令读入下一行，并将n（包括多余的空白）替换成一个制
 <p>类似：（假设行号最多是3位数）</p>
 <pre class="codepre">  1  aaa
  20  aaa
-123  aaa
-</pre>
+123  aaa</pre>
 <p>相应的命令如下：</p>
 <pre class="codepre">sed '=' test.txt | sed 'N; s/^/  /;s/ *([ 0-9]{3})s*ns*/1t/'</pre>
 <p>解释：前面同1，这里只介绍后面这部分：<code>s/^/  /;s/ *([ 0-9]{3})s*ns*/1t/</code><br>
@@ -71,8 +69,7 @@ Next命令读入下一行，并将n（包括多余的空白）替换成一个制
 类似</p>
 <pre class="codepre">...................a
 .................bba
-................cccc
-</pre>
+................cccc</pre>
 <p>(超出的部分不处理)</p>
 <pre class="codepre">sed -e ':a' -e 's/^.{1,78}$/ &amp;/;ta' test.txt</pre>
 <p>解释: 对单个命令本身不解释了,这里用到了标签、跳转、替换等命令。 替换过程对不小于79列宽的行处理，在行首插入一个空格，直到等于79列宽为止，自动<br>
@@ -85,8 +82,7 @@ Next命令读入下一行，并将n（包括多余的空白）替换成一个制
 b. sed 's/foo/bar/4' test.txt
 c. sed 's/foo/bar/g' test.txt
 d. sed 's/(.*)foo(.*foo)/1bar2/ test.txt
-e. sed 's/(.*)foo/1bar/' test.txt
-</pre>
+e. sed 's/(.*)foo/1bar/' test.txt</pre>
 <p>解释：a在一行中只替换一次（首次出现）；b替换第四次出现；c全局替换；d替换倒数第二个匹配；e替换最后一个匹配 。</p>
 <p>6. 在包含或者不包含baz的行中替换foo为bar</p>
 <pre class="codepre">sed '/baz/s/foo/bar/g' test.txt</pre>
