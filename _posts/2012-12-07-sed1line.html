@@ -1,0 +1,246 @@
+---
+layout: default
+title: sed1line
+author: reserved
+thisdate: 2012-12-07
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+<p>这个是在网上看到的一篇文章，原文在<a href="http://kodango.me/sed1line-notes">这里</a>,保留下来顺便学习和帮助已有查阅</p>
+
+<p>这篇是当初看完Chinaunix论坛的帖子“<a href="http://bbs.chinaunix.net/thread-336126-1-1.html">抛砖引玉----翻译加注sed1line</a>”后记的笔记，最近无聊从Evernote翻出来。本文假设测试文件名为test.txt。</p>
+<h3>文件空行处理</h3>
+<p>1.  在文件中的每一行后面添加一个空行。</p>
+<pre class="codepre">sed 'G' test.txt</pre>
+<p>解释： Get命令是将保留空间的内容取出，并添加到当前模式空间的内容之后（添加一行）。当保留空间为空时，效果为往模式空间添加一行空行。</p>
+<p>2. 保证文件中的每一行后面都有一行空行。和1不同的是，如果文件中本身包含空行，则合并成一行。</p>
+<pre class="codepre">sed '/^$/d;G' test.txt</pre>
+<p>解释：首先删除空行，再添加一行空行。</p>
+<p>3. 删除偶数行</p>
+<pre class="codepre">sed 'n;d' test.txt</pre>
+<p>解释：n的意思读入下一行，并且输出当前行。当n读入下一行之后，用d将其删除。</p>
+<p><span id="more-682"></span>4. 在匹配regex的行之前添加空行</p>
+<pre class="codepre">sed '/regex/{x;p;x}' test.txt</pre>
+<p>解释：x的意思是交换保留空间和模式空间的内容，首先保留空间为空，首次交换并用p打印空行；接着将原有内容交换回来，执行到命令末尾，自动输出模式空间的内容。</p>
+<p>5. 在匹配regex的行之后添加空行</p>
+<pre class="codepre">sed '/regex/G' test.txt</pre>
+<p>解释：参考1</p>
+<p>6. 在匹配regex的行之前和之后都添加空行</p>
+<pre class="codepre">sed '/regex/{x;p;x;G;}' test.txt</pre>
+<p>解释：参考4、5</p>
+<p>7. 每五行后添加一行空行</p>
+<pre class="codepre">sed 'n;n;n;n;G'</pre>
+<p>或者</p>
+<pre class="codepre">sed '0~5G' test.txt</pre>
+<p>解释：很简单，每次读5行，再添加一个空行。第二种方法利用了GNU Sed的功能 addr~step，查看man sed。</p>
+<h3>文件行号处理</h3>
+<p>1. 给每一行添加行号，并且行号与行的非空白内容之间以制表符（t）分隔（保证左对齐）</p>
+<p>类似：</p>
+<pre class="codepre">1   aaa
+20  aaa
+</pre>
+<p>相应的命令如下：</p>
+<pre class="codepre">sed '=' test.txt | sed 'N;s/s*ns*/t/'</pre>
+<p>解释：首先要取出并打印行号，可以用＝命令打印行号，但是此时行号与行内容不在同一行输出，因此需要将标准输出重定向再次使用sed命令处理。使用
+Next命令读入下一行，并将n（包括多余的空白）替换成一个制表符（t），再默认输出打印。准确地说，这里使用了两条sed命令。</p>
+<p>2. 给每一行添加行号，并且行号与行的非空白内容之间以制表符（t）分隔（保证右对齐）</p>
+<p>类似：（假设行号最多是3位数）</p>
+<pre class="codepre">  1  aaa
+ 20  aaa
+123  aaa
+</pre>
+<p>相应的命令如下：</p>
+<pre class="codepre">sed '=' test.txt | sed 'N; s/^/  /;s/ *([ 0-9]{3})s*ns*/1t/'</pre>
+<p>解释：前面同1，这里只介绍后面这部分：<code>s/^/  /;s/ *([ 0-9]{3})s*ns*/1t/</code><br>
+这里首先在行首插入两个空格，然后将空格与后面的行号（数字）部分，只保留三个字符。最后将回车与多余的空白替换成制表符。</p>
+<p>3.  给文件每一行加上行号，但是仅当行非空时才打印行号。</p>
+<pre class="codepre">sed '/./=' test.txt | sed '/./N; s/s*ns*/t/'</pre>
+<p>解释：在sed中.不匹配n，因此用/./匹配非空行，其它同1。 但是如果要处理空行（包含空白符等的行），则需要：</p>
+<pre class="codepre">sed '/[^[:blank:]]/=' test.txt | sed '/[^[:blank:]]/N; s/n/t/'</pre>
+<p>4. 统计行数</p>
+<pre class="codepre">sed -n '$=' test.txt</pre>
+<p>解释：使用-n阻止默认输出，并只在最后一行的时候打印行号。</p>
+<h3>文本内容转换和替换</h3>
+<p>1. 在Unix环境下,转换DOS换行符为Unix格式</p>
+<pre class="codepre">sed 's/^M//' test.txt</pre>
+<p>解释：^M的键入方法，按住ctrl+v再敲回车。 这种处理和环境依赖性比较大，不是非常统一，这里只介绍一种。</p>
+<p>2.  删除行首和行尾空白</p>
+<pre class="codepre">sed 's/^[[:blank:]]*|[[:blank:]]*$//' test.txt</pre>
+<p>解释：这里再次用到了posix字符组，不多解释。</p>
+<p>3.  对每一行按照79列宽处理, 保持右对齐<br>
+类似</p>
+<pre class="codepre">...................a
+.................bba
+................cccc
+</pre>
+<p>(超出的部分不处理)</p>
+<pre class="codepre">sed -e ':a' -e 's/^.{1,78}$/ &amp;/;ta' test.txt</pre>
+<p>解释: 对单个命令本身不解释了,这里用到了标签、跳转、替换等命令。 替换过程对不小于79列宽的行处理，在行首插入一个空格，直到等于79列宽为止，自动<br>
+输出。</p>
+<p>4. 对每一行按照79列宽处理，保持居中。</p>
+<pre class="codepre">sed -e ':a' -e 's/^.{1,77}$/ &amp; /; ta' test.txt</pre>
+<p>解释：同3</p>
+<p>5. 在每一行用bar替换foo</p>
+<pre class="codepre">a. sed 's/foo/bar/' test.txt
+b. sed 's/foo/bar/4' test.txt
+c. sed 's/foo/bar/g' test.txt
+d. sed 's/(.*)foo(.*foo)/1bar2/ test.txt
+e. sed 's/(.*)foo/1bar/' test.txt
+</pre>
+<p>解释：a在一行中只替换一次（首次出现）；b替换第四次出现；c全局替换；d替换倒数第二个匹配；e替换最后一个匹配 。</p>
+<p>6. 在包含或者不包含baz的行中替换foo为bar</p>
+<pre class="codepre">sed '/baz/s/foo/bar/g' test.txt</pre>
+<pre class="codepre">sed '/baz/!s/foo/bar/g' test.txt</pre>
+<p>7. 反转文件行的顺序（类似tac命令，即从最后一行到第一行的顺序打印）</p>
+<pre class="codepre">sed '1!G;h;$!d' test.txt</pre>
+<p>解释：首先1!G表示将除第一行之外，都先从保留空间取出内容并追加到模式空间的最后；h表示将模式空间的内容全部覆盖到保留空间；然后 
+$!d表示将除最后一行之外的，都要将模式空间清除，并从头开始（不打印）。这些命令合起来就是，首先将一行的内容拷贝到临时缓冲区（保留空间），然后清
+除当前行（不打印），再读入下一行并从缓冲区取会保存的内容，因此行的顺序就颠倒了。</p>
+<p>8. 反转文件中每一行的字符顺序（类似rev命令）</p>
+<pre class="codepre">sed '/n/!G;s/(.)(.*n)/&amp;21/;//D;s/.//'</pre>
+<p>解释：首先解释一下这里使用到的一些特殊语法，<code>//D</code>，//为无内容，这是一种简写情况，默认使用上一次使用的正则表达式，这里就是<code>(.)(.*n)</code>，因此等价于<code>/(.)(.*n)/D</code>。这条sed命令中过程是这样的，首先该行如果不包含回车，则在末尾添加一个，对应命令中的<code>/n/!G</code>；然后开始替换，目的是把当前最前面的字母放到后面。</p>
+<p>例如123n变成123n23n1；23n1变成23n3n21。然后使用D命令删除第一行的内容。最后一个替换去掉首字符。该例子可以自己使用一个简单的例子演练一遍就清楚了。</p>
+<p>9. 将两行合并成一行（类似paste命令）</p>
+<pre class="codepre">sed '$!N;s/n/ /' test.txt</pre>
+<p>解释：$!N表示除最后一行外，其它每行在读入的时候，都将下一行读进来添加到后面。接着用替换命令替换回车为空格。如果$!N改成N在这里不会出现问题，但是要记住的是，当到最后一行时，执行N命令将不会再读入新行，结果是sed退出。不会执行接下来的命令。</p>
+<p>10. 如果一行以“”结束，则合并下一行内容到当前行之后。</p>
+<pre class="codepre">sed -e ':a' -e '/$/N; s/n/ /; ta' test.txt</pre>
+<p>解释：同8类似，但是要考虑合并多行，因此需要做循环处理，这里使用标签来达到这个目的。</p>
+<p>11. 如果一行以等号开始，则合并这一行至上一行，并替换等号为空格</p>
+<pre class="codepre">sed -e ':a' -e '$!N;s/n=/ /;ta;P;D' test.txt</pre>
+<p>解释:同9类似,不过这里要读入下一行之后,判断'n='则替换成空格, 如果替换成功,则继续读入下一行(标签跳转);否则, 打印并删除模式空间中的第一行。<br>
+D命令不会导入新的行读入。</p>
+<p>12. 给数字串加逗号，例如把“1234567”变成“1，234，567”</p>
+<pre class="codepre">sed -e ':a' -e 's/([0-9])([0-9]{3})($|,)/1,2/;ta' test.txt</pre>
+<p>或者</p>
+<pre class="codepre">sed -e ':a' -e 's/(.*[0-9])([0-9]{3})/1,2/;ta' test.txt</pre>
+<p>解释：这里要使用标签进行循环处理，关键点在正则表达式的书写上。第二种写法更加简练。</p>
+<p>13. 给带有小数点和铅的数字加上逗号</p>
+<pre class="codepre">sed ':a;s/(^|[^0-9.])([0-9]+)([0-9]{3})/12,3/g;ta' test.txt</pre>
+<p>或者</p>
+<pre class="codepre">sed ':a;s/^(-?[0-9]+)([0-9]{3})/1,2/g;ta' test.txt</pre>
+<p>解释：同11，要注意负号和小数点，因此要加上开始标记^和-。</p>
+<h3>选择性输出行</h3>
+<p>1. 打印一个文件的前10行（类似head命令）</p>
+<pre class="codepre">sed -n '1,10p' test.txt</pre>
+<p>或者</p>
+<pre class="codepre">sed '10q' test.txt</pre>
+<p>解释：显然第二种方法比第一种方法效率高。q退出命令，表明在第10行的时候自动退出，不再读入新的输入行。</p>
+<p>2.  打印一个文件的第一行。</p>
+<pre class="codepre">sed 'q' test.txt</pre>
+<p>解释：同上，在读入第一行之后就退出，但是仍打印第一行的内容。</p>
+<p>3.  打印一个文件的倒数10行（类似tail命令）</p>
+<pre class="codepre">sed ':a;$q;N;11,$D;ba'</pre>
+<p>解释：如果只看 
+':a;$q;N;ba'，效果就是一直将下一行追加到模式空间，最后达到最后一行的时候退出，并打印模式空间的内容。但是当变成
+':a;$q;N;11,$D;ba'，11,$D表示如果行超过10行，则将模式空间的第一行删除，同时ba跳转到开头，再次读入下一行，保持模式空间
+的行数在10行。这样看起来就是模式空间的最前面的一行被删除，同时将新的一行追加到末尾处，当循环结束时，模式空间中保存的就是文件的最后10行。</p>
+<p>4. 打印一个文件的倒数两行（类似tail -2）</p>
+<pre class="codepre">sed ':a;$q;N;3,$D;ba'</pre>
+<p>或者</p>
+<pre class="codepre">sed '$!N;$!D' test.txt</pre>
+<p>解释：第一种方法同3一样。第二种方法，$!的意思是不在最后一行上执行命令。N命令不解释，D命令是删除模式空间的第一行，并且跳转到命令开头重新执行，并且当模式空间仍有内容时，不读入新的输入行。这一句的意思透露出两点：<br>
+1) D命令之后的命令不会执行，而是跳转到开头，同时也不会自动输出当前模式空间的内容。<br>
+2) 模式空间不为空，则不会自动读入下一行的数据，除非使用N命令读入下一行。<br>
+因此，$!N;$!D，将下一行读入模式空间，并且将模式空间的第一行删除，除非遇到最后一行，因此当循环结束时，模式空间中包含倒数两行，完成要求，打印输出。</p>
+<p>5. 打印一个文件的最后一行（类似tail -1）</p>
+<pre class="codepre">sed ':a;$q;N;2,$D;ba' test.txt</pre>
+<p>或者 </p>
+<pre class="codepre">sed -n '$p' test.txt</pre>
+<p>或者 </p>
+<pre class="codepre">sed '$!d' test.txt</pre>
+<p>6. 打印匹配“regex”行（类似grep）</p>
+<pre class="codepre">sed -n '/regex/p' test.txt</pre>
+<p>或者</p>
+<pre class="codepre">sed '/regex/!d' test.txt</pre>
+<p>解释：同5类似</p>
+<p>7. 打印不匹配“regex”行（类似grep -v）</p>
+<pre class="codepre">sed -n '/regex/!p' test.txt</pre>
+<p>或者</p>
+<pre class="codepre">sed '/regex/d' test.txt</pre>
+<p>解释：同6。</p>
+<p>8.  打印匹配“regex”之前的那一行。</p>
+<pre class="codepre">sed -n '$!N;/regex/!D;/regex/P'</pre>
+<p>或者</p>
+<pre class="codepre">sed -n '/regex/{g;1!p;};h'</pre>
+<p>解释：第一方法理解起来比较简单，读入下一行到模式空间，并且判断是否包含regex，如果匹配，则打印模式空间中的第一行，如果不匹配，则删除模式空间的第一行，循环处理。（这种方法有问题吗？）<br>
+第二种方法，如果没遇到匹配行，则将当前行拷贝到保持空间，然后读入下一行，如果匹配，则将保存的行从保持空间中提取到模式空间，并且打印（假如第一行就匹配则不打印）。</p>
+<p>9. 打印奇数行</p>
+<pre class="codepre">sed -n 'N;P' test.txt</pre>
+<p>或者</p>
+<pre class="codepre">sed -n '1~2p' test.xt</pre>
+<p>解释：第一种方法，N读入下一行到模式空间，P打印模式空间中的第一行，然后自动输出被关闭，进入下一次循环，重新读入新的一行到模式空间（自动读
+入新行，非N，因此模式空间的内容被清除再读入新行），再执行N；P，同样打印模式空间的第一行。效果等同于打印奇数行。第二种方法，比较简单，不过用到
+GNU Sed的特殊地址表示方法，addr~step，因此只在1，3，5，7等奇数行才打印行的内容。</p>
+<p>10. 打印匹配“regex”那一行的后一行。</p>
+<pre class="codepre">sed -n '/regex/{n;p}' test.txt</pre>
+<p>解释：如果找到匹配的行，则读取下一行，并且打印输出。</p>
+<p>11. 打印匹配“regex”那一行的前后一行，并且打印匹配行的行号（类似grep -A1 -B1）</p>
+<pre class="codepre">sed -n '/regex/{=;x;1!p;g;$!N;p;D;}; h' test.txt</pre>
+<p>解释： 
+如果不匹配，则先把该行保存到保持空间暂时记录下来；如果找到匹配行，则打印该行的等号，并且将模式空间的内容和保持空间的内容交换，随即打印模式空间的
+内容（第一行除外，同10）；交换之后，再次将保持空间的内容恢复到模式空间（即当前匹配行），再读入下一行（注意$!N），打印模式空间的所有内容（非
+P），打印完之后，清除模式空间的第一行的内容。进入下一个循环。注意此时，保持空间同样保存着当前的输入行。</p>
+<p>12.  假设段落以空行分隔，打印包含“regex”的段落。</p>
+<pre class="codepre">sed '/./{H;$!d};x;/regex/!d' test.txt </pre>
+<pre class="codepre">sed '/./{1h;1!H;$!d};x;/regex/!d' test.txt </pre>
+<p>解释：思路很简单，首先将读入段落的内容，并依次将段落的第一行追加到保持空间备份，然后在保持空间中查找匹配单词。但是第一种方法的输出结果会在开始处多一个空行，第二种方法的目的是去掉多输出的一个空行。</p>
+<p>13. 打印长于65个字符的行</p>
+<pre class="codepre">sed -n '/^.{65}/p' test.txt</pre>
+<p>解释：正则表达式的应用。</p>
+<p>14.  打印第52行</p>
+<pre class="codepre">sed '52q;d' test.txt</pre>
+<p>解释：效率比一般方法高</p>
+<p>15. 从第三行开始，每隔7行打印机一行</p>
+<pre class="codepre">sed -n '3~7p' test.txt</pre>
+<pre class="codepre">sed -n '3,${p;n;n;n;n;n;n;}' test.txt</pre>
+<p>解释：比较简单</p>
+<h3>选择性删除某些行</h3>
+<p>1. 删除文件中连续并且重复的行，只保留第一行（类似uniq命令）</p>
+<pre class="codepre">sed -n "$!N;/^(.*)n1$/!P;D' test.txt</pre>
+<p>解释：读入下一行，然后用正则判断两行是否一样，如果一样，则不打印，并且删除同样行中的第一行，再循环处理。</p>
+<p>2. 删除文件中重复的，但不连续的行，注意不要溢出保持空间的缓冲区大小。<br>
+不知道</p>
+<p>3. 删除一个文件中前10行</p>
+<pre class="codepre">sed '1,10d' test.txt</pre>
+<p>解释：比较简单</p>
+<p>4.  删除一个文件中最后1行</p>
+<pre class="codepre">sed '$d' test.txt</pre>
+<p>5. 删除一个文件中最后2行</p>
+<pre class="codepre">sed 'N;$!P;$!D;$d' test.txt</pre>
+<p>解释：使用N读入一行，并且如果新读入的下一行不是最后一行，则打印模式空间中的第一行，并且删除；如果新读入的一行是文件的最后一行，则删除模式空间中的所有内容（即倒数两行）。</p>
+<p>6. 删除一个文件中最后10行；</p>
+<pre class="codepre">sed ':a;$d;N;11,${P;D};ba' test.txt</pre>
+<pre class="codepre">sed ':a;$d;N;2,10ba;P;D' test.txt</pre>
+<pre class="codepre">sed -n ':a;1,10!{P;N;D};N;ba'</pre>
+<p>解释：第一种方法参考前面的打印文件的最后10行内容。第二种方法，首先不停读入下一行的内容，直到读入第11行，此时模式空间中包含11行，打印
+第一行的内容并删除，然后判断最后读入的那一行是不是最后一行，如果是，则删除模式空间中的内容（一共10行，即倒数10行）；如果不是，则继续读入下一
+行，打印模式空间中的第一行并删除。循环直到最后一行为止。第一种方法，首先将读入前10行的内容，如果读到第10行之后（11行开始），首先打印模式空
+间的第一行，并读入下一行，再删除第一行，循环处理；始终保证模式空间中包含10行的内容，当在最后一行之后，再读新行会导致sed退出，并打印模式空间
+的内容。</p>
+<p>7. 每8行删除1行</p>
+<pre class="codepre">sed '0~8d' test.txt</pre>
+<p>解释：比较简单。</p>
+<p>8. 删除所有空行</p>
+<pre class="codepre">sed '/^$/d' test.txt</pre>
+<p>或者</p>
+<pre class="codepre">sed '/./!d' test.txt</pre>
+<p>解释：都比较简单，第一个匹配空行，第二个匹配非空行。</p>
+<p>9. 压缩文件中的连续空行为一行，包括文件开头和结尾（类似cat -s）</p>
+<pre class="codepre">sed '/^$/N;/n$/D' test.txt</pre>
+<p>解释：遇到空行，则继续读入下一行，如果读入的一行依然是空行，则删除第一行（空行），循环处理。</p>
+<p>10. 删除文件中的连续空行，但保留前两个空行</p>
+<pre class="codepre">sed '/^$/N;/n$/N;//D' test.txt </pre>
+<p>解释：同9，不过不是压缩空行为一行，而是两行，因此在9的基础上再加一步，//D中正则为空，默认使用上次的正则表达式。</p>
+<p>11. 删除文件开头的空行</p>
+<pre class="codepre">sed '/./, $!d' test.txt</pre>
+<p>解释：删除第一行非空行之前的所有空行。</p>
+<p>12. 删除文件结尾的所有空行</p>
+<pre class="codepre">sed ':a;/^n*$/{$d;N;ba}' test.txt</pre>
+<p>解释：如果碰到一个空行，如果不是最后一行，则继续读入下一行，跳到开头，判断模式空间内是否全是空行。如果读到最后一行，而且，模式空间内的内容都是空行，则删除，这意味着删除了所有结尾处的空行。</p>
+<p>13.  删除每个段落的最后一行</p>
+<pre class="codepre">sed -n '/^$/{p;h;};/./{x;/./p}' test.txt</pre>
+<p>解释：如果遇到空行，则直接打印，并且将空行保存到保持空间，这样会覆盖空行的上一行内容，如果上一行不为空行，内容就不打印了，而如果上一行是空
+行，因为之前已经打印了，所以这里不会有影响；如果不是空行，则交换保持空间和模式空间的内容，保持空间保存的是上一行的内容，如果上一行不是空行，则打
+印。</p>
+</div>
