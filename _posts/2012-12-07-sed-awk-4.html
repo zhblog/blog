@@ -1,0 +1,196 @@
+---
+layout: default
+title: sed-高级命令
+author: reserved
+thisdate: 2012-12-07
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+<p>这个是在网上看到的一篇文章，原文在<a href="http://kodango.me/tag/sed-and-awk">这里</a>,保留下来顺便学习和帮助已有查阅</p>
+<p>在<a href="http://kodango.me/sed-and-awk-notes-part-3" title="Sed&amp;awk笔记之sed篇：基础命令">上一篇</a>中介绍的基础命令都是面向行的，一般情况下，这种处理并没有什么问题，但是当匹配的内容是错开在两行时就会有问题，最明显的例子就是某些英文单词会被分成两行。</p>
+<p>幸运地是，sed允许将多行内容读取到模式空间，这样你就可以匹配跨越多行的内容。本篇笔记主要介绍这些命令，它们能够创建多行模式空间并且处理
+之。其中，N/D/P这三个多行命令分别对应于小写的n/d/p命令，后者我们在上一篇已经介绍。它们的功能是类似的，区别在于命令影响的内容不同。例如
+D命令与d命令同样是删除模式空间的内容，只不过d命令会删除模式空间中所有的内容，而D命令仅会删除模式空间中的第一行。</p>
+<h3>读下一行：N</h3>
+<p>N命令将下一行的内容读取到当前模式空间，但是下n命令不一样的地方是N命令并没有直接输出当前模式空间中的行，而是把下一行追加到当前模式空间，两行之间用回车符\n连接，如下图所示：</p>
+<p class="addimg" id="sed/sed5.png"></p>
+<p>模式空间包含多行之后，正则表达式的^/$符号的意思就变了，^是匹配模式空间的最开始而非行首，$是匹配模式空间的最后位置而非行尾。</p>
+<p><span id="more-1044"></span>书中给的第一例子，是替换以下文本中的"Owner and Operator Guide"为"Installation Guide"，正如我们在本篇开头说的Owner and Operator Guide跨越在两行：</p>
+<pre class="codepre">Consult Section 3.1 in the Owner and Operator
+Guide for a description of the tape drives
+available on your system.
+</pre>
+<p>我们用N命令试下手：</p>
+<pre class="codepre">$ sed '/Operator$/{N;s/Owner and Operator\nGuide/Installation Guide/}' text
+Consult Section 3.1 in the Installation Guide for a description of the tape drives
+available on your system.
+</pre>
+<p>不过这个例子有两个局限：</p>
+<ul>
+<li>我们知道Owner and Operator Guide分割的位置；</li>
+<li>执行替换命令后，前后两行拼接在一起，导致这行过长；</li>
+</ul>
+<p>第二点，可以这样解决：</p>
+<pre class="codepre">$ sed '/Operator$/{N;s/Owner and Operator\nGuide /Installation Guide\n/}' text
+Consult Section 3.1 in the Installation Guide
+for a description of the tape drives
+available on your system.
+</pre>
+<p>现在去掉第1个前提，我们引入更加复杂的测试文本，这段文本中Owner and Operator Guide有位于一行的，也有跨越多行的情况：</p>
+<pre class="codepre">$ cat text
+Consult Section 3.1 in the Owner and Operator
+Guide for a description of the tape drives
+available on your system.
+
+Look in the Owner and Operator Guide shipped with your system.
+
+Two manuals are provided including the Owner and
+Operator Guide and the User Guide.
+
+The Owner and Operator Guide is shipped with your system.
+</pre>
+<p>相应地修改下之前执行的命令，如下所示：</p>
+<pre class="codepre">$ sed 's/Owner and Operator Guide/Installation Guide/
+/Owner/{
+N
+s/ *\n/ /
+s/Owner and Operator Guide */Installation Guide\
+/
+}' text
+Consult Section 3.1 in the Installation Guide
+for a description of the tape drives
+available on your system.
+
+Look in the Installation Guide shipped with your system.
+
+Two manuals are provided including the Installation Guide
+and the User Guide.
+
+The Installation Guide is shipped with your system.
+</pre>
+<p>这里我们首先将在单行出现的Owner and Operator Guide替换为Installation 
+Guide，然后再寻找匹配Owner的行，匹配后读取下一行的内容到模式空间，并且将中间的换行符替换成空格，最后再替换Owner and 
+Operator Guide。</p>
+<p>解释起来很简单，但是中间还是有些门道的。比如你可能觉得这里最前面的s/Owner and Operator Guide/Installation Guide/命令是多余的，假设你删除这一句：</p>
+<pre class="codepre">$ sed '/Owner/{
+&gt; N
+&gt; s/ *\n/ /
+&gt; s/Owner and Operator Guide */Installation Guide\
+&gt; /
+&gt; }' text
+Consult Section 3.1 in the Installation Guide
+for a description of the tape drives
+available on your system.
+
+Look in the Installation Guide
+shipped with your system. 
+Two manuals are provided including the Installation Guide
+and the User Guide.
+
+The Owner and Operator Guide is shipped with your system.
+</pre>
+<p>最明显的问题是最后一行没有被替换，原因是当最后一行的被读入到模式空间后，匹配Owner，执行N命令读入下一行，但是因为当前已经是最后一行，所以N读取替换，告诉sed可以退出了，sed也不会继续执行接下来的替换命令（<strong>注：</strong>书中说最后一行不会被打印输出，我这边测试是会输出的）。所以这里需要在使用N的时候加一个判断，即当前行为最后一行时，不读取下一行的内容：$!N，这一点在很多场合都是有用的，更改后重新执行：</p>
+<pre class="codepre">$ sed '/Owner/{
+&gt; $!N
+&gt; s/ *\n/ /
+&gt; s/Owner and Operator Guide */Installation Guide\
+&gt; /
+&gt; }' text
+Consult Section 3.1 in the Installation Guide
+for a description of the tape drives
+available on your system.
+
+Look in the Installation Guide
+shipped with your system. 
+Two manuals are provided including the Installation Guide
+and the User Guide.
+
+The Installation Guide
+is shipped with your system.
+</pre>
+<p>上面只是为了用例子说明N的用法，可能解决方案未必是最好的。</p>
+<h3>删除行：D</h3>
+<p>该命令删除模式空间中第一行的内容，而它对应的小d命令删除模式空间的所有内容。D不会导致读入新行，相反它会回到最初的编辑命令，重要应用在模式空间剩余的内容上。</p>
+<p>后面半句开始比较难以理解，用书中的一个例子来解释下。现在我们有一个文本文件，内容如下所示，行之间有空行：</p>
+<pre class="codepre">$ cat text
+This line is followed by 1 blank line.
+
+This line is followed by 2 blank lines.
+
+
+This line is followed by 3 blank lines.
+
+
+
+This line is followed by 4 blank lines.
+
+
+
+
+This is the end.
+</pre>
+<p>现在我们要删除多余的空行，将多个空行缩减成一行。假如我们使用d命令来删除，很简单的逻辑：</p>
+<pre class="codepre">$ sed '/^$/{N;/^\n$/d}' text
+This line is followed by 1 blank line.
+
+This line is followed by 2 blank lines.
+This line is followed by 3 blank lines.
+
+This line is followed by 4 blank lines.
+This is the end.
+</pre>
+<p>我们会发现一个奇怪的结果，奇数个数的相连空行已经被合并成一行，但是偶数个数的却全部被删除了。造成这样的原因需要重新翻译下上面的命令，当匹配
+一个空行是，将下一行也读取到模式空间，然后若下一行也是空行，则模式空间中的内容应该是\n，因此匹配^\n$，从而执行d命令会将模式空间中的内容清
+空，结果就是相连的两个空行都被删除。这样就可以理解为什么相连奇数个空行的情况下是正常的，而偶数个数就有问题了。</p>
+<p>这种情况下，我们就应该用D命令来处理，这样做就得到预期的结果了：</p>
+<pre class="codepre">$ sed '/^$/{N;/^\n$/D}' text
+This line is followed by 1 blank line.
+
+This line is followed by 2 blank lines.
+
+This line is followed by 3 blank lines.
+
+This line is followed by 4 blank lines.
+
+This is the end.
+</pre>
+<p>D命令只会删除模式空间的第一行，而且删除后会重新在模式空间的内容上执行编辑命令，类似形成一个循环，前提是相连的都是空行。当匹配一个空行
+时，N读取下一行内容，此时匹配^\n$导致模式空间中的第一行被删除。现在模式空间中的内容是空的，重新执行编辑命令，此时匹配/^$/。继续读取下一
+行，当下一行依然为空行时，重复之前的动作，否则输出当前模式空间的内容。造成的结果是连续多个空行，只有最后一个空行是保留输出的，其余的都被删除了。
+这样的结果才是我们最初希望得到的。</p>
+<h3>打印行：P</h3>
+<p>P命令与p命令一样是打印模式空间的内容，不同的是前者仅打印模式空间的第一行内容，而后者是打印所有的内容。因为编辑命令全部执行完之后，sed
+默认会输出模式空间的内容，所以一般情况下，p和P命令都是与-n选项一起使用的。但是有一种情况是例外的，即编辑命令的执行流程被改变的情况，例如
+N，D等。很多情况下，P命令都是用在N命令之后，D命令之前的。这三个命令合起来，可以形成一人输入输出的循环，并且每次只打印一行：读入一行后，N继
+续读下一行，P命令打印第一行，D命令删除第一行，执行流程回到最开始重复该过程。</p>
+<pre class="codepre">$ echo -e "line1\nline2\nline3" | sed '$!N;P;D'
+</pre>
+<p>不过多行命令用起来要格外小心，你要用自己的大脑去演算一遍执行的过程，要不然很容易出错，比如：</p>
+<pre class="codepre">$ echo -e "line1\nline2\nline3" | sed -n 'N;1P'
+</pre>
+<p>你可能期望打印第一行的内容，事实上并没有输出。原因是当N继续读入第二行后，当前行号已经是2了，我们在<a href="http://kodango.me/sed-and-awk-notes-part-2" title="Sed&amp;awk笔记之sed篇：模式空间与地址匹配">第二篇</a>笔记中曾经说过，行号只是sed在内部维护的一个计数变量而已，每当读入新的一行，行号就加一：</p>
+<pre class="codepre">$ echo -e "line1\nline2\nline3" | sed -n '$!N;='
+2
+3
+</pre>
+<p>我们依然用替换Unix System为Unix Operating System作为例子，介绍N/P/D三个命令是如何配合使用的。</p>
+<p>示例文本如下所示，为了举例方便，这段文本仅有三行内容，刚好可以演示一个循环的处理过程：</p>
+<pre class="codepre">$ cat text
+The UNIX
+System and UNIX
+...
+</pre>
+<p>执行的命令：</p>
+<pre class="codepre">$ sed '/UNIX$/{
+&gt; N
+&gt; s/\nSystem/ Operating &amp;/
+&gt; P
+&gt; D
+&gt; }' text
+The UNIX Operating 
+System and UNIX
+...
+</pre>
+<p>执行过程如下图所示：<br></p>
+<p class="addimg" id="sed/sed6.png"></p>
+<p>以上三个命令的用法与之前介绍的基础命令是截然不同的，有些同学可能都没有接触过。在下一篇中，我会介绍更多高级的命令，同时为引入一个新的概念：保持空间（Hold Space)。</p>
