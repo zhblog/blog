@@ -23,20 +23,20 @@ space)，这是一个很重要的概念，在后文中会多次被提及。因�
 果，所以编辑命令之间的顺序就显得格外重要。</p>
 <h3>简单例子</h3>
 <p>让我们来看一个非常简单的例子，将一段文本中的pig替换成cow，并且将cow替换成horse：</p>
-<pre class="codepre"><code>$ sed 's/pig/cow/;s/cow/hores/' input
-</code></pre>
+<pre class="codepre"><code>
+$ sed 's/pig/cow/;s/cow/hores/' input</code></pre>
 <p><span id="more-974"></span>初看起来好像没有问题，但是实际上是错误的，原因是第一个替换命令将所有的pig都替换成cow，紧接着的替换命令是基于前一个结果处理的，将所有的cow都替换成horse，造成的结果是全部的pig/cow都被替换成了horse，这样违背了我们的初衷。</p>
 <p>在这种情况下，只需要调换下两个编辑命令的顺序：</p>
-<pre class="codepre"><code>$ sed 's/cow/hores/;s/pig/cow/' input
-</code></pre>
+<pre class="codepre"><code>
+$ sed 's/cow/hores/;s/pig/cow/' input</code></pre>
 <h3>模式空间的转换</h3>
 <p>sed只会缓存一行的内容在模式空间，这样的好处是sed可以处理大文件而不会有任何问题，不像一些编辑器因为要一次性载入文件的一大块内容到缓存中而导致内存不足。下面用一个简单的例子来讲解模式空间的转换过程，如下图所示：</p>
 <p class="addimg" id="sed/sed2.png"></p>
 </br>
 <p>现在要把一段文本中的Unix System与UNIX System都要统一替换成The UNIX Operating System，因此我们用两句替换命令来完成这个目的：</p>
-<pre class="codepre"><code>s/Unix /UNIX /
-s/UNIX System/UNIX Operating System/
-</code></pre>
+<pre class="codepre"><code>
+s/Unix /UNIX /
+s/UNIX System/UNIX Operating System/</code></pre>
 <p>对应上图，过程如下：</p>
 <ol>
 <li>首先一行内容The  Unix System被读入模式空间；</li>
@@ -49,7 +49,8 @@ s/UNIX System/UNIX Operating System/
 <h3>地址匹配</h3>
 <p>地址匹配在sed中是非常重要的一块内容，因为它限制sed的编辑命令到底应用在哪些行上。默认情况下，sed是全局匹配的，即对所有输入行都应用指定的编辑命令，这是因为sed依次读入每一行，每一行都会成为当前行并被处理，所以<code>s/CA/California/g</code>会将所有输入行的CA替换成California。这一点跟vi/vim是不一样的，众所周知，vim的替换命令默认是替换当前行的内容，除非你指定%s才会作全局替换。</p>
 <p>可以通过指定地址来限制sed的处理范围，例如只想将替换包含Sebastopol的行：</p>
-<pre class="codepre"><code>Sebastopol/s/CA/California/</code></pre>
+<pre class="codepre"><code>
+Sebastopol/s/CA/California/</code></pre>
 <p>/Sebastopol/是一个正则表达式匹配包含Sebastopol的行，因此像行“San Francisco, CA”则不会被替换。</p>
 <p>sed命令中可以包含0个、1个或者2个地址（地址对），地址可以为正则表达式（如/Sebastopol/），行号或者特殊的行符号（如$表示最后一行）：</p>
 <ul>
@@ -59,68 +60,68 @@ s/UNIX System/UNIX Operating System/
 <li>如果地址后面有一个感叹号（！），则将编辑命令应用到不匹配该地址的所有行；</li>
 </ul>
 <p>为了方便理解上述内容，我们以删除命令（d）为例，默认不指定地址将会删除所有行：</p>
-<pre class="codepre"><code>$ sed 'd' list 
-$ 
-</code></pre>
+<pre class="codepre"><code>
+$ sed 'd' list 
+$ </code></pre>
 <p>指定地址则删除匹配的行，如删除第一行：</p>
-<pre class="codepre"><code>$ sed '1d' list 
+<pre class="codepre"><code>
+$ sed '1d' list 
 Alice Ford, 22 East Broadway, Richmond VA
 Orville Thomas, 11345 Oak Bridge Road, Tulsa OK
 Terry Kalkas, 402 Lans Road, Beaver Falls PA
 Eric Adams, 20 Post Road, Sudbury MA
 Hubert Sims, 328A Brook Road, Roanoke VA
 Amy Wilde, 334 Bayshore Pkwy, Mountain View CA
-Sal Carpenter, 73 6th Street, Boston MA
-</code></pre>
+Sal Carpenter, 73 6th Street, Boston MA</code></pre>
 <p>或者删除最后一行，$符号在这里表示最后一行，这点要下正则表达式中的含义区别开来：</p>
-<pre class="codepre"><code>$ sed '$d' list 
+<pre class="codepre"><code>
+$ sed '$d' list 
 John Daggett, 341 King Road, Plymouth MA
 Alice Ford, 22 East Broadway, Richmond VA
 Orville Thomas, 11345 Oak Bridge Road, Tulsa OK
 Terry Kalkas, 402 Lans Road, Beaver Falls PA
 Eric Adams, 20 Post Road, Sudbury MA
 Hubert Sims, 328A Brook Road, Roanoke VA
-Amy Wilde, 334 Bayshore Pkwy, Mountain View CA
-</code></pre>
+Amy Wilde, 334 Bayshore Pkwy, Mountain View CA</code></pre>
 <p>这里通过指定行号删除，行号是sed命令内部维护的一个计数变量，该变量只有一个，并且在多个文件输入的情况下也不会被重置。</p>
 <p>前面都是以行号来指定地址，也可以通过正则表达式来指定地址，如删除包含MA的行：</p>
-<pre class="codepre"><code>$ sed '/MA/d' list 
+<pre class="codepre"><code>
+$ sed '/MA/d' list 
 Alice Ford, 22 East Broadway, Richmond VA
 Orville Thomas, 11345 Oak Bridge Road, Tulsa OK
 Terry Kalkas, 402 Lans Road, Beaver Falls PA
 Hubert Sims, 328A Brook Road, Roanoke VA
-Amy Wilde, 334 Bayshore Pkwy, Mountain View CA
-</code></pre>
+Amy Wilde, 334 Bayshore Pkwy, Mountain View CA</code></pre>
 <p>通过指定地址对可以删除该范围内的所有行，例如删除第3行到最后一行：</p>
-<pre class="codepre"><code>$ sed '2,$d' list 
-John Daggett, 341 King Road, Plymouth MA
-</code></pre>
+<pre class="codepre"><code>
+$ sed '2,$d' list 
+John Daggett, 341 King Road, Plymouth MA</code></pre>
 <p>使用正则匹配，删除从包含Alice的行开始到包含Hubert的行结束的所有行：</p>
-<pre class="codepre"><code>$ sed '/Alice/,/Hubert/d' list 
+<pre class="codepre"><code>
+$ sed '/Alice/,/Hubert/d' list 
 John Daggett, 341 King Road, Plymouth MA
 Amy Wilde, 334 Bayshore Pkwy, Mountain View CA
-Sal Carpenter, 73 6th Street, Boston MA
-</code></pre>
+Sal Carpenter, 73 6th Street, Boston MA</code></pre>
 <p>当然，行号和地址对是可以混用的：</p>
-<pre class="codepre"><code>$ sed '2,/Hubert/d' list 
+<pre class="codepre"><code>
+$ sed '2,/Hubert/d' list 
 John Daggett, 341 King Road, Plymouth MA
 Amy Wilde, 334 Bayshore Pkwy, Mountain View CA
-Sal Carpenter, 73 6th Street, Boston MA
-</code></pre>
+Sal Carpenter, 73 6th Street, Boston MA</code></pre>
 <p>如果在地址后面指定感叹号（！），则会将命令应用到不匹配该地址的行：</p>
-<pre class="codepre"><code>$ sed '2,/Hubert/!d' list 
+<pre class="codepre"><code>
+$ sed '2,/Hubert/!d' list 
 Alice Ford, 22 East Broadway, Richmond VA
 Orville Thomas, 11345 Oak Bridge Road, Tulsa OK
 Terry Kalkas, 402 Lans Road, Beaver Falls PA
 Eric Adams, 20 Post Road, Sudbury MA
-Hubert Sims, 328A Brook Road, Roanoke VA
-</code></pre>
+Hubert Sims, 328A Brook Road, Roanoke VA</code></pre>
 <p>以上介绍的都是最基本的地址匹配形式，GNU Sed（也是我们用的sed版本）基于此添加了几个扩展的形式，具体可以看man手册，或者可以看我之前写的<a href="http://kodango.me/sed-address-matching-summary" title="Sed命令地址匹配问题总结">Sed命令地址匹配问题总结</a>一文。</p>
 <p>上面说的内容都是对匹配的地址执行单个命令，如果要执行多个编辑命令要怎么办？sed中可以用{}来组合命令，就好比编程语言中的语句块，例如：</p>
-<pre class="codepre"><code>$ sed -n '1,4{s/ MA/, Massachusetts/;s/ PA/, Pennsylvania/;p}' list 
+<pre class="codepre"><code>
+$ sed -n '1,4{s/ MA/, Massachusetts/;s/ PA/, Pennsylvania/;p}' list 
 John Daggett, 341 King Road, Plymouth, Massachusetts
 Alice Ford, 22 East Broadway, Richmond VA
 Orville Thomas, 11345 Oak Bridge Road, Tulsa OK
-Terry Kalkas, 402 Lans Road, Beaver Falls, Pennsylvania
-</code></pre>
+Terry Kalkas, 402 Lans Road, Beaver Falls, Pennsylvania</code></pre>
 <p>这一篇的内容就到此为止，下一篇见<a href="http://kodango.me/sed-and-awk-notes-part-3" title="Sed&amp;awk笔记之sed篇：基础命令">Sed&amp;awk笔记之sed篇：基础命令</a>。</p>
