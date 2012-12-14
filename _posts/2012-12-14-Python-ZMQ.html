@@ -1,0 +1,149 @@
+---
+layout: default
+title: Python使用ZMQ
+author: zzh
+thisdate: 2012-12-14
+classification: python
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<h2>典型的SERVER-CLIENT</h2>
+<pre class="preclass">
+ server.py</pre>
+<pre class="codepre"><code>
+#
+#   Hello World server in Python
+#   Binds REP socket to tcp://*:5555
+#   Expects "Hello" from client, replies with "World"
+#
+import zmq
+import time
+
+context = zmq.Context()
+socket = context.socket(zmq.REP)
+socket.bind("tcp://*:5555")
+
+while True:
+    #  Wait for next request from client
+    message = socket.recv()
+    print "Received request: ", message
+
+    #  Do some 'work'
+    time.sleep (1)        #   Do some 'work'
+
+    #  Send reply back to client
+    socket.send("World")</code></pre>
+   <pre class="preclass">
+  client.py</pre>
+<pre class="codepre"><code>
+#
+#   Hello World client in Python
+#   Connects REQ socket to tcp://localhost:5555
+#   Sends "Hello" to server, expects "World" back
+#
+import zmq
+
+context = zmq.Context()
+
+#  Socket to talk to server
+print "Connecting to hello world server..."
+socket = context.socket(zmq.REQ)
+socket.connect ("tcp://localhost:5555")
+
+#  Do 10 requests, waiting each time for a response
+for request in range (1,10):
+    print "Sending request ", request,"..."
+    socket.send ("Hello")
+    
+    #  Get the reply.
+    message = socket.recv()
+    print "Received reply ", request, "[", message, "]"
+</code></pre>
+
+<h2>Req/Rep均衡负载请求</h2>
+<pre class="preclass">
+server1.py</pre>
+<pre class="codepre"><code>
+import zmq
+context = zmq.Context()
+socket = context.socket(zmq.REP)
+socket.bind("tcp://127.0.0.1:5000")
+ 
+while True:
+    msg = socket.recv()
+    print "Got", msg
+    socket.send(msg)
+</code></pre>
+<pre class="preclass">
+server2.py</pre>
+<pre class="codepre"><code>
+import zmq
+context = zmq.Context()
+socket = context.socket(zmq.REP)
+socket.bind("tcp://127.0.0.1:6000")
+ 
+while True:
+    msg = socket.recv()
+    print "Got", msg
+    socket.send(msg)
+</code></pre>
+
+<pre class="preclass">
+client.py</pre>
+<pre class="codepre"><code>
+import zmq
+context = zmq.Context()
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://127.0.0.1:5000")
+socket.connect("tcp://127.0.0.1:6000")
+ 
+for i in range(10):
+    msg = "msg %s" % i
+    socket.send(msg)
+    print "Sending", msg
+    msg_in = socket.recv()
+</code></pre>
+    
+<h2>Pub/Sub</h2>
+<pre class="preclass">
+server.py</pre>
+<pre class="codepre"><code>
+import zmq
+from random import choice
+context = zmq.Context()
+socket = context.socket(zmq.PUB)
+socket.bind("tcp://127.0.0.1:5000")
+ 
+countries = ['netherlands','brazil','germany','portugal']
+events = ['yellow card', 'red card', 'goal', 'corner', 'foul']
+ 
+while True:
+    msg = choice( countries ) +" "+ choice( events )
+    print "->",msg
+    socket.send( msg )</code></pre>
+<pre class="preclass">
+client1.py</pre>
+<pre class="codepre"><code>
+import zmq
+ 
+context = zmq.Context()
+socket = context.socket(zmq.SUB)
+socket.connect("tcp://127.0.0.1:5000")
+socket.setsockopt(zmq.SUBSCRIBE, "netherlands")
+socket.setsockopt(zmq.SUBSCRIBE, "germany")
+ 
+while True:
+    print  socket.recv()</code></pre>
+    <pre class="preclass">
+client2.py</pre>
+<pre class="codepre"><code>
+import zmq
+ 
+context = zmq.Context()
+socket = context.socket(zmq.SUB)
+socket.connect("tcp://127.0.0.1:5000")
+socket.setsockopt(zmq.SUBSCRIBE, "brazil")
+socket.setsockopt(zmq.SUBSCRIBE, "goal")
+ 
+while True:
+    print  socket.recv()</code></pre>
