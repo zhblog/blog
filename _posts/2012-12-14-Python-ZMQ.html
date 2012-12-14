@@ -109,41 +109,45 @@ for i in range(10):
 server.py</pre>
 <pre class="codepre"><code>
 import zmq
+import time 
 from random import choice
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind("tcp://127.0.0.1:5000")
- 
-countries = ['netherlands','brazil','germany','portugal']
-events = ['yellow card', 'red card', 'goal', 'corner', 'foul']
- 
+
+abc = ['aa','bb','cc','dd']
+num = ['11', '22', '33', '44', '55']
+
 while True:
-    msg = choice( countries ) +" "+ choice( events )
+    msg = choice( abc ) + choice( num )
     print "->",msg
-    socket.send( msg )</code></pre>
+    socket.send( msg )
+    time.sleep(0.2)
+    msg = choice( num ) + choice( abc )
+    print "->",msg
+    socket.send( msg )
+    time.sleep(0.2)</code></pre>
 <pre class="preclass">
 client1.py</pre>
 <pre class="codepre"><code>
 import zmq
- 
+
 context = zmq.Context()
 socket = context.socket(zmq.SUB)
 socket.connect("tcp://127.0.0.1:5000")
-socket.setsockopt(zmq.SUBSCRIBE, "netherlands")
-socket.setsockopt(zmq.SUBSCRIBE, "germany")
- 
+socket.setsockopt(zmq.SUBSCRIBE, "aa")
+socket.setsockopt(zmq.SUBSCRIBE, "11")
 while True:
     print  socket.recv()</code></pre>
     <pre class="preclass">
 client2.py</pre>
 <pre class="codepre"><code>
 import zmq
- 
+
 context = zmq.Context()
 socket = context.socket(zmq.SUB)
 socket.connect("tcp://127.0.0.1:5000")
-socket.setsockopt(zmq.SUBSCRIBE, "brazil")
-socket.setsockopt(zmq.SUBSCRIBE, "goal")
- 
+socket.setsockopt(zmq.SUBSCRIBE, "cc")
+socket.setsockopt(zmq.SUBSCRIBE, "44")
 while True:
     print  socket.recv()</code></pre>
