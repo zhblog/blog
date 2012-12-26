@@ -1,0 +1,204 @@
+---
+layout: default
+title: 大小端
+author: zzh
+thisdate: 2012-12-20
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<h2>大小端问题</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;平时不做大端小端的判断（默认都是小端），时间长了就只仿佛记得大端小端和鸡蛋有关系^：^</p>
+<p>一、大端小端的概念（以下概念来自网络）</p>
+<p>端模式（Endian）的这个词出自Jonathan 
+Swift书写的《格列佛游记》。这本书根据将鸡蛋敲开的方法不同将所有的人分为两类，从圆头开始将鸡蛋敲开的人被归为Big 
+Endian，从尖头开始将鸡蛋敲开的人被归为Littile 
+Endian。小人国的内战就源于吃鸡蛋时是究竟从大头（Big-Endian）敲开还是从小头（Little-Endian）敲开。在计算机业Big 
+Endian和Little 
+Endian也几乎引起一场战争。在计算机业界，Endian表示数据在存储器中的存放顺序。下文举例说明在计算机中大小端模式的区别。 </p>
+<p>如果将一个32位的整数0x12345678存放到一个整型变量（int）中，这个整型变量采用大端或者小端模式在内存中的存储由下表所示。为简单
+起见，本书使用OP0表示一个32位数据的最高字节MSB（Most Significant 
+Byte），使用OP3表示一个32位数据最低字节LSB（Least Significant Byte）。</p>
+<p></p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top">
+<p>地址偏移</p></td>
+<td valign="top">
+<p>大端模式</p></td>
+<td valign="top">
+<p>小端模式</p></td></tr>
+<tr>
+<td valign="top">
+<p>0x00</p></td>
+<td valign="top">
+<p>12（OP0）</p></td>
+<td valign="top">
+<p>78（OP3）</p></td></tr>
+<tr>
+<td valign="top">
+<p>0x01</p></td>
+<td valign="top">
+<p>34（OP1）</p></td>
+<td valign="top">
+<p>56（OP2）</p></td></tr>
+<tr>
+<td valign="top">
+<p>0x02</p></td>
+<td valign="top">
+<p>56（OP2）</p></td>
+<td valign="top">
+<p>34（OP1）</p></td></tr>
+<tr>
+<td valign="top">
+<p>0x03</p></td>
+<td valign="top">
+<p>78（OP3）</p></td>
+<td valign="top">
+<p>12（OP0）</p></td></tr></tbody></table>
+<p>如果将一个16位的整数0x1234存放到一个短整型变量（short）中。这个短整型变量在内存中的存储在大小端模式由下表所示。</p>
+<p></p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top">
+<p>地址偏移</p></td>
+<td valign="top">
+<p>大端模式</p></td>
+<td valign="top">
+<p>小端模式</p></td></tr>
+<tr>
+<td valign="top">
+<p>0x00</p></td>
+<td valign="top">
+<p>12（OP0）</p></td>
+<td valign="top">
+<p>34（OP1）</p></td></tr>
+<tr>
+<td valign="top">
+<p>0x01</p></td>
+<td valign="top">
+<p>34（OP1）</p></td>
+<td valign="top">
+<p>12（OP0）</p></td></tr></tbody></table>
+<p>由上表所知，采用大小模式对数据进行存放的主要区别在于在存放的字节顺序，<strong>大端方式将高位存放在低地址，小端方式将低位存放在高地址。采用大端方式 进行数据存放符合人类的正常思维，而采用小端方式进行数据存放利于计算机处理</strong>。到目前为止，采用大端或者小端进行数据存放，其孰优孰劣也没有定论。</p>
+<p>二、程序判断</p>
+</tbody></table>
+<h3>一</h3>
+<pre class="codepre"><code>
+#include &lt;stdio.h&gt;
+
+union data
+{
+	int inter;
+	char ch;	
+};
+
+int main(void)
+{
+	union data c;
+	c.inter = 1;
+	if(c.ch == 1)
+		printf("The compute is little-endian.\n");
+	else
+		printf("The compute is big-endian,\n");
+		
+	return 0;	
+}</code></pre>
+
+<h3>二</h3>
+<pre class="codepre"><code>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include <string.h>
+
+union AA
+{
+        int i;
+        char a[2];
+};
+
+int is_little_endian()
+{
+        union check
+        {
+                int i;
+                char ch;
+        }c;
+        c.i = 1;
+
+        return (c.ch == 1);
+}
+
+int main()
+{
+	int ret;
+	union AA *p, u;
+	p = &u;
+	
+	memset(&u, 0, sizeof(union AA));
+	p->a[0] = 0x39;
+	p->a[1] = 0x38;
+	
+	printf("0x%x\n", p->i);
+	
+	if(is_little_endian())
+	{
+	    printf("little endian!\n");
+	}
+	else
+	{
+	    printf("big endian!\n");
+	}
+
+	return 0;
+}</code></pre>
+
+<h3>三</h3>
+<pre class="codepre"><code>
+#include &lt;stdio.h&gt;
+
+
+int main(void)
+{
+	short int x;
+	char x0,x1;
+	
+	x = 0x1122;
+	
+	x0 = ((char *)&x)[0];
+	x1 = ((char *)&x)[1];
+	
+	printf("The x0 = 0x%x\n",x0);
+	printf("The x1 = 0x%x\n",x1);
+
+	return 0;	
+}</code></pre>
+
+<h3>四</h3>
+<pre class="codepre"><code>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+union data
+{
+	short inter;
+	char ch;	
+};
+
+int main(void)
+{
+	union data c;
+	c.inter = 0x1122;
+    printf("%x\n", c.inter);
+    printf("%x\n", c.ch);
+
+	if(c.ch == 0x22)
+		printf("The compute is little-endian.\n");
+	else
+		printf("The compute is big-endian,\n");
+		
+	getchar();
+	return 0;	
+}</code></pre>
