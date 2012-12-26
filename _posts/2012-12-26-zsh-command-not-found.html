@@ -1,0 +1,26 @@
+---
+layout: default
+title: zsh-apt-get提示
+author: zzh
+thisdate: 2012-12-26
+classification: linux
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+
+<h2>zsh 提示apt-get安装</h2>
+<pre class="preclass">
+在使用debian系列的时候，bash下运行还没安装的软件会有提示：
+zzh@mint ~ $ miredo
+程序“miredo”尚未安装。  您可以使用以下命令安装：
+sudo apt-get install miredo
+zzh@mint ~ $ 
+但是换成zsh就没有了，查了一下，原来是引进/etc/zsh_command_not_found来做的，具体的做法可以查看该文件
+zsh下面的做法
+souce /etc/zsh_command_not_found
+ok 会是这样：
+18:11:14 mint:~ > miredo
+程序“miredo”尚未安装。  您可以使用以下命令安装：
+sudo apt-get install miredo
+zsh: command not found: miredo
+[127] 18:11:15 mint:~ > 
+</pre>
