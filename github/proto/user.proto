@@ -1,0 +1,10 @@
+message User {  
+	optional string username = 1 [default = "jack.zh"];  
+	optional string password = 2;  
+	optional int32 age = 3;  
+	optional string email = 4;  
+}  
+
+message Users {  
+	repeated User user = 1;  
+}  
