@@ -1,0 +1,182 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>C</title>
+<meta name="Microsoft Theme" content="none">
+</head>
+
+<body>
+
+<h2>Sed&nbsp;&nbsp; <span style="font-weight: 400"><font size="3">
+<a target="_blank" href="sed_fei.htm">sed学习笔记</a></font></span></h2>
+<h3>一. Sed语法:</h3>
+<p>sed '<i>command'</i> filenames</p>
+<h3>二. sed简介</h3>
+<p>Sed是非交互式的行编辑器. 它即可以从stdin中接收文本输入, 也可以从文件中接收文本输入, 它对输入中的指定行进行特定的操作, 一行操作一次, 
+然后将结果输出到stdout, 或输出到文件中. 在shell脚本中使用的话, sed通常都是作为管道工具链中的一个处理部分来使用. </p>
+<p>Sed会决定它需要处理那些行, 因为sed的参数就包含有地址范围. [1] 既可以通过行号来指定地址范围, 也可以通过模式匹配来决定地址范围. 比如, 
+3d表示sed会删除输入的第3行, /windows/d表示sed会删除掉所有匹配&quot;windows&quot;的输入行. </p>
+<div class="TABLE">
+	<h3><b>三. 基本sed操作</b></h3>
+	<table class="CALSTABLE" border="1" id="table1">
+		<colgroup>
+			<col><col><col>
+		</colgroup>
+		<thead>
+			<tr>
+				<th>操作符</th>
+				<th>名字</th>
+				<th>效果</th>
+			</tr>
+		</thead>
+		<tr>
+			<td><code class="OPTION">[地址范围]/p</code></td>
+			<td>打印</td>
+			<td>打印[指定的地址范围]</td>
+		</tr>
+		<tr>
+			<td><code class="OPTION">[地址范围]/d</code></td>
+			<td>删除</td>
+			<td>删除[指定的地址范围]</td>
+		</tr>
+		<tr>
+			<td><code class="OPTION">s/pattern1/pattern2/</code></td>
+			<td>替换</td>
+			<td>将指定行中, 将第一个匹配到的pattern1, 替换为pattern2. </td>
+		</tr>
+		<tr>
+			<td><code class="OPTION">[地址范围]/s/pattern1/pattern2/</code></td>
+			<td>替换</td>
+			<td>在<tt class="REPLACEABLE"><i>地址范围</i></tt>指定的每一行中, 
+			将第一个匹配到的pattern1, 替换为pattern2.
+	      	</td>
+		</tr>
+		<tr>
+			<td><code class="OPTION">[地址范围]/y/pattern1/pattern2/</code></td>
+			<td>transform</td>
+			<td>在<tt class="REPLACEABLE"><i>地址范围</i></tt>指定的每一行中, 
+			将pattern1中的每个匹配到pattern2的字符都使用pattern2的相应字符作替换. (等价于<b class="COMMAND">tr</b>命令)</td>
+		</tr>
+		<tr>
+			<td><code class="OPTION">g</code></td>
+			<td>全局</td>
+			<td>在每个匹配的输入行中, 将<em>每个</em>模式匹配都作相应的操作. (译者注: 不只局限于第一个匹配) 
+	        </td>
+		</tr>
+		<tr>
+			<td>-e</td>
+			<td>　</td>
+			<td>允许多项编辑</td>
+		</tr>
+		<tr>
+			<td>-f</td>
+			<td>　</td>
+			<td>指定sed脚本文件名</td>
+		</tr>
+		<tr>
+			<td>-n</td>
+			<td>　</td>
+			<td>取消缺省输出</td>
+		</tr>
+	</table>
+	<p>　</div>
+<p>除非在替换命令的后边明确指定选项g(全局), 否则的话, 替换操作只会替换掉每行上的第一个模式匹配实例. </p>
+<p>如果在命令行或脚本中使用这个命令, sed操作可能还需要某些选项和引用. </p>
+<h3>四. 示例</h3>
+<p>$cat file1&nbsp;&nbsp;&nbsp; #file1内容</p>
+<hr>
+<p>northwest&nbsp;&nbsp;&nbsp; NW Charles Main&nbsp; 3.0 .98 3 24<br>
+western&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WE Sharon Gray&nbsp;&nbsp; 5.3 .97 5 23<br>
+Southwest&nbsp;&nbsp;&nbsp; SW Lewis Dalsass 2.7 .8 2 18<br>
+Southern&nbsp;&nbsp;&nbsp;&nbsp; SO Suan Chin&nbsp;&nbsp;&nbsp;&nbsp; 5.1 .95 4 
+15<br>
+Southeast&nbsp;&nbsp;&nbsp; SE Patricia Hemenway 4.0.7 4 17<br>
+eastern&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EA TB Savage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+4.4 .84 5 20<br>
+northeast&nbsp;&nbsp;&nbsp; NE AM Main Jr.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+5.1 .94 3 13<br>
+north&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO Margot Weber&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+4.5 .89 5 9<br>
+central&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CT Ann Stephens&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+5.7 .94 5 13</p>
+<hr>
+<p>例1:</p>
+<hr>
+<p>1. sed '1,3d' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#删除文件file1的1至3行</p>
+<p>2. sed -n '/Tom/p' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#打印文件file1中包含Tom的行</p>
+<p>3. sed -n '/Tom/! p' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#打印文件file1中不包含Tom的行</p>
+<p>4. sed '3,$d' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#删除文件file1从第3行至最后一行的内容</p>
+<p>5. sed '/Tom/d' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#删除文件file1中包含Tom的行</p>
+<p>6. sed 's/Tom/Jack/g' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#将文件file1各行内所有的Tom都替换为Jack</p>
+<p>7. sed -n 's/^Tom/Jack/p' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#将文件file1行首的Tom替换为Jack并只打印发生替换的行</p>
+<p>8. sed -n 's/\(Mar\)got/\1ianne/p' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#将文件file1中的Margot替换为Marianne,并只显示发性替换的行</p>
+<p>9. sed -n '/west/,/east/' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#将文件file1在west和east中的所有行打印出来</p>
+<p>10. sed -e '1,3d' -e 's/Hemenway/Jones/' file1&nbsp;&nbsp;&nbsp; 
+#对file1先编辑,再替换</p>
+<p>11. sed '/Susan/r file2' file1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+#在文件file1中所有包含Suan的行后读入文件file2的内容</p>
+<p>12. sed -n '/north/w file3' file1&nbsp;&nbsp;&nbsp; #将file1中包含north的行写入file3</p>
+<p>13. sed&nbsp; '/^north /a ---&gt;new appended line&lt;---' file1&nbsp;&nbsp;&nbsp; 
+#将file1中以north开头的行后添加一行内容</p>
+<p>14. sed&nbsp; '/eastern/i ---&gt;new insert line&lt;---' file1&nbsp;&nbsp;&nbsp; 
+#将file1中包含eastern的行前插入一行内容</p>
+<hr>
+<p>例2. sed脚本</p>
+<p><b>$cat sed_sh1 </b></p>
+<hr>
+<p>/Lewis /a \<br>
+saaaaaaaaaaaaaaaaaa\<br>
+bbbbbbbbbbbbb</p>
+<p>/Margot/c \<br>
+*********************\<br>
+*Margot has retired *|<br>
+********************* </p>
+<p>1i employee database</p>
+<p>$d</p>
+<hr>
+<p>针对文件file1运行sed脚本sed_sh</p>
+<p><b>$sed -f sed_sh1 file1</b></p>
+<p>例3. sed脚本</p>
+<hr>
+<p>$cat sed_sh2</p>
+<p>/western/,/southeast/ {<br>
+/^ $/d<br>
+/Suan/ { h; d; }<br>
+}</p>
+<p>s/TB \(Savage\)/Thomas \1/</p>
+<hr>
+<h3>练习</h3>
+<p>1. 写出下列sed命令的功能</p>
+<p>1) sed -n '/sentimental/p' filex<br>
+2) sed '1,3d' filex &gt; newfilex<br>
+3) sed '/[Dd]aniel/d' filex <br>
+4) sed -n '15,20p' filex<br>
+5) sed 1,10s/Montana/MT/g' filex<br>
+6) sed '/March/! d' filex<br>
+7) sed '/report/s/5/8/ ' filex<br>
+8) sed 's/....//' filex<br>
+9) sed 's/....$//' filex<br>
+10) sed '/east/,/west/s/North/South/' filex<br>
+11) sed -n '/Time off/w timefile' filex<br>
+12) sed 's/\([Oo]ccur\)ence/\1rence/' filex</p>
+<p>2.写出一个能完成下列功能的sed脚本</p>
+<p>&nbsp;&nbsp;&nbsp; 1)删除所有空行<br>
+&nbsp;&nbsp;&nbsp; 2)在第一行前插入标题&quot;Personal sed file&quot;<br>
+&nbsp;&nbsp;&nbsp; 3)把第5行到最后一行范围内第一个出现的单词&quot;or&quot;更改为&quot;and&quot;<br>
+&nbsp;&nbsp;&nbsp; 4)在文件的末尾加上&quot;The End&quot;<br>
+&nbsp;&nbsp;&nbsp; 5)将包含in,包含out之间的行写入另外一个文件:mysedout</p>
+
+</body>
+
+</html>

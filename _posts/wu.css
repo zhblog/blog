@@ -1,0 +1,11 @@
+/* CSS Document */
+
+.awk_script {
+	font-weight: bold;
+	color: #0000CC;
+	font-size: 10px;
+}.cmd_style {
+	font-size: 10px;
+	font-weight: bold;
+	color: #336600;
+}

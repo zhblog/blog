@@ -1,0 +1,50 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>新建网页 1</title>
+</head>
+
+<body>
+
+<p>1. 写一个简单的批量添加用户的shell程序(注:参照示例7-13)</p>
+<p>假定用户名、密码、用户所属的组包括在文件myuser中(分别是第1列、第2列、第3列),格式如下:</p>
+<p>hao 123456 net04grp <br>
+  tom 234567 net04grp<br>
+  nuwa 345678 net04grp<br>
+  zhangqiang uvwxyz stu05<br>
+lusi shanghai stu05<br>
+jane qpmzwonx stu05 </p>
+<p>如果你编写的脚本是ua.sh,那么在工作目录下，执行：</p>
+<p>./ua.sh -f myuser</p>
+<p>就能将文件myuser中所列的用户做为系统用户添加进来，并设定密码，用户组。</p>
+<p>2. 在第1题的基础上,编写一个批量删除用户的程序. </p>
+<p>如果你编写的脚本是ud.sh,那么在工作目录下，执行：</p>
+<p>./ud.sh -f myuser</p>
+<p>就能将文件myuser中所列的系统用户删除。</p>
+<p>3. 编写下列bash脚本函数(函数名可以自定义):</p>
+<p>isRootUser():判断当前用户是否是root用户</p>
+<p>isUserExist():判断用户是否存在</p>
+<p>  getOs():显示操作系统名称</p>
+<p>die(): 显示信息($1), 以某个返回值($2)退出</p>
+<p>  getHostName(): 显示主机名称</p>
+<p>getCpuInfo():显示CPU的相关信息,如制造商,频率等</p>
+<p>  getRealRamInfo():显示系统RAM大小</p>
+<p>  getSystemLoad():显示系统在过去5,10,15分钟的负载</p>
+<p>getNumberOfLoggedInUsers(): 得到登录的用户数</p>
+<p>  getNumberOfInterfaces(): 得到网络接口数</p>
+<p>getNumberOfKernelModules(): 得到内核模块数 (提示: lsmod ) </p>
+<p>getNumberOfRunningProcess(): 得到运行的进程数(提示: ps -aux)</p>
+<p>getParittions() :显示分区数,各分区的总空间大小,已用空间大小,尚余空间大小及百分比</p>
+<p>getOsRunLevel(): 得到系统运行级别(提示:/etc/inittab有默认系统运行级别的设置, 或运行命令runlevel)</p>
+<p>  getDiskDrives(): 获取磁盘数 (提示:fdisk -l) </p>
+<p>4. 编写脚本ifbash,通过新建配置文件的方式,为网络接口eth0绑定一个新的IP,即假定原来eth0上只绑定了一个IP,则通过下面两次执行:</p>
+<p># ./ifbash 172.16.32.50 255.255.0.0</p>
+<p># ./ifbash 10.1.1.10 255.0.0.0</p>
+<p>将为eth0添加两个虚拟接口</p>
+<p>eth0:1 (172.16.32.50/255.255.0.0)</p>
+<p>eth0:2 (10.1.1.10/255.0.0.0) </p>
+</body>
+
+</html>

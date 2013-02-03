@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>无标题文档</title>
+</head>
+
+<body>
+<h2>xargs命令</h2>
+<p>利用接收到的输入构造并运行其它命令.或者说xargs将它接收到的输入输出给xargs后面的命令，作为后面那个命令的参数。</p>
+<p>语法:</p>
+<p>xargs [options] [command]</p>
+<p>1. 比较当前目录下以f开头的文件对的不同 (如, f1.a 、 f1.b、 f2.a 、f2.b等):</p>
+<p>ls f* | xargs -n2 diff</p>
+<p>2. 显示文件,每行一个单词:</p>
+<p>cat file | xargs -n1</p>
+<p>3. 将文件从olddir移动到newdir,同时显示每条命令( -t:
+要运行每条命令前显示它
+):</p>
+<p>ls olddir | xargs -i -t mv olddir/{} newdir</p>
+<p>4. 删除当前目录下的文件</p>
+<p>ls | xargs rm</p>
+<p>5. 删除vsftpd进程。</p>
+<p> ps x|grep -m1 vsftpd | gawk '{print $1}'| xargs kill</p>
+<p>6. 在当前目录下找出一天内修改过的文件,并打印它们的内容.</p>
+<p>find . -type f -mtime -1 -print | xargs pr -n</p>
+<p>7. 查找Members目录下的普通文件,并在这些文件中查找字符串&quot;google&quot;</p>
+<p>find Members/ -type f -print0 | xargs -0 grep &quot;google&quot;</p>
+<h2>代码分析</h2>
+<p>一. 参照BASH编程手册,运行并分析&quot;例子 33-2 稍微复杂一些的shell包装&quot;, 该脚本的功能是将一个文件中的某个字符串(或匹配模式), 替换为另一个字符串(或匹配模式)</p>
+<p>二. 参照BASH编程手册,运行并分析&quot;例子 A-17. tree: 显示目录树&quot;, 该脚本的功能是显示树形目录结构</p>
+<p>三. 参照BASH编程手册,运行并分析&quot;例子 10-8. 列出系统上的所有用户&quot;</p>
+<p>四. 参照BASH编程手册,运行并分析&quot;例子 10-9. 在目录的所有文件中查找源字串&quot;</p>
+<p>五. 参照BASH编程手册,运行并分析&quot;例子 10-11. 将目录中所有符号链接文件的名字保存到一个文件中&quot;</p>
+<p> 六. 参照BASH编程手册,运行并分析&quot;例子 10-28. 检查输入字符是否为字母&quot; </p>
+<p>七. 参照BASH编程手册,运行并分析&quot;例子 12-5. Logfile: 使用xargs来监控系统log&quot; </p>
+<p>八. 参照BASH编程手册,运行并分析&quot;例子 12-6. 把当前目录下的文件拷贝到另一个文件中&quot; </p>
+<p>九. 参照BASH编程手册,运行并分析&quot;例子 12-7. 通过名字kill进程&quot;</p>
+<p>十. 参照BASH编程手册,运行并分析&quot;例子 12-8. 使用xargs分析单词出现的频率&quot;</p>
+<h2>练习</h2>
+<p>1. 删除文件中的重复行,可以将删除重复行的结果显示在屏幕上,也可以将删除重复行的结果重定向输出到另一个文件中.假定脚本的文件名为xx,则希望达到以下效果:</p>
+<p>执行:</p>
+<p><strong># ./xx ff1</strong></p>
+<p>可以将文件ff1中的重复行删除,并将结果显示在屏幕上.</p>
+<p>执行:</p>
+<p><strong># ./xx ff1 ff1new</strong></p>
+<p>可以将文件ff1中的重复行删除,并将结果输出到文件ff1new中.</p>
+<p>2. 参照&quot;例子 10-8. 列出系统上的所有用户&quot;,编写一个脚本列,出系统上不允许登录（即登录脚本为/sbin/nologin）的用户.</p>
+<p>3. 参照&quot;例子 10-9. 在目录的所有文件中查找源字串&quot;,编写一个脚本,在x目录中,扩展名为y的文件内查找字符串z, x、y、z都由命令行参数确定。</p>
+<p>4. 参照&quot;例子 10-11. 将目录中所有符号链接文件的名字保存到一个文件中&quot;,编写一个脚本,将目录中所有近一天内创建的文件名保存到一个文件中。</p>
+<p>5. 编写脚本, 将1至100内能被3整除的数字相加,能被5整除的数字相加,能被7整除的数字相加,能被9整除的数字相加.将最后结果按大小顺序输出.</p>
+<p>6. 参照&quot;例子 10-28. 检查输入字符是否为字母&quot;,完成例子中给出的任务----编写一个'isfloat ()'函数来测试浮点数.</p>
+<p>7. 参照&quot;例子 12-8. 使用xargs分析单词出现的频率&quot;,查找指定的单词出现的频率.即,假定该脚本文件为e7.sh,执行:</p>
+<p>e7.sh anaconda.log network</p>
+<p>就能输出在文件anaconda.log中单词network出现了多少次.</p>
+<p>8.  参照&quot;例子 13-11. killall, 来自于/etc/rc.d/init.d&quot;,并完成下面的练习:</p>
+<p>练习1). 察看并分析/etc/rc.d/init.d下的dovecot脚本.</p>
+<p>练习2). 在/etc/rc.d/init.d中, 分析halt脚本. 比脚本killall长一些, 但是概念上很相近. 对这个脚本做一个拷贝, 放到你的home目录下并且用它练习一下, (不要以root身份运行它). 使用-vn标志来模拟运行一下(sh -vn scriptname). 添加详细的注释. 将&quot;action&quot;命令修改为&quot;echo&quot;.</p>
+</body>
+</html>

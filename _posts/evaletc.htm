@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>无标题文档</title>
+<link href="file:///F|/w2008/04net_shell/shellweb/wu.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<h3>一. 花括号扩展</h3>
+<p>如:</p>
+<p class="awk_script">$ echo chap_{one,two,three}.txt </p>
+<h3>二. 算术扩展</h3>
+<p>1. $((<em>算术表示式</em>))</p>
+<p>如:</p>
+<p>#!/bin/bash<br>
+  echo -n &quot;how old are you?&quot;<br>
+  read age<br>
+  echo &quot;Wow,in $((60-age)) years ,you'll be 60!&quot;
+</p>
+<h3>三. 命令替换</h3>
+<p>1. $(<em>命令</em>)</p>
+<p>2. eval <em>参数</em> </p>
+<p>命令格式：eval <em>args</em></p>
+<p>　　功能：当shell程序执行到eval语句时，shell读入参数args，并将它们组合成一个新的命令，然后执行 </p>
+<p>eval的作用是再次执行命令行处理，也就是说，对一个命令行，执行两次命令行处理。这个命令要用好，就要费一定的功夫。</p>
+<p>如:</p>
+<p>$ <span class="awk_script">eval 'ls -l $(find . -name "a*" -print)'</span><br>
+  ________________________________________<br>
+  <br>
+  $ <span class="awk_script">where=$(pwd)</span><br>
+  $ <span class="awk_script">echo $where</span></p>
+<h3>四. bash命令处理的12个步骤:</h3>
+<p>1、将命令行分成由固定元字符集分隔的记号；</p>
+<p>SPACE, TAB, NEWLINE, ; , (, ), &lt;, &gt;, |, &amp;</p>
+<p>记号类型包括单词，关键字，I/O重定向符和分号。</p>
+<p>2、检测每个命令的第一个记号，查看是否为不带引号或反斜线的关键字。</p>
+<p>如果是一个开放的关键字，如if和其他控制结构起始字符串，function，{或(，则命令实际上为一复合命令。shell在内部对复合命令进行处理，读取下一个命令，并重复这一过程。如果关键字不是复合命令起始字符串(如then等一个控制结构中间出现的关键字)，则给出语法错误信号。</p>
+<p>3、依据别名列表检查每个命令的第一个关键字；</p>
+<p>如果找到相应匹配，则替换其别名定义，并退回第一步;否则进入第4步。该策略允许递归别名，还允许定义关键字别名。如alias procedure=function</p>
+<p>4、执行大括号扩展，例如a{b,c}变成ab ac</p>
+<p>5、如果~位于单词开头，用$HOME替换~。</p>
+<p>如使用usr的主目录替换~user。</p>
+<p>6、对任何以符号$开头的表达式执行参数(变量)替换;
+</p>
+<p>7、对形式$(string)的表达式进行命令替换；</p>
+<p>这里是嵌套的命令行处理。</p>
+<p>8、计算形式为$((string))的算术表达式；</p>
+<p>9、把行的参数，命令和算术替换部分再次分成单词，这次它使用$IFS中的字符做分割符而不是步骤1的元字符集；</p>
+<p>10、对出现*, ?, [ / ]对执行路径名扩展，也称为通配符扩展； </p>
+<p>11、按命令优先级表(跳过别名)，进行命令查询； </p>
+<p>12、设置完I/O重定向和其他操作后执行该命令。</p>
+<h3>五、关于引用 </h3>
+<p>1、单引号跳过了前10个步骤，不能在单引号里放单引号<br>
+  2、双引号跳过了步骤1~5，步骤9~10，也就是说，只处理6~8个步骤。 </p>
+<p>也就是说，双引号忽略了管道字符，别名，~替换，通配符扩展，和通过分隔符分裂成单词。<br>
+  双引号里的单引号没有作用，但双引号允许参数替换，命令替换和算术表达式求值。可以在双引号里包含双引号，方式是加上转义符&quot;\&quot;，还必须转义$, `, \。 </p>
+<h3>六、命令优先级表</h3>
+<p>  1、别名<br>
+  2、关键字<br>
+  3、函数<br>
+  4、内置命令<br>
+  5、脚本或可执行程序($PATH)</p>
+<h3>七、鉴于一些学习中会遇到的困惑，我再给出一些有趣的命令。<br>
+</h3>
+<p>1、以下命令可以改变默认的命令优先级</p>
+<ul>
+  <li>command [-pVv] <em>命令 [参数 ...]</em></li>
+</ul>
+<p>运行系统内部命令或在PATH路径中找到命令,而不去执行shell中的同名函数(如果有的话).</p>
+<ul>
+  <li>builtin <em>shell内部命令 [参数]</em></li>
+</ul>
+<p>执行shell内置命令,而不是同名的shell函数(如果有的话)</p>
+<ul>
+  <li>enable [-adnps] [-f <em>filename</em>] [<em>name</em> ...]</li>
+</ul>
+<p>启用或禁用内置的shell命令</p>
+<p>上面的命令行提及过，第11步会进行命令查找，那它的具体过程如何呢？<br>
+  它的默认查找次序为函数，内部命令，脚本和可执行代码。我们往往要在实际编程中跳过一些查找项以满足一定的功能需求。这时候就要用到这三个命令来施展魔法~~ </p>
+<p>2、command </p>
+<p>跳过别名和函数的查找，换句话说，它只查找内部命令以及搜索路径中找到的脚本或可执行程序。<br>
+  这里举个有趣的例子。  </p>
+<p>[root@home root]# type -all pwd<br>
+  <br>
+  pwd is a shell builtin<br>
+  pwd is /bin/pwd</p>
+<p>  [root@home root]# cat myscript2<br>
+  <br>
+  <span class="awk_script">#!/bin/sh<br>
+  pwd(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo &quot;This is the current directory.&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;command pwd<br>
+  }<br>
+  pwd</span></p>
+<p>  [root@home root]# ./myscript2<br>
+  This is the current directory.<br>
+  /root</p>
+<p>我用pwd()函数取代了内置命令pwd以及外部命令/bin/pwd，然后在脚本里执行内置命令pwd。在这里我们为什么要用command呢？是为了避免函数陷入递归循环，因为函数名与内置命令同名，而函数的优先级比内置命令高。</p>
+<p>3、builtin </p>
+<p>顾名思义，它只查找shell内置命令。这个命令很简单，就不多说了。</p>
+<p>4、enable</p>
+<p>  与builtin相反，它屏蔽一个内置命令，允许运行一个shell脚本或同名的可执行代码而无须给出完全路径名。<br>
+  举个例子吧。 </p>
+<p>pwd命令有两个，一个是shell内置的，一个是可执行程序。</p>
+<p>当执行一些奇怪的路径名后，shell内置的pwd会打印出&quot;错误信息&quot;，但外部的pwd会打印出当前目录的&quot;原来面目&quot;。请看下面：<br>
+  [root@home root]# cd //<br>
+  [root@home //]# pwd<br>
+  //<br>
+  [root@home //]# type -all pwd<br>
+  pwd is a shell builtin<br>
+  pwd is /bin/pwd<br>
+  [root@home //]# /bin/pwd<br>
+  /<br>
+  [root@home //]# enable -n pwd<br>
+  [root@home //]# pwd<br>
+/</p>
+<p>这样，用enable -n屏蔽内置pwd命令后，就可以用外部pwd打印出正确的路径名了。</p>
+<h3>例1. eval功能示例</h3>
+<p>#!/bin/bash</p>
+<p>y=`eval ls -l` # 等效于 y=`ls -l`<br>
+  echo $y </p>
+<p>y=`eval df` # 等效于 y=`df`<br>
+  echo $y </p>
+<p>exit 0</p>
+<p>---------------------------------------------</p>
+<p>$ var=&quot;1234 4556&quot;<br>
+  $ tmp=var</p>
+<p>$ eval test='$'$tmp （这里只是参数传递）<br>
+$ echo $test</p>
+<p>---------------------------------------------</p>
+<p>  $ tmp='ls -l; date'<br>
+  $ eval $tmp</p>
+<h3>例2. 强制注销 </h3>
+<p>#!/bin/bash</p>
+<p>y=`eval ps ax | sed -n '/ppp/p' | awk '{ print $1 }'`<br>
+  # 找到进程 'ppp'的PID.</p>
+<p>kill -9 $y # 杀死进程 </p>
+<p># 上述几行可以用下面的行来代替<br>
+  # kill -9 `ps ax | awk '/ppp/ { print $1 }'</p>
+<p>chmod 666 /dev/ttyS3<br>
+  # 通过信号SIGKILL 杀死进程ppp 发变了串口权限, 将它恢复到以前状态.</p>
+<p>rm /var/lock/LCK..ttyS3 # 删除串口LOCK文件.<br>
+  exit 0</p>
+<h3>例3. rot13</h3>
+<p>#!/bin/bash<br>
+  # rot13.sh: 典型 rot13 算法, 一个简单的加密算法.</p>
+<p># 用法: ./rot13.sh filename<br>
+  # or ./rot13.sh &lt;filename<br>
+  # or ./rot13.sh and supply keyboard input (stdin)</p>
+<p>cat &quot;$@&quot; | tr 'a-zA-Z' 'n-za-mN-ZA-M' # &quot;a&quot; 转换为 &quot;n&quot;, &quot;b&quot; 转换为&quot;o&quot;, 以此类推.<br>
+  # The 'cat &quot;$@&quot;' construction<br>
+  # permits getting input either from stdin or from files.</p>
+<p>exit 0</p>
+<h3> 例4. 用eval技巧实现shell的控制结构for</h3>
+<p>用eval技巧实现shell的控制结构for。 </p>
+<p>[root@home root]# cat myscript1<br>
+  #!/bin/sh<br>
+  evalit(){<br>
+  if [ $cnt = 1 ];then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eval $@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return<br>
+  else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let cnt=cnt-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;evalit $@<br>
+  fi<br>
+  eval $@<br>
+  }<br>
+  cnt=$1<br>
+  echo $cnt | egrep &quot;^[1-9][0-9]*$&quot; &gt;/dev/null<br>
+  if [ $? -eq 0 ]; then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shift<br>
+&nbsp;&nbsp;&nbsp;&nbsp;evalit $@<br>
+  else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo 'ERROR!!! Check your input!'<br>
+  fi</p>
+<p><br>
+  [root@home root]# ./myscript1 3 hostname<br>
+  home<br>
+  home<br>
+  home</p>
+<p><br>
+  [root@home root]# ./myscript1 5 "id |cut -f1 -d ' '" <br>
+  uid=0(root)<br>
+  uid=0(root)<br>
+  uid=0(root)<br>
+  uid=0(root)<br>
+  uid=0(root)</p>
+<p>注意：bash里有两个很特殊的变量，它们保存了参数列表。</p>
+<p>$*，保存了以$IFS指定的分割符所分割的字符串组。<br>
+  $@，原样保存了参数列表，也就是&quot;$1&quot;&quot;$2&quot;... </p>
+<p>这里我使用了函数递归以及eval实现了for结构。<br>
+  当执行eval $@时，它经历了步骤如下：<br>
+  第1步，分割成eval $@<br>
+  第6步，扩展$@为hostname<br>
+  第11步，找到内置命令eval<br>
+  重复一次命令行处理，第11步，找到hostname命令，执行。 </p>
+<p>注意：也许有人想当然地认为，何必用eval呢？直接$@来执行命令就可以了嘛。</p>
+<h3>例5. 一个典型错误的例子 </h3>
+<p>错误！这里给个典型的例子大家看看。</p>
+<p>[root@home root]# a=&quot;id | cut -f1 -d' '&quot;<br>
+  [root@home root]# $a<br>
+  id：无效选项 -- f<br>
+  请尝试执行‘id --help'来获取更多信息。<br>
+  [root@home root]# eval $a<br>
+  uid=0(root)</p>
+<p>如果命令行复杂的话(包括管道或者其他字符)，直接执行$a字符串的内容就会出错。分析如下。<br>
+  $a的处理位于第6步──参数扩展，也就是说，跳过了管道分析，于是&quot;|&quot;, &quot;cut&quot;, &quot;-f1&quot;, &quot;-d&quot;都变成了id命令的参数，当然就出错啦。<br>
+  但使用了eval，它把第一遍命令行处理所得的&quot;id&quot;, &quot;|&quot;, &quot;cut&quot;, &quot;-f1&quot;, &quot;-d&quot;这些字符串再次进行命令行处理，这次就能正确分析其中的管道了。</p>
+<p>总而言之：要保证你的命令或脚本设计能正确通过命令行处理，跳过任意一步，都可能造成意料外的错误！ </p>
+<h3>例6. 设置系统的ls色彩显示 </h3>
+<p>eval $(dircolors -b /etc/dircolors)</p>
+<p>eval语句通知shell接受eval参数，并再次通过命令行处理的所有步骤运行它们。<br>
+  它使你可以编写脚本随意创建命令字符串，然后把它们传递给shell执行;<br>
+  $()是命令替换，返回命令的输出字符串。<br>
+  其中dircolors命令根据/etc/dircolors配置文件生成设置环境变量LS_COLORS的bash代码，内容如下<br>
+  [root@localhost root]# dircolors -b &gt; tmp<br>
+  [root@localhost root]# cat tmp<br>
+  LS_COLORS='no=00:fi=00:di=01;34:ln=01; ......<br>
+  export LS_COLORS<br>
+  #这里我没有指定配置文件，所以dircolors按预置数据库生成代码。<br>
+  其输出被eval命令传递给shell执行。</p>
+<p>eval是对Bash Shell命令行处理规则的灵活应用，进而构造&quot;智能&quot;命令实现复杂的功能。<br>
+  上面提及的命令是eval其中一个很普通的应用，它重复了1次命令行参数传递过程，纯粹地执行命令的命令。<br>
+  其实它是bash的难点，是高级bash程序员的必修之技。</p>
+<h3>例7. 显示菜单,根据用户所做选择执行不同的动作</h3>
+<p>#!/bin/bash<br>
+  PS3=&quot;Please select one of the actions :&quot;<br>
+  select choice in &quot;execute ls&quot; &quot;show current date&quot; &quot;command id&quot; &quot;Exit loop&quot;<br>
+  do<br>
+xcomm=&quot;&quot;<br>
+case $choice in<br>
+&quot;execute ls&quot; )<br>
+xcomm=&quot;ls -lt&quot;;;<br>
+&quot;show current date&quot; )<br>
+xcomm=&quot;date&quot;;;<br>
+&quot;command id&quot; )<br>
+xcomm=&quot;id | cut -f1 -d' '&quot;;;<br>
+&quot;Exit loop&quot;)<br>
+echo you select exit,bye.;break;;<br>
+*)<br>
+echo your select is wrong.<br>
+esac<br>
+eval $xcomm<br>
+done<br>
+exit 0<br>
+</p>
+<p>练习:</p>
+<p>	1. 编写脚本,要求用户从键盘输入一串命令并能执行该命令.</p>
+</body>
+</html>

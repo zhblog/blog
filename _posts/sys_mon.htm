@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>无标题文档</title>
+</head>
+
+<body>
+<h1>系统监视</h1>
+<p>一. 监视并重启httpd服务</p>
+<p>#!/bin/bash<br>
+  # Apache Process Monitor<br>
+  # Restart Apache Web Server When It Goes Down<br>
+  # RHEL / CentOS / Fedora Linux restart command<br>
+  RESTART=&quot;service httpd restart&quot;<br>
+  <br>
+  # uncomment if you are using Debian / Ubuntu Linux<br>
+  #RESTART=&quot;/etc/init.d/apache2 restart&quot;<br>
+  <br>
+  #path to pgrep command<br>
+  PGREP=&quot;/usr/bin/pgrep&quot;<br>
+  <br>
+  # find httpd pid<br>
+  $PGREP httpd<br>
+  <br>
+  if [ $? -eq 0 ]<br>
+  then<br>
+  # restart apache<br>
+  $RESTART<br>
+  fi</p>
+<hr>
+<p>check process </p>
+<p>#!/bin/bash</p>
+<p>process=&quot;/usr/sbin/httpd&quot;<br>
+  start=&quot;service httpd restart&quot;</p>
+<p>ps ax | awk '{print $5}' | grep -q &quot;^$process$&quot; || {<br>
+  # Apparently not running, so start the process<br>
+  eval &quot;$start&quot;<br>
+  exit $?<br>
+  }</p>
+<p>exit 0</p>
+<hr>
+<p>check apache </p>
+<p>#!/bin/bash</p>
+<p>URL=&quot;http://localhost/netsaint/index.html&quot;<br>
+  TIMEOUT=10 #(seconds)<br>
+  MATCH=&quot;&lt;HTML&gt;&quot;<br>
+  restart=&quot;service httpd restart&quot;</p>
+<p>wget -q -O - -T=$TIMEOUT --tries=1 &quot;$URL&quot; | grep -q &quot;$MATCH&quot; || {<br>
+  # Something is wrong, so restart<br>
+  eval &quot;$restart&quot;<br>
+  exit $?<br>
+  }</p>
+<p>exit 0<br>
+</p>
+<hr>
+<p>check port</p>
+<p>#!/bin/bash</p>
+<p>port=&quot;80&quot;<br>
+  restart=&quot;service httpd restart&quot;</p>
+<p>netstat -ln | awk '/^tcp/ {print $4}' | grep -q &quot;:$port$&quot; || {<br>
+  # Apparently not listening, so run restart command<br>
+  eval &quot;$restart&quot;<br>
+  exit $?<br>
+  }</p>
+<p>exit 0</p>
+<hr>
+<p>log watch all </p>
+<p>#!/bin/bash</p>
+<p>HOSTS='<br>
+  host1|admin1@someplace.com<br>
+  host2|admin2@someplace.com<br>
+  host3|admin3@someplace.com<br>
+  '</p>
+<p>for entry in $HOSTS ; do<br>
+  host=`echo &quot;$entry&quot; | sed 's/|.*$//'`<br>
+  email=`echo &quot;$entry&quot; | sed 's/^.*|//'`<br>
+  logwatch --mailto &quot;$email&quot; --hostname &quot;$host&quot;<br>
+done</p>
+<hr>
+<p>web</p>
+<p>#!/bin/bash</p>
+<p>SLEEP=30 #seconds<br>
+  TIMEOUT=10 #seconds<br>
+  URL='http://localhost/index.html'<br>
+  MATCH='&lt;HTML&gt;'</p>
+<p>while true ; do<br>
+  wget -q -O - -T=$TIMEOUT --tries=1 &quot;$URL&quot; | grep -q &quot;$MATCH&quot; || {<br>
+  /usr/local/sbin/report ERROR &quot;Web server not responding&quot;<br>
+  /etc/rc.d/init.d/httpd restart &amp;&amp; {<br>
+  /usr/local/sbin/report INFO &quot;Web server restarted&quot;<br>
+  }<br>
+  }<br>
+  sleep $SLEEP<br>
+  done</p>
+<hr>
+<p>log watch example </p>
+<p>#!/bin/bash</p>
+<p># Note, needs to be placed in /etc/log.d/scripts/services and named<br>
+  # according to your configuration file (i.e. a config file of <br>
+  # 'example.conf' would require this file to be named 'example'.</p>
+<p># This is as nice script that will show you the lines you will<br>
+  # be processing and reporting on. It will first display the<br>
+  # standard environment variables and then it takes STDIN and<br>
+  # dump it right back out to STDOUT.</p>
+<p># These are the standard environment variables.<br>
+  echo &quot;Date Range: $LOGWATCH_DATE_RANGE&quot;<br>
+  echo &quot;Detail Level: $LOGWATCH_DETAIL_LEVEL&quot;<br>
+  echo &quot;Temp Dir: $LOGWATCH_TEMP_DIR&quot;<br>
+  echo &quot;Debug Level: $LOGWATCH_DEBUG&quot;</p>
+<p># Now take STDIN and dump it to STDOUT<br>
+  cat</p>
+<hr>
+<p>按如下方式设置调度作业(cronjob):<br>
+*/5 * * * * /path/to/script.sh &gt;/dev/null 2&gt;&amp;1</p>
+<p>二. 下面的脚本用业监视系统进程,根据指定的服务端口是否打开，输出相应的信息．</p>
+<p>执行该脚本，看能否得到正确的结果，如果不能，修改脚本使之能正常运行．</p>
+<p>#!/bin/bash<br>
+  # Shell script to monitor running services such as web/http, ssh, mail etc.<br>
+  # If service fails it will send an Email to ADMIN user<br>
+  # service port<br>
+  ports=&quot;22 80 25&quot;<br>
+  <br>
+  # service names as per above ports<br>
+  service=&quot;SSH WEB MAIL&quot;<br>
+  <br>
+  # No of services to monitor as per (above ports+1)<br>
+  SCOUNTER=4<br>
+  <br>
+  #Email id to send alert<br>
+  ADMINEMAIL=&quot;admin@myispname.com&quot;<br>
+  <br>
+  # counter<br>
+  c=1<br>
+  echo &quot;Running services status:&quot;<br>
+  <br>
+  # use sudo if you want i.e. sudo /bin/netstat<br>
+  /bin/netstat -tulpn | grep -vE '^Active|Proto' | while read LINE<br>
+  do<br>
+&nbsp;&nbsp;sendMail=0<br>
+&nbsp;&nbsp;# get active port name and use : as delimiter<br>
+&nbsp;&nbsp;t=$(echo $LINE | awk '{ print $4}' | cut -d: -f2)<br>
+&nbsp;&nbsp;[ &quot;$t&quot; == &quot;&quot; ] &amp;&amp; t=-1 || :<br>
+&nbsp;&nbsp;# get service name from $services and : as delimiter<br>
+&nbsp;&nbsp;sname=$(echo $service | cut -d' ' -f$c)<br>
+&nbsp;&nbsp;sstatus=&quot;$sname: No&quot;<br>
+&nbsp;&nbsp;# now compare port<br>
+&nbsp;&nbsp;for i in $ports<br>
+&nbsp;&nbsp;do<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if [ $i -eq $t ]; then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sstatus=&quot;$sname: Ok&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sendMail=1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fi<br>
+&nbsp;&nbsp;done<br>
+&nbsp;&nbsp;# display service status as OK or NO<br>
+&nbsp;&nbsp;echo &quot;$sstatus&quot;<br>
+&nbsp;&nbsp;#next service please<br>
+&nbsp;&nbsp;c=$( expr $c + 1 )<br>
+&nbsp;&nbsp;[ &quot;$sendMail&quot; == &quot;0&quot; ] &amp;&amp; echo $sstatus | mail -s &quot;service down $sstatus&quot; $ADMINEMAIL || :<br>
+&nbsp;&nbsp;# break afer 3 services<br>
+&nbsp;&nbsp;[ $c -ge $SCOUNTER ] &amp;&amp; break || :<br>
+  done</p>
+<p>三. 下面的脚本用ping来检查远程主机是否有响应，输出相应的信息．</p>
+<p>执行该脚本，看能否得到正确的结果，如果不能，修改脚本使之能正常运行．</p>
+<p>#!/bin/bash<br>
+  # Simple SHELL script for Linux and UNIX system monitoring with<br>
+  # ping command<br>
+  <br>
+  # add ip / hostname separated by while space<br>
+  HOSTS=&quot;cyberciti.biz theos.in router&quot;<br>
+  <br>
+  # no ping request<br>
+  COUNT=1<br>
+  <br>
+  # email report when<br>
+  SUBJECT=&quot;Ping failed&quot;<br>
+  EMAILID=&quot;me@mydomain.com&quot;<br>
+  for myHost in $HOSTS<br>
+  do<br>
+&nbsp;&nbsp;count=$(ping -c $COUNT $myHost | grep 'received' | awk -F',' '{ print $2 }' | awk '{ print $1 }')<br>
+&nbsp;&nbsp;if [ $count -eq 0 ]; then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;# 100% failed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo &quot;Host : $myHost is down (ping failed) at $(date)&quot; | mail -s &quot;$SUBJECT&quot; $EMAILID<br>
+&nbsp;&nbsp;fi<br>
+  done</p>
+<hr>
+<p>check drives</p>
+<p>#!/bin/bash</p>
+<p>types=&quot;ext2|ext3|ufs|vfat&quot;<br>
+  cutoff=&quot;90&quot;</p>
+<p>for drive in `mount | awk &quot;/type ($types)/ {print \\\$1}&quot;` ; do<br>
+  df &quot;$drive&quot; | awk -v &quot;cutoff=$cutoff&quot; '/^\// {<br>
+  gsub(/%$/, &quot;&quot;, $5);<br>
+  if ($5 &gt; cutoff) <br>
+  print &quot;Drive &quot; $1 &quot; (&quot; $6 &quot;) is &quot; $5 &quot;% Full&quot;<br>
+  }'<br>
+done | /usr/local/sbin/report --stdin WARNING 'Drives almost full'</p>
+<hr>
+<p>check for failure </p>
+<p>#!/bin/bash</p>
+<p># Check for any drive failures<br>
+  egrep 'I/O error: dev .+, sector' /var/log/messages | \<br>
+  /usr/local/sbin/report --stdin CRITICAL 'Drives failure'</p>
+<p># Check for any RAID failures<br>
+  egrep 'raid.*Disk failure on' /var/log/messages | \<br>
+  /usr/local/sbin/report --stdin CRITICAL 'RAID drive failure'</p>
+<hr>
+<p>services </p>
+<p>#!/bin/bash</p>
+<p>SLEEP=30 #seconds</p>
+<p>while true ; do<br>
+  cat /usr/local/etc/services.conf | while read line ; do<br>
+  match=`echo &quot;$line&quot; | sed 's/|.*$//'`<br>
+  cmd=`echo &quot;$line&quot; | sed 's/^.*|//'`<br>
+  ps ax -o '%c %P' | awk -v &quot;process=$match&quot; \<br>
+  '{if (($1 == process) &amp;&amp; ($2 == 1)) exit 1}' &amp;&amp; {<br>
+  # Process not found!<br>
+  /usr/local/sbin/report ERROR &quot;Process $match not running&quot;<br>
+  [ -n &quot;$cmd&quot; ] &amp;&amp; {<br>
+  $cmd &amp;&amp; {<br>
+  /usr/local/sbin/report INFO \<br>
+&quot;Process $match was restarted ($cmd)&quot;<br>
+  }<br>
+  }<br>
+  }<br>
+  done<br>
+  sleep $SLEEP<br>
+  done</p>
+<h2>练习</h2>
+<p>1. 监控磁盘空闲空间,如果小于30%,则发送警告(提示信息或邮件).</p>
+<p>2. 编写脚本,找出系统没有设置密码的用户,并将它们锁定(passwd -l username).</p>
+</body>
+</html>

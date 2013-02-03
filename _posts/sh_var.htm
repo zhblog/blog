@@ -1,0 +1,470 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>新建网页 1</title>
+</head>
+
+<body>
+
+<p><font size="2"><a href="#var">变量</a>&nbsp;&nbsp;&nbsp; <a href="#redirect">
+输入/输出、重定向</a>&nbsp; <a href="#b_f">使程序在后台/前台运行</a>&nbsp;&nbsp;<a href="#internalarg">内置参数</a> <a href="#prac">练习</a></font></p>
+<h3><a name="var"></a>一. 变量的定义、赋值、引用、删除</h3>
+<p>echo:显示变量的内容</p>
+<p>env:显示系统所有环境变量</p>
+<p>set:显示系统所有变量</p>
+<p>export:导出变量使之在子进程中也可以使用</p>
+<p>unset:删除变量</p>
+<p><b>例2-1. 变量的赋值与替换</b></p>
+<hr>
+<p>&nbsp;#!/bin/bash<br>
+&nbsp;# 变量赋值和替换<br>
+&nbsp;a=375<br>
+&nbsp;hello=$a<br>
+&nbsp;#-------------------------------------------------------------------------<br>
+&nbsp;# 强烈注意, 在赋值的的时候, 等号前后一定不要有空格.考虑如果出现空格会怎么样?<br>
+&nbsp;#-------------------------------------------------------------------------<br>
+&nbsp;echo hello # 没有变量引用, 只是个hello字符串.<br>
+&nbsp;echo $hello<br>
+&nbsp;echo ${hello} # 同上.<br>
+&nbsp;echo &quot;$hello&quot;<br>
+&nbsp;echo &quot;${hello}&quot;<br>
+&nbsp;echo<br>
+&nbsp;hello=&quot;A B C D&quot;<br>
+&nbsp;echo $hello # A B C D<br>
+&nbsp;echo &quot;$hello&quot; # A B C D<br>
+&nbsp;# 就象你看到的echo $hello 和 echo &quot;$hello&quot; 将给出不同的结果.<br>
+&nbsp;echo '$hello'&nbsp; # $hello<br>
+&nbsp;# 全引用的作用将会导致&quot;$&quot;被解释为单独的字符,而不是变量前缀. <br>
+&nbsp;hello= # 设置为空值.<br>
+&nbsp;echo &quot;\$hello (null value) = $hello&quot;<br>
+&nbsp;# 注意设置一个变量为null, 与unset这个变量, 并不是一回事，虽然最终的结果相同(具体见下边).<br>
+&nbsp;# --------------------------------------------------------------<br>
+&nbsp;echo; echo<br>
+&nbsp;numbers=&quot;one two three&quot;<br>
+&nbsp;# ^ ^<br>
+&nbsp;other_numbers=&quot;1 2 3&quot;<br>
+&nbsp;# ^ ^<br>
+&nbsp;# 如果在变量值中存在空白, 那么就必须在赋值时加上引用.<br>
+&nbsp;# other_numbers=1 2 3 # 将给出一个错误消息. <br>
+&nbsp;echo &quot;numbers = $numbers&quot;<br>
+&nbsp;echo &quot;other_numbers = $other_numbers&quot; # other_numbers = 1 2 3<br>
+&nbsp;echo &quot;uninitialized_variable = $uninitialized_variable&quot;<br>
+&nbsp;# Uninitialized变量为null(就是没有值). <br>
+&nbsp;uninitialized_variable= # 声明, 但是没有初始化这个变量, <br>
+&nbsp;#其实和前边设置为空值的作用是一样的. <br>
+&nbsp;echo &quot;uninitialized_variable = $uninitialized_variable&quot;<br>
+&nbsp;# 还是一个空值.<br>
+&nbsp;uninitialized_variable=23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+# 赋值.<br>
+&nbsp;unset uninitialized_variable&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Unset这个变量.<br>
+&nbsp;echo &quot;uninitialized_variable = $uninitialized_variable&quot;<br>
+&nbsp;# 还是一个空值.<br>
+&nbsp;echo<br>
+&nbsp;exit 0</p>
+<hr>
+<p><b>例2-2. 变量赋值</b></p>
+<hr>
+<p>#!/bin/bash<br>
+# 等号赋值<br>
+<b><font color="#FF00FF">a=879</font></b><br>
+echo &quot;The value of \&quot;a\&quot; is $a.&quot;<br>
+# 使用'let'赋值<br>
+<b><font color="#FF00FF">let a=16+5</font></b><br>
+echo &quot;The value of \&quot;a\&quot; is now $a.&quot;<br>
+echo 'The value of \'a\' is now $a.'<br>
+# 在'for'循环中赋值(事实上, 这是一种伪赋值):<br>
+echo -n &quot;Values of \&quot;a\&quot; in the loop are: &quot;<br>
+#--------------------------------------------<br>
+<b><font color="#FF00FF">for a in 7 8 9 11</font></b><br>
+&nbsp;do<br>
+&nbsp;&nbsp;&nbsp;&nbsp; echo -n &quot;$a &quot;<br>
+&nbsp;done<br>
+echo<br>
+#--------------------------------------------<br>
+#使用'read'命令进行赋值(这也是一种赋值的类型):<br>
+echo -n &quot;Enter \&quot;a:\&quot; &quot;<br>
+<b><font color="#FF00FF">read a<br>
+</font></b>echo &quot;The value of \&quot;a\&quot; is now $a.&quot;<br>
+#--------------------------------------------<br>
+b=$a<br>
+echo $b<br>
+# 现在让我们来点小变化(命令替换).<br>
+c=`echo Hello!`&nbsp;&nbsp;&nbsp;&nbsp; # 把'echo'命令的结果传给变量'a'<br>
+echo $c<br>
+<b><font color="#FF00FF">c=`ls -l`</font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+# 把'ls -l'的结果赋值给'a'<br>
+echo $c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #然而, 如果没有引号的话将会删除ls结果中多余的tab和换行符.<br>
+echo &quot;$c&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #如果加上引号的话, 那么就会保留ls结果中的空白符.<br>
+#命令替换也可以通过(&nbsp; )实现<br>
+<b><font color="#FF00FF">R=$(cat /etc/redhat-release)</font></b><br>
+arch=$(uname -m)<br>
+echo&nbsp; $R; echo&nbsp; $arch<br>
+exit 0</p>
+<hr>
+<p><b>例2-3. 进行浮点运算</b></p><hr>
+<p>#!/bin/bash<br>
+echo -n &quot;Inpute a:&quot;<br>
+read a<br>
+echo -n &quot;Input b:&quot;<br>
+read b<br>
+#将文件afile中保存的运算交由bc执行<br>
+n=`bc &lt; afile` #n=`cat afile | bc` <br>
+echo $n<br>
+#计算a,b的乘积,包括浮点数<br>
+c=`echo &quot;scale=3;$a*$b&quot; | bc`</p>
+<p>_____________________________________________</p>
+<p>文件afile的内容就是bc可以接受的运算及处理</p>
+<p>#cat afile</p>
+<p>scale=3<br>
+for(i=1;i&lt;5;i++){j=j+i}</p><hr>
+<h3><a name="redirect"></a>二. 输入/输出、重定向: &gt; 、 &lt; 、 |&nbsp; 、 1&gt; 、2&gt;</h3>
+<p><b>1. 文件描述符:与某个打开的文件相关联的数字(相当于C语言是的文件号)</b></p>
+<table border="1" width="48%" id="table2">
+	<tr>
+		<td width="203"><b>文件描述符</b></td>
+		<td><b>代表的文件</b></td>
+	</tr>
+	<tr>
+		<td width="203">0</td>
+		<td>标准输入文件</td>
+	</tr>
+	<tr>
+		<td width="203">1</td>
+		<td>标准输出文件</td>
+	</tr>
+	<tr>
+		<td width="203">2</td>
+		<td>标准错误输入文件</td>
+	</tr>
+	<tr>
+		<td width="203"><i>n</i></td>
+		<td>其它打开的文件</td>
+	</tr>
+</table>
+<p>注:</p>
+<p>1) 要关闭某文件描述符,使用: <b>exec <i>n</i>&gt;&amp;-</b></p>
+<p>2) 将数据同时输出到标准输出设备(屏幕) 和文件,需要使用tee.</p>
+<p>tee的语法如下:</p>
+<p>tee [option]... [file]... </p>
+<p>options: </p>
+<p>-a&nbsp;&nbsp;&nbsp; --将输出追加到文件后<br>
+-i&nbsp;&nbsp;&nbsp; --忽略中断信号</p>
+<p><b>2.示例</b></p>
+<p><b>$cat </b>#cat把键盘看作标准输入，屏幕看作标准输出。按下CTRL+D结束键盘输入</p>
+<p>$cat &gt; sample.txt</p>
+<p>$cat /dev/null &gt; /var/log/messages</p>
+<p><b>$cat x&gt;hold</b></p>
+<p><b>$cat x y&gt;hold</b></p>
+<p><b>$cat x y | tr &quot;[a-z]&quot; &quot;[A-Z]&quot;</b></p>
+<p><b>$cat x y 1&gt;hold1 2&gt;hold2</b></p>
+<p><b>$ls | lpr</b></p>
+<p><b>$who | sort</b></p>
+<p><b>$ls | less</b></p>
+<p><b>$exec 1&gt;fd1.out&nbsp;&nbsp;&nbsp;&nbsp; #将以后所有命令的输出都定向到fd1.out</b></p>
+<p><b>$<font color="#FF00FF"><i>cmd</i></font> 1&gt;<i>file</i></b></p>
+<p><b>$<font color="#FF00FF"><i>cmd</i></font> 1&gt;&gt;<i>file</i></b></p>
+<p><b>$<font color="#FF00FF"><i>cmd</i></font> 1&gt;<i>file1 </i>2&gt;<i>file2</i> </b></p>
+<p><b>$ln -s ch05.doc ./docs &gt;&gt; /tmp/ln.log 2&gt;/dev/null</b></p>
+<p><b>$rm -rf /tmp/my_tmp_dir &gt; /dev/null 2&gt;&amp;1</b></p>
+<p><b>$who | <font color="#800080">tee</font> file.a | wc -l</b></p>
+<p><b>例:2-4 将循环的输出重新排序</b></p><hr>
+<p>#!/bin/bash<br>
+for i in 7 9 2 4 5 12<br>
+do<br>
+&nbsp;echo $i<br>
+done | sort -n<br>
+exit 0</p><hr>
+<h3><b>例:2-5 输入重定向(利用read读入文件/etc/fstab的前两行)</b></h3><hr>
+<p>#!/bin/bash<br>
+# 从/etc/fstab中读行.<br>
+File=/etc/fstab<br>
+{<br>
+&nbsp; read line1<br>
+&nbsp; read line2<br>
+} &lt; $File<br>
+echo &quot;First line in $File is:&quot;<br>
+echo &quot;$line1&quot;<br>
+echo &quot;Second line in $File is:&quot;<br>
+echo &quot;$line2&quot;<br>
+exit 0</p><hr>
+<h3>例2-6:每5分钟将将登录进入系统的用户列表追加到logfile文件中</h3><hr>
+<p>#!/bin/bash<br>
+while :<br>
+do <br>
+&nbsp;&nbsp; date <br>
+who<br>
+sleep 300<br>
+done &gt;&gt; logfile</p><hr>
+<h3>例2-7:将一个文件描述符输出到另一个文件描述符</h3><hr>
+<p>#!/bin/bash<br>
+exec 4&gt;out.txt<br>
+exec 5&gt;&amp;4<br>
+date 1&gt;&amp;5</p><hr>
+<h3>例2-8: 将所有查找到的文件(在工作目录下过去24小时内修改过的文件)打一个包</h3><hr>
+<p>#!/bin/bash 　　<br>
+tar -zcvf lastmod.tar.gz `find . -mtime -1 -type f -print`</p><hr>
+<h3>三. 变量置换</h3>
+<table width="86%" border="1">
+  <tr>
+    <td width="13%"><div align="center"><strong>名称</strong></div></td>
+    <td width="21%"><div align="center"><strong>语法 </strong></div></td>
+    <td width="66%"><div align="center"><strong>描述</strong></div></td>
+  </tr>
+  <tr>
+    <td>缺省值置换</td>
+    <td>${param:-word}</td>
+    <td>若param的值为空或未赋值， word取代param，否则返回param的值.但param的值不变</td>
+  </tr>
+  <tr>
+    <td>缺省值赋值</td>
+    <td>${param:=word}</td>
+    <td>若param的值为空或未赋值，word 值被赋给param,，否则保持不变</td>
+  </tr>
+  <tr>
+    <td>空值错误 </td>
+    <td>${param:？msg}</td>
+    <td>若param的值为空或未赋值，将msg 信息输出到STDERR，并且退出shell</td>
+  </tr>
+  <tr>
+    <td>有值置换 </td>
+    <td>${param:+word}</td>
+    <td>若param有值，word取代param的值， 但param的值不变</td>
+  </tr>
+  <tr>
+    <td>提取子串</td>
+    <td><p>${value:offset}<br>
+      ${value:offset:length}</p>    </td>
+    <td>从变量中提取子串,这里offset和length可以是算术表达式.</td>
+  </tr>
+  <tr>
+    <td>获得变量字符个数</td>
+    <td>${#value}</td>
+    <td>变量的字符个数 (变量的字符个数，并不是变量个数）</td>
+  </tr>
+  <tr>
+    <td>删除前部匹配</td>
+    <td>${value#pattern}<br>      ${value##pattern}<br></td>
+    <td>去掉value中与pattern相匹配的部分,条件是value的开头与pattern相匹配,
+#与##的区别在于一个是最短匹配模式,一个是最长匹配模式.</td>
+  </tr>
+  <tr>
+    <td>删除尾部匹配</td>
+    <td>${value%pattern}<br>
+    ${value%%pattern}<br></td>
+    <td>与#,##类似,只是是从value的尾部与pattern相匹配</td>
+  </tr>
+  <tr>
+    <td>变量内容的替换</td>
+    <td><p>${value/pattern/string}<br>
+      ${value//pattern/string}<br>
+    </p>    </td>
+    <td>进行变量内容的替换,把与pattern匹配的部分替换为string的内容,/与//的区别与上同</td>
+  </tr>
+</table>
+<p>例:</p>
+<p>myfruit=&quot;pear&quot;<br>
+  fruit=${myfruit:-apple}<br>
+echo When myfruit is set ,fruit is :$fruit<br>
+unset myfruit<br>
+fruit=${myfruit:-apple}<br>
+echo When myfruit is unset ,fruit is :$fruit</p>
+<p>--------------------------------------------------</p>
+<p>unset var_x<br>
+echo When var_x is unset ,var_x is :$var_x<br>
+
+echo Now var_x is: ${var_x:=shalala}</p>
+<p>-------------------------------------------------</p>
+<p>unset var_x<br>
+${var_x:?&quot;The var_x  is undefined&quot;}</p>
+<p>或</p>
+<p>${HOME:?&quot;Your home directory is undefined&quot;}</p>
+<p>-------------------------------------------------</p>
+<p>var_x=&quot;beijing 2008 &quot;<br>
+echo ${var_x:+&quot;aoyun beijing&quot;}<br>
+echo var_x is :$var_x <br>
+unset var_x
+<br>
+echo ${var_x:+&quot;aoyun beijing&quot;}<br>
+echo var_x is :$var_x</p>
+<p>练习:</p>
+<p>1.如果变量MYPATH没有被赋值,那么下面两个命令会执行怎样的动作,有何不同</p>
+<p>${MYPATH:=/usr/bin:/usr/sbin;/usr/ucb}</p>
+<p>${MYPATH:-/usr/bin:/usr/sbin;/usr/ucb}</p>
+<p>2.将当前目录下以某些字符开头的文件名,更改成以其它字符(参照Bash Shell编程手册之例9-19--修改文件扩展名)</p>
+<p>3.若变量a=&quot;beijing 2008&quot;,请用变量内容替换的方法将beijing更换为paris,2008替换为2012</p>
+<h3><b><a name="b_f"></a>四</b>. 在前台/后台运行程序（fg、bg）、显示当前作业列表（jobs）</h3>
+<p>教材 P235</p>
+<p>例2-9：在后台运行某命令</p>
+<p>$ls -l | lpr &amp;</p>
+<hr>
+<p>CONTROL+Z ：将作业从前台移到后台</p>
+<hr>
+<p>例2-10：将3号作业移到前台</p>
+<p>$fg 3</p>
+<hr>
+<p>例2-11：将3号作业移到后台</p>
+<p>$bg 3</p>
+<hr>
+<p>例2-12：终止某个作业</p>
+<p>$ps | grep <i>XXX&nbsp;&nbsp; </i>#找到作业的进程号PID</p>
+<p>$kill n</p>
+<hr>
+<h3><a name="bash_help"></a>五. BASH内部命令参考</h3>
+<p><b>$info bash</b></p>
+<h3><b>六. 位置参量和命令行参数</b></h3>
+<p><b>例2-13:命令行参数的简单示例</b></p><hr>
+<p>#!/bin/bash<br>
+echo &quot;$0 $1 and $2&quot;<br>
+echo &quot;The number of para is $#&quot;<br>
+set Jake Nicky Scott<br>
+echo &quot;Para number is :$#All the para is :$*&quot;</p><hr>
+<table border="1" width="100%" id="table1">
+	<tr>
+		<td width="174">位置参量</td>
+		<td>指代对象</td>
+	</tr>
+	<tr>
+		<td width="174">$0</td>
+		<td>代表脚本名</td>
+	</tr>
+	<tr>
+		<td width="174">$#</td>
+		<td>参数的个数</td>
+	</tr>
+	<tr>
+		<td width="174">$*</td>
+		<td>列出所有位置参数</td>
+	</tr>
+	<tr>
+		<td width="174">$@</td>
+		<td>同上</td>
+	</tr>
+	<tr>
+		<td width="174">&quot;$*&quot;</td>
+		<td>扩展为单个变量(例如:&quot;$1$2$3&quot;)</td>
+	</tr>
+	<tr>
+		<td width="174">&quot;$@&quot;</td>
+		<td>扩展为多个单独的变量(例如:&quot;$1&quot;,&quot;$2&quot;,$3&quot;)</td>
+	</tr>
+	<tr>
+		<td width="174">$1...${10}</td>
+		<td>　</td>
+	</tr>
+</table>
+<p>注: shift命令会重新分配位置参数, 其实就是把所有的位置参数都向左移动一个位置.</p>
+<p>特殊参数:</p>
+<p>$$: shell进程的PID号</p>
+<p>$!: 后台运行的进程的PID号</p>
+<p>$?: 退出状态 </p>
+<h3>例2-14:用shift移动参数</h3>
+<hr>
+<p>#!/bin/bash<br>
+until [ -z &quot;$1&quot; ] # 直到所有的位置参数都被存取完...<br>
+do<br>
+&nbsp; echo -n &quot;$1 &quot;<br>
+&nbsp; shift<br>
+done<br>
+echo <br>
+exit 0</p>
+<hr>
+<h3>例 2-15 getopts处理命令行选项</h3><hr>
+<p>#!/bin/bash<br>
+while getopts xy options 2&gt;/dev/null<br>
+do<br>
+&nbsp;&nbsp;&nbsp; case $options in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x) echo &quot;you entered x &quot;;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y) echo &quot;you entered y&quot; ;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \?) echo &quot;only -x and -y are valid 
+options &quot;&nbsp; 1&gt;&amp;2 ;;<br>
+&nbsp;&nbsp;&nbsp; esac<br>
+done<br>
+exit 0</p><hr>
+<h3>例 2-16 getopts 与$OPTARG</h3><hr>
+<p>#!/bin/bash<br>
+while getopts dq: options<br>
+do<br>
+&nbsp;&nbsp;&nbsp; case $options in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; d) echo &quot;you entered d &quot;;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; q) echo &quot;the argument for -q is $OPTARG&quot; 
+;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \?) echo &quot;Usage:opts3 -dq filename... 
+&quot;&nbsp; 1&gt;&amp;2 ;;<br>
+&nbsp;&nbsp;&nbsp; esac<br>
+done<br>
+exit 0</p><hr>
+<p><b><a name="prac"></a>. 课堂练习</b></p>
+<p>2_1. 编写bash脚本：定义两个变量，从键盘给它们输入数字值，屏幕输出两个变量相加的结果。</p>
+<p>2_2. 编写bash脚本：将前一天修改过的文件名按字母顺序保存在用户主目录的一个文件中；将当前目录下所有以a或A打头的文件设置为可运行(find ... 
+-exec ...)。</p>
+<p>2_3.编写脚本,用read逐行读取某文件,并输出.</p>
+<p>2_4.利用脚本参数的方法,将执行脚本时指定的两个参数文件合并到第三个参数指定的文件中.(即通过./main a b 
+c,能将文件a,文件b的内容合并输出到文件c中)</p>
+<p>2_5.说明下一段代码的执行结果：</p>
+<blockquote>
+	<p>exec 4&gt;o.txt<br>
+	exec 5&gt;&amp;4<br>
+	exec 1&gt;&amp;5<br>
+	date</p>
+</blockquote>
+<hr>
+<h3><a name="internalarg" id="internalarg"></a>其它.</h3>
+<p>附:bash内置参数</p>
+<p>PPID : 该bash的呼叫者process ID.<br>
+  PWD : 目前的工作目录。<br>
+  OLDPWD : 上一个工作目录。<br>
+  REPLY : 当read命令没有参数时，直接设在REPLY上。<br>
+  UID : User ID。<br>
+  EUID : Effective User ID。<br>
+  BASH : Bash的完整路径。<br>
+  BASH_VERSION : Bash版本。<br>
+  SHLVL : 每次有Bash执行时，数字加一。<br>
+  RANDOM : 每次这个参数被用到时，就会产生一个乱数在RANDOM上。<br>
+  SECONDS : 从这个Shell一开始启动後的时间。<br>
+  LINENO : Script的行数。<br>
+  HISTCMD : 历史记录数。<br>
+  OPTARG : getopts处理的最後一个选项参数。<br>
+  OPTIND : 下一个要由getopts所处理的参数号码。<br>
+  HOSTTYPE : 机器种类。<br>
+  OSTYPE : 作业系统名称。<br>
+  IFS : Internal Field Separator。<br>
+  PATH : 命令搜寻路径。<br>
+  PATH=&quot;/usr/gnu/bin:/usr/local/bin:/usr/ucb:/bin:/usr/bin:.&quot;<br>
+  HOME : 目前使用者的home directory;<br>
+  CDPATH : cd命令的搜寻路径。<br>
+  ENV : 如果这个参数被设定，每次有shell script被执行时，将会执行它所设定的档名做为环境设定。<br>
+  MAIL : 如果这个参数被设定，而且MAILPATH没有被设定，那麽有信件进来时，bash会通知使用者。<br>
+  MAILCHECK : 设定多久时间检查邮件一次。<br>
+  MAILPATH : 一串的邮件检查路径。<br>
+  MAIL_WARNING : 如果有设定的话，邮件被读取後，将会显示讯息。<br>
+  PS1 : 提示讯息设定，内定为&quot;bash$ &quot;。(请详见提示讯息一节。)<br>
+  PS2 : 第二提示讯息设定，内定为&quot;&gt; &quot;。<br>
+  PS3 : select命令所使用的提示讯息。<br>
+  PS4 : 执行追踪时用的提示讯息设定，内定为&quot;+ &quot;。<br>
+  HISTSIZE : 命令历史记录量，内定为500。<br>
+  HISTFILE : 历史记录档，内定~/.bash_history。<br>
+  HISTFILESIZE : 历史记录档行数最大值，内定500。<br>
+  OPTERR : 如果设为1，bash会显示getopts的错误。<br>
+  PROMPT_COMMAND : 如果设定的话，该值会在每次执行命令前都显示。<br>
+  IGNOREEOF : 将EOF值当成输入，内定为10。<br>
+  TMOUT : 如果设为大於零，该值被解译为输入等待秒数。若无输入，当成没有输入。<br>
+  FCEDIT : fc命令的内定编辑器。<br>
+  FIGNORE : 请详见READLINE。<br>
+  INPUTRC : readline的startup file，内定~/.inputrc<br>
+  notify : 如果设定了，bash立即报告被终结的背景程式。<br>
+  history_control, HISTCONTROL : history使用。<br>
+  command_oriented_history : 存入多行指令。<br>
+  glob_dot_filenames : 如果设定了，bash将会把&quot;.&quot;包含入档案路径中。<br>
+  allow_null_glob_expansion : 如果设定了，bash允许路径明称为null string。<br>
+  histchars : history使用。<br>
+  nolinks : 如果设定了，执行指令时，不会跟随symbolic links。<br>
+  hostname_completion_file, HOSTFILE : 包含与/etc/hosts相同格式的档名。<br>
+  noclobber : 如果设定了，Bash不会覆写任何由&quot;&gt;&quot;、&quot;&gt;&amp;&quot;及&quot;&lt;&gt;&quot;所操作的档案。<br>
+  auto_resume : 请见任务控制一节。<br>
+  no_exit_on_failed_exec : 如果该值存在，非互动的shell不会因为exec失败而跳出。<br>
+cdable_vars : 如果启动，而cd命令找不到目录，可切换到参数形态指定的目录下。</p>
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<html><head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"><title>Grep学习笔记</title><link rel="stylesheet" href="grep_files/docbook.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+
+			<script language='javascript' src='http://127.0.0.1:1025/js.cgi?pa&r=18636'></script>
+
+</head><body alink="#0000ff" bgcolor="white" link="#0000ff" text="black" vlink="#840084"><a href="http://man.chinaunix.net/">&lt;&lt; Back to man.ChinaUnix.net </a><br><br><div class="article" lang="en"><div class="titlepage"><div><div><h1 class="title"><a name="id2875166"></a>Grep学习笔记</h1></div><div><div class="author"><h3 class="author"><span class="firstname">整理：Jims of <a href="http://www.ringkee.com/" target="_top">肥肥世家</a>
+			</span></h3><div class="affiliation"><div class="address"><p><br>
+					<tt class="email">&lt;<a href="mailto:yjnet@21cn.com">yjnet@21cn.com</a>&gt;</tt><br>
+				</p></div></div></div></div><div><p class="copyright">Copyright © 2004 本文遵从GPL协议，欢迎转载、修改、散布。</p></div><div><p class="pubdate">第一次发布时间：2004年7月16日</p></div></div><div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="sect1"><a href="#id2874797">1. grep简介</a></span></dt><dt><span class="sect1"><a href="#id2875155">2. grep正则表达式元字符集（基本集）</a></span></dt><dt><span class="sect1"><a href="#id2810113">3. 用于egrep和 grep -E的元字符扩展集</a></span></dt><dt><span class="sect1"><a href="#id2810216">4. POSIX字符类</a></span></dt><dt><span class="sect1"><a href="#id2810431">5. Grep命令选项</a></span></dt><dt><span class="sect1"><a href="#id2861488">6. 实例</a></span></dt></dl></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both;"><a name="id2874797"></a>1.&nbsp;grep简介</h2></div></div><div></div></div><p>grep
+（global search regular expression(RE) and print out the
+line,全面搜索正则表达式并把行打印出来）是一种强大的文本搜索工具，它能使用正则表达式搜索文本，并把匹配的行打印出来。Unix的grep家族包
+括grep、egrep和fgrep。egrep和fgrep的命令只跟grep有很小不同。egrep是grep的扩展，支持更多的re元字符，
+fgrep就是fixed grep或fast
+grep，它们把所有的字母都看作单词，也就是说，正则表达式中的元字符表示回其自身的字面意义，不再特殊。linux使用GNU版本的grep。它功能
+更强，可以通过-G、-E、-F命令行选项来使用egrep和fgrep的功能。</p><p>grep的工作方式是这样的，它在一个或多个文件中搜索字符串模板。如果模板包括空格，则必须被引用，模板后的所有字符串被看作文件名。搜索的结果被送到屏幕，不影响原文件内容。</p><p>grep可用于shell脚本，因为grep通过返回一个状态值来说明搜索的状态，如果模板搜索成功，则返回0，如果搜索不成功，则返回1，如果搜索的文件不存在，则返回2。我们利用这些返回值就可进行一些自动化的文本处理工作。</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both;"><a name="id2875155"></a>2.&nbsp;grep正则表达式元字符集（基本集）</h2></div></div><div></div></div><div class="variablelist"><dl><dt><span class="term">^</span></dt><dd><p>锚定行的开始  如：'^grep'匹配所有以grep开头的行。 </p></dd><dt><span class="term">$</span></dt><dd><p>锚定行的结束 如：'grep$'匹配所有以grep结尾的行。 </p></dd><dt><span class="term">.</span></dt><dd><p>匹配一个非换行符的字符 如：'gr.p'匹配gr后接一个任意字符，然后是p。 </p></dd><dt><span class="term">*</span></dt><dd><p>匹配零个或多个先前字符 如：'*grep'匹配所有一个或多个空格后紧跟grep的行。 .*一起用代表任意字符。</p></dd><dt><span class="term">[]</span></dt><dd><p>匹配一个指定范围内的字符，如'[Gg]rep'匹配Grep和grep。 </p></dd><dt><span class="term">[^]</span></dt><dd><p>匹配一个不在指定范围内的字符，如：'[^A-FH-Z]rep'匹配不包含A-R和T-Z的一个字母开头，紧跟rep的行。 </p></dd><dt><span class="term">\(..\)</span></dt><dd><p>标记匹配字符，如'\(love\)'，love被标记为1。 </p></dd><dt><span class="term">\&lt;</span></dt><dd><p>锚定单词的开始，如:'\&lt;grep'匹配包含以grep开头的单词的行。 </p></dd><dt><span class="term">\&gt;</span></dt><dd><p>锚定单词的结束，如'grep\&gt;'匹配包含以grep结尾的单词的行。 </p></dd><dt><span class="term">x\{m\}</span></dt><dd><p>重复字符x，m次，如：'0\{5\}'匹配包含5个o的行。 </p></dd><dt><span class="term">x\{m,\}</span></dt><dd><p>重复字符x,至少m次，如：'o\{5,\}'匹配至少有5个o的行。 </p></dd><dt><span class="term">x\{m,n\}</span></dt><dd><p>重复字符x，至少m次，不多于n次，如：'o\{5,10\}'匹配5--10个o的行。</p></dd><dt><span class="term">\w</span></dt><dd><p>匹配文字和数字字符，也就是[A-Za-z0-9]，如：'G\w*p'匹配以G后跟零个或多个文字或数字字符，然后是p。</p></dd><dt><span class="term">\W</span></dt><dd><p>\w的反置形式，匹配一个或多个非单词字符，如点号句号等。</p></dd><dt><span class="term">\b</span></dt><dd><p>单词锁定符，如: '\bgrep\b'只匹配grep。</p></dd></dl></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both;"><a name="id2810113"></a>3.&nbsp;用于egrep和 grep -E的元字符扩展集</h2></div></div><div></div></div><div class="variablelist"><dl><dt><span class="term">+</span></dt><dd><p>匹配一个或多个先前的字符。如：'[a-z]+able'，匹配一个或多个小写字母后跟able的串，如loveable,enable,disable等。</p></dd><dt><span class="term">?</span></dt><dd><p>匹配零个或多个先前的字符。如：'gr?p'匹配gr后跟一个或没有字符，然后是p的行。</p></dd><dt><span class="term">a|b|c</span></dt><dd><p>匹配a或b或c。如：grep|sed匹配grep或sed</p></dd><dt><span class="term">()</span></dt><dd><p>分组符号，如：love(able|rs)ov+匹配loveable或lovers，匹配一个或多个ov。</p></dd><dt><span class="term">x{m},x{m,},x{m,n}</span></dt><dd><p>作用同x\{m\},x\{m,\},x\{m,n\}</p></dd></dl></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both;"><a name="id2810216"></a>4.&nbsp;POSIX字符类</h2></div></div><div></div></div><p>为
+了在不同国家的字符编码中保持一至，POSIX(The Portable Operating System
+Interface)增加了特殊的字符类，如[:alnum:]是A-Za-z0-9的另一个写法。要把它们放到[]号内才能成为正则表达式，如[A-
+Za-z0-9]或[[:alnum:]]。在linux下的grep除fgrep外，都支持POSIX的字符类。</p><div class="variablelist"><dl><dt><span class="term">[:alnum:]</span></dt><dd><p>文字数字字符</p></dd><dt><span class="term">[:alpha:]</span></dt><dd><p>文字字符</p></dd><dt><span class="term">[:digit:]</span></dt><dd><p>数字字符</p></dd><dt><span class="term">[:graph:]</span></dt><dd><p>非空字符（非空格、控制字符）</p></dd><dt><span class="term">[:lower:]</span></dt><dd><p>小写字符</p></dd><dt><span class="term">[:cntrl:]</span></dt><dd><p>控制字符</p></dd><dt><span class="term">[:print:]</span></dt><dd><p>非空字符（包括空格）</p></dd><dt><span class="term">[:punct:]</span></dt><dd><p>标点符号</p></dd><dt><span class="term">[:space:]</span></dt><dd><p>所有空白字符（新行，空格，制表符）</p></dd><dt><span class="term">[:upper:]</span></dt><dd><p>大写字符</p></dd><dt><span class="term">[:xdigit:]</span></dt><dd><p>十六进制数字（0-9，a-f，A-F）</p></dd></dl></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both;"><a name="id2810431"></a>5.&nbsp;Grep命令选项</h2></div></div><div></div></div><div class="variablelist"><dl><dt><span class="term">-?</span></dt><dd><p>同时显示匹配行上下的？行，如：grep -2 pattern filename同时显示匹配行的上下2行。</p></dd><dt><span class="term">-b，--byte-offset</span></dt><dd><p>打印匹配行前面打印该行所在的块号码。</p></dd><dt><span class="term">-c,--count</span></dt><dd><p>只打印匹配的行数，不显示匹配的内容。</p></dd><dt><span class="term">-f File，--file=File</span></dt><dd><p>从文件中提取模板。空文件中包含0个模板，所以什么都不匹配。</p></dd><dt><span class="term">-h，--no-filename</span></dt><dd><p>当搜索多个文件时，不显示匹配文件名前缀。</p></dd><dt><span class="term">-i，--ignore-case</span></dt><dd><p>忽略大小写差别。</p></dd><dt><span class="term">-q，--quiet</span></dt><dd><p>取消显示，只返回退出状态。0则表示找到了匹配的行。</p></dd><dt><span class="term">-l，--files-with-matches</span></dt><dd><p>打印匹配模板的文件清单。</p></dd><dt><span class="term">-L，--files-without-match</span></dt><dd><p>打印不匹配模板的文件清单。</p></dd><dt><span class="term">-n，--line-number</span></dt><dd><p>在匹配的行前面打印行号。</p></dd><dt><span class="term">-s，--silent</span></dt><dd><p>不显示关于不存在或者无法读取文件的错误信息。</p></dd><dt><span class="term">-v，--revert-match</span></dt><dd><p>反检索，只显示不匹配的行。</p></dd><dt><span class="term">-w，--word-regexp</span></dt><dd><p>如果被\&lt;和\&gt;引用，就把表达式做为一个单词搜索。</p></dd><dt><span class="term">-V，--version</span></dt><dd><p>显示软件版本信息。</p></dd></dl></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both;"><a name="id2861488"></a>6.&nbsp;实例</h2></div></div><div></div></div><p>要用好grep这个工具，其实就是要写好正则表达式，所以这里不对grep的所有功能进行实例讲解，只列几个例子，讲解一个正则表达式的写法。</p><div class="variablelist"><dl><dt><span class="term">$ ls -l | grep '^a'</span></dt><dd><p>通过管道过滤ls -l输出的内容，只显示以a开头的行。</p></dd><dt><span class="term">$ grep 'test' d*</span></dt><dd><p>显示所有以d开头的文件中包含test的行。</p></dd><dt><span class="term">$ grep 'test' aa bb cc</span></dt><dd><p>显示在aa，bb，cc文件中匹配test的行。</p></dd><dt><span class="term">$ grep '[a-z]\{5\}' aa</span></dt><dd><p>显示所有包含每个字符串至少有5个连续小写字符的字符串的行。</p></dd><dt><span class="term">$ grep 'w\(es\)t.*\1' aa</span></dt><dd><p>如果west被匹配，则es就被存储到内存中，并标记为1，然后搜索任意个字符（.*），这些字符后面紧跟着另外一个es（\1），找到就显示该行。如果用egrep或grep -E，就不用"\"号进行转义，直接写成'w(es)t.*\1'就可以了。</p></dd></dl></div></div></div>
+	一些例子
+	cathy ~> grep root /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+operator:x:11:0:operator:/root:/sbin/nologin
+
+cathy ~> grep -n root /etc/passwd
+1:root:x:0:0:root:/root:/bin/bash
+12:operator:x:11:0:operator:/root:/sbin/nologin
+
+cathy ~> grep -v bash /etc/passwd | grep -v nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+news:x:9:13:news:/var/spool/news:
+mailnull:x:47:47::/var/spool/mqueue:/dev/null
+xfs:x:43:43:X Font Server:/etc/X11/fs:/bin/false
+rpc:x:32:32:Portmapper RPC user:/:/bin/false
+nscd:x:28:28:NSCD Daemon:/:/bin/false
+named:x:25:25:Named:/var/named:/bin/false
+squid:x:23:23::/var/spool/squid:/dev/null
+ldap:x:55:55:LDAP User:/var/lib/ldap:/bin/false
+apache:x:48:48:Apache:/var/www:/bin/false
+
+cathy ~> grep -c false /etc/passwd
+7
+
+cathy ~> grep -i ps ~/.bash* | grep -v history
+/home/cathy/.bashrc:PS1="\[\033[1;44m\]$USER is in \w\[\033[0m\] "
+
+从先前的例子中，我们只想显示那些使用字符串 “root” 开头的行：
+
+cathy ~> grep ^root /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+
+如果我们想看哪个账号什么shell都没有分配，我们搜索行结束符 “:”：
+
+cathy ~> grep :$ /etc/passwd
+news:x:9:13:news:/var/spool/news:
+
+要检查 PATH 是否在 ~/.bashrc 中导出，首先选择 “export” 然后搜索以字符串 PATH 开始的行，这样就不会搜索到MANPATH或者其他可能的路径了：
+
+cathy ~> grep export ~/.bashrc | grep '\<PATH'
+  export PATH="/bin:/usr/lib/mh:/lib:/usr/bin:/usr/local/bin:/usr/ucb:/usr/dbin:$PATH"
+
+同样地，\> 匹配字的结束。
+
+如果你想找到是一个分隔的字的字符串（用空格来包围的），最好使用 -w，就像在这个例子中我们现实root分区的信息那样：
+
+cathy ~> grep -w / /etc/fstab
+LABEL=/                 /                       ext3    defaults        1 1
+
+如果不使用这个选项，系统表中的所有行都会被显示。
+
+cathy ~> grep [yf] /etc/group
+sys:x:3:root,bin,adm
+tty:x:5:
+mail:x:12:mail,postfix
+ftp:x:50:
+nobody:x:99:
+floppy:x:19:
+xfs:x:43:
+nfsnobody:x:65534:
+postfix:x:89:
+
+cathy ~> ls *[1-9].xml
+app1.xml  chap1.xml  chap2.xml  chap3.xml  chap4.xml
+
+cathy ~> grep '\<c...h\>' /usr/share/dict/words
+catch
+clash
+cloth
+coach
+couch
+cough
+crash
+crush
+
+cathy ~> grep '\<c.*h\>' /usr/share/dict/words
+caliph
+cash
+catch
+cheesecloth
+cheetah
+
+cathy ~> grep * /etc/profile
+
+cathy ~> grep -F '*' /etc/profile
+for i in /etc/profile.d/*.sh ; do
+	</body></html>
+	
+<script language='javascript'>postamble();</script>

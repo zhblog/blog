@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>无标题文档</title>
+</head>
+
+<body>
+<p>例: 更改dns配置</p>
+<p>说明:向w99.com的正向区域内添加一条主机(A)记录,向w99.com的反向区域文件中添加一条指针(FTR)记录</p>
+<p>______________________________________________________________________________________</p>
+<p>#!/bin/bash </p>
+<p>domain=&quot;w99.com&quot;<br>
+  forward_zone=&quot;/var/named/w99.com.zone&quot;<br>
+  rev_zone=&quot;/var/named/w99.com.rev&quot;</p>
+<p># This function requires that the serial number be on<br>
+  # a line by itself and followed by &quot; ;serial&quot;</p>
+<p>increment_serial() {<br>
+  &nbsp;&nbsp;[ -w &quot;$1&quot; ] || {<br>
+  &nbsp;&nbsp;echo &quot;File $1 doesn't exist or is not writable!&quot; &gt;&amp;2<br>
+  &nbsp;&nbsp;return<br>
+  &nbsp;&nbsp;}<br>
+  &nbsp;&nbsp;awk '/; serial/ {print &quot; &quot; $1+1 &quot; ; serial&quot;} \<br>
+  &nbsp;&nbsp;!/; serial/ {print $0}' &quot;$1&quot; &gt; &quot;$1.tmp&quot; &amp;&amp; \<br>
+  &nbsp;&nbsp;mv &quot;$1.tmp&quot; &quot;$1&quot;<br>
+  }</p>
+<p># First, increment the serial numbers<br>
+  increment_serial &quot;$forward_zone&quot;<br>
+   increment_serial &quot;$rev_zone&quot;</p>
+<p>new_hostname=&quot;amaz&quot;<br>
+ip_address=&quot;334.16.27.39&quot;</p>
+<p>  # Determine reversed-ip <br>
+  rev_ip=`echo &quot;$ip_address&quot; | sed 's/^\(.*\)\.\(.*\)\.\(.*\)\.\(.*\)$/\4.\3.\2.\1.in-addr.arpa./'`</p>
+<p># Now, add new entries<br>
+  echo &quot;$new_hostname.$domain. IN A $ip_address&quot; &gt;&gt; &quot;$forward_zone&quot;<br>
+echo &quot;$rev_ip IN PTR $new_hostname.$domain.&quot; &gt;&gt; &quot;$rev_zone&quot;</p>
+<p>echo &quot;DNS entries created for $new_hostname ($ip_address)&quot; &gt;&amp;2</p>
+<p># Indicate success on STDOUT<br>
+  echo &quot;true;&quot;<br>
+  exit 0</p>
+</body>
+</html>

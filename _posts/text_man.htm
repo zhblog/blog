@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>无标题文档</title>
+<link href="wu.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<h2>处理文本和文本文件的命令
+</h2>
+<h3>一. sort</h3>
+<p> 文件排序, 通常用在管道中当过滤器来使用. 这个命令可以依据指定的关键字或指定的字符位置, 对文件行进行排序. 使用-m选项, 它将会合并预排序的输入文件. 想了解这个命令的全部参数请参考这个命令的info页. </p>
+<h3>  二. tsort</h3>
+<p> 拓扑排序, 读取以空格分隔的有序对, 并且依靠输入模式进行排序. </p>
+<h3>  三. uniq</h3>
+<p> 这个过滤器将会删除一个已排序文件中的重复行. 这个命令经常出现在sort命令的管道后边.</p>
+<h3>四. expand, unexpand</h3>
+<p> expand命令将会把每个tab转化为一个空格. 这个命令经常用在管道中.</p>
+<p> unexpand命令将会把每个空格转化为一个tab. 效果与expand命令相反. </p>
+<h3>  五. cut</h3>
+<p> 一个从文件中提取特定域的工具. 这个命令与awk中使用的print $N命令很相似, 但是更受限. 在脚本中使用cut命令会比使用awk命令来得容易一些. 最重要的选项就是-d(字段定界符)和-f(域分隔符)选项.</p>
+<h3> 六. paste</h3>
+<p> 将多个文件, 以每个文件一列的形式合并到一个文件中, 合并后文件中的每一列就是原来的一个文件. 与cut结合使用, 经常用于创建系统log文件. </p>
+<h3>  七. join</h3>
+<p> 这个命令与paste命令属于同类命令. 但是它能够完成某些特殊的目地. 这个强力工具能够以一种特殊的形式来合并两个文件, 这种特殊的形式本质上就是一个关联数据库的简单版本.</p>
+<p> join命令只能够操作两个文件. 它可以将那些具有特定标记域(通常是一个数字标签)的行合并起来, 并且将结果输出到stdout. 被加入的文件应该事先根据标记域进行排序以便于能够正确的匹配. </p>
+<h3>八. head</h3>
+<p> 把文件的头部内容打印到stdout上(默认为10行, 可以自己修改). 这个命令有一些比较有趣的选项. </p>
+<h3>九. tail</h3>
+<p> 将一个文件结尾部分的内容输出到stdout中(默认为10行). 通常用来跟踪一个系统logfile的修改情况, 如果使用-f选项的话, 这个命令将会继续显示添加到文件中的行. </p>
+<h3>十. wc</h3>
+<p> wc可以统计文件或I/O流中的&quot;单词数量&quot;:</p>
+<h3>十一. fold</h3>
+<p> 将输入按照指定宽度进行折行. 这里有一个非常有用的选项-s, 这个选项可以使用空格进行断行(译者: 事实上只有外文才需要使用空格断行, 中文是不需要的)(请参考例子 12-23和例子 A-1).</p>
+<h3>  十二. fmt</h3>
+<p> 一个简单的文件格式器, 通常用在管道中, 将一个比较长的文本行输出进行&quot;折行&quot;. </p>
+<h3>十三. col</h3>
+<p> 这个命令用来滤除标准输入的反向换行符号. 这个工具还可以将空白用等价的tab来替换. col工具最主要的应用还是从特定的文本处理工具中过滤输出, 比如groff和tbl. (译者: 主要用来将man页转化为文本.) </p>
+<h3>  十四. column</h3>
+<p> 列格式化工具. 通过在合适的位置插入tab, 这个过滤工具会将列类型的文本转化为&quot;易于打印&quot;的表格式进行输出. </p>
+<h3>十五. colrm</h3>
+<p> 列删除过滤器. 这个工具将会从文件中删除指定的列(列中的字符串)并且写到文件中, 如果指定的列不存在, 那么就回到stdout. colrm 2 4 &lt;filename将会删除filename文件中每行的第2到第4列之间的所有字符.</p>
+<p> Caution: 如果这个文件包含tab和不可打印字符, 那将会引起不可预期的行为. 在这种情况下, 应该通过管道的手段使用expand和unexpand来预处理colrm. </p>
+<h3>  十六. nl</h3>
+<p> 计算行号过滤器. nl filename将会把filename文件的所有内容都输出到stdout上, 但是会在每个非空行的前面加上连续的行号. 如果没有filename参数, 那么就操作stdin.</p>
+<p> nl命令的输出与cat -n非常相似, 然而, 默认情况下nl不会列出空行. </p>
+<h3>十七. pr</h3>
+<p> 格式化打印过滤器. 这个命令会将文件(或stdout)分页, 将它们分成合适的小块以便于硬拷贝打印或者在屏幕上浏览. 使用这个命令的不同的参数可以完成好多任务, 比如对行和列的操作, 加入行, 设置页边, 计算行号, 添加页眉, 合并文件等等. pr命令集合了许多命令的功能, 比如nl, paste, fold, column, 和expand.</p>
+<p> pr -o 5 --width=65 fileZZZ | more 这个命令对fileZZZ进行了比较好的分页, 并且打印到屏幕上. 文件的缩进被设置为5, 总宽度设置为65.</p>
+<p> 一个非常有用的选项-d, 强制隔行打印(与sed -G效果相同). </p>
+<h3>  十八. gettext</h3>
+<p> GNU gettext包是专门用来将程序的输出翻译或者本地化为不同国家语言的工具集. 在最开始的时候仅仅支持C语言, 现在已经支持了相当数量的其它程序语言和脚本语言.</p>
+<p> 想要查看gettext程序如何在shell脚本中使用. 请参考info页. </p>
+<h3>  十九. msgfmt</h3>
+<p> 一个产生二进制消息目录的程序. 这个命令主要用来本地化. </p>
+<h3>  二十. iconv</h3>
+<p> 一个可以将文件转化为不同编码格式(字符集)的工具. 这个命令主要用来本地化. </p>
+<h3>二十一. recode</h3>
+<p> 可以认为这个命令是上边iconv命令的专业版本. 这个非常灵活的并可以把整个文件都转换为不同编码格式的工具并不是Linux标准安装的一部分.</p>
+<h3>  二十二. TeX, gs</h3>
+<p> TeX和Postscript都是文本标记语言, 用来对打印和格式化的视频显示进行预拷贝.</p>
+<p> TeX是Donald Knuth精心制作的排版系统. 通常情况下, 通过编写脚本的手段来把所有的选项和参数封装起来一起传到标记语言中是一件很方便的事情.</p>
+<p> Ghostscript (gs) 是一个 遵循GPL的Postscript解释器. </p>
+<h3>  二十三. enscript</h3>
+<p> 将纯文本文件转换为PostScript的工具</p>
+<p> 比如, enscript filename.txt -p filename.ps 产生一个 PostScript 输出文件filename.ps. </p>
+<h3>  二十四. groff, tbl, eqn</h3>
+<p> 另一种文本标记和显示格式化语言是groff. 这是一个对传统UNIX roff/troff显示和排版包的GNU增强版本. Man页使用的就是groff.</p>
+<p> tbl表处理工具可以认为是groff的一部分, 它的功能就是将表标记转化到groff命令中.</p>
+<p> eqn等式处理工具也是groff的一部分, 它的功能是将等式标记转化到groff命令中. </p>
+<h3>二十五. lex, yacc</h3>
+<p> lex是用于模式匹配的词汇分析产生程序. 在Linux系统上这个命令已经被flex取代了.</p>
+<p> yacc工具基于一系列的语法规范, 产生一个语法分析器. 在Linux系统上这个命令已经被bison取代了. </p>
+<h3>二十六. tr</h3>
+<p> 字符转换过滤器. </p>
+<h3>例:8-1</h3>
+<p>1. #ls -l /var/www/html #显示指定目录的内容列表 </p>
+<p>2. #ls -lut /var/www/html #以最近访问的日期顺序显示指定目录的内容列表</p>
+<p>3. #ls -lut /var/www/html | head -5 #以最近访问的日期顺序显示指定目录的内容列表的前5项</p>
+<p>4. #ls -lt /var/spool/mail #按最后修改的时间顺序显示/var/spool/mail下的内容列表</p>
+<p>5. #ls -lt /var/spool/mail | tail -5 #按最后修改的时间顺序显示/var/spool/mail下的内容列表后5项</p>
+<p>6. #tail -f /var/log/httpd/access_log #监视Apache的访问日志</p>
+<p>7. #grep -i unix chapt5.txt #不区分大小写</p>
+<p>8. #grep -v &quot;#&quot; /etc/hosts #不显示包含#的行</p>
+<p>9. #grep -n pipe chap02.txt chap06.txt #显示行号</p>
+<p>10. #grep -l sharp /project/* #只显示包含sharp的文件名称</p>
+<p>11. #grep -n pipe chap02.txt chap06.txt #显示包含pipe内容的行,同时显示行号 </p>
+<p>12. #echo &quot;abcd2ef1&quot; | tr '[:alpha:]' -</p>
+<p>13. #tr '!?&quot;:;\[\]{}(),.\t\n' ' ' &lt; chapt5.txt | tr 'A-Z' 'a-z' | tr -s ' ' | tr ' ' '\n' | sort </p>
+<p>14. #tr '!?&quot;:;\[\]{}(),.\t\n' ' ' &lt; chapt5.txt | tr 'A-Z' 'a-z' | tr -s ' ' | tr ' ' '\n' | sort | uniq -c | sort -rn | head</p>
+<p>15. #tr '[:punct:]' ' ' &lt; chapt5.txt | tr 'A-Z' 'a-z' |  tr '[:space:] ' ' ' | tr -s ' '| tr ' ' '\n' | sort | uniq -c | sort -rn | head </p>
+<p>16. #sort -rn -k 2,2 chapt5.txt </p>
+<p>17. #echo &quot;abcd2ef1&quot; | tr '[:alpha:]' -</p>
+<p>18. #echo &quot;abcdef&quot; | tr -d b-d # 结果为aef,tr的 -d 选项删除指定范围的字符.</p>
+<p>  19. #tr -d 0-9 &lt;filename
+# 删除&quot;filename&quot;中所有的数字. </p>
+<h3>例子 8-2. 转换大写: 把一个文件的内容全部转换为大写.</h3>
+<p>#!/bin/bash<br>
+   # 把一个文件的内容全部转换为大写. <br>
+ E_BADARGS=65<br>
+ if [ -z &quot;$1&quot; ];then # 检查命令行参数.<br>
+&nbsp;&nbsp;echo &quot;Usage: `basename $0` filename&quot;<br>
+&nbsp;&nbsp;exit $E_BADARGS<br>
+   fi <br>
+  tr a-z A-Z &lt;&quot;$1&quot;<br>
+ # 与上边的作用相同, 但是使用了POSIX字符集标记方法:<br>
+ # tr '[:lower:]' '[:upper:]' &lt;&quot;$1&quot;<br>
+   exit 0<br>
+</p>
+<h3>例子 8-3. 转换小写: 将当前目录下的所有文件名全部转换为小写.</h3>
+<p> #!/bin/bash<br>
+   #<br>
+   # 将当前目录下的所有文件名全部转换为小写. <br>
+   # <br>
+   for filename in * # 遍历当前目录下的所有文件. <br>
+   do <br>
+   &nbsp;&nbsp;fname=`basename $filename` <br>
+   &nbsp;&nbsp;n=`echo $fname | tr A-Z a-z` # 将名字修改为小写. <br>
+   &nbsp;&nbsp;if [ &quot;$fname&quot; != &quot;$n&quot; ] # 只对那些文件名不是小写的文件进行重命名. <br>
+   &nbsp;&nbsp;then<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;mv $fname $n<br>
+   &nbsp;&nbsp;fi <br>
+   done <br>
+  exit $?<br>
+  <br>
+   # 下边的代码将不会被执行, 因为上边的&quot;exit&quot;. <br>
+   #-------------------------------------------#<br>
+   # 删除上边的内容, 来运行下边的内容. <br>
+  <br>
+   # 对于那些文件名中包含空白和新行的文件, 上边的脚本就不能工作了. <br>
+   # Stephane Chazelas因此建议使用下边的方法: <br>
+  <br>
+  for filename in * # 不必非得使用basename命令,  因为&quot;*&quot;不会返回任何包含&quot;/&quot;的文件. <br>
+   do <br>
+  n=`echo &quot;$filename/&quot; | tr '[:upper:]' '[:lower:]'`<br>
+  # POSIX 字符集标记法. 添加的斜线是为了在文件名结尾换行不会被命令替换删掉. <br>
+  # 变量替换:<br>
+  n=${n%/} # 从文件名中将上边添加在结尾的斜线删除掉. <br>
+  [[ $filename == $n ]] || mv &quot;$filename&quot; &quot;$n&quot;<br>
+  # 检查文件名是否已经是小写. <br>
+  done<br>
+  exit $?</p>
+<p>例子 10-9. 在目录的所有文件中查找源字串</p>
+<p>  #!/bin/bash<br>
+   # findstring.sh:<br>
+   # 在一个指定目录的所有文件中查找一个特定的字符串.<br>
+  <br>
+   directory=/usr/bin/<br>
+   fstring=&quot;Free Software Foundation&quot; # 查看哪个文件中包含FSF.<br>
+  <br>
+   for file in $( find $directory -type f -name '*' | sort )<br>
+   do<br>
+   strings -f $file | grep &quot;$fstring&quot; | sed -e &quot;s%$directory%%&quot;<br>
+   # 在&quot;sed&quot;表达式中, 我们必须替换掉正常的替换分隔符&quot;/&quot;, 因为&quot;/&quot;碰巧是我们需要过滤的字符串之一.<br>
+   # 如果不用&quot;%&quot;代替&quot;/&quot;作为分隔符,那么这个操作将失败,并给出一个错误消息.(试一试).<br>
+   done <br>
+exit 0</p>
+<h3>例子 8-4. 列出目录中所有的符号链接</h3>
+<p>#!/bin/bash<br>
+   # symlinks.sh: 列出目录中所有的符号链接文件.<br>
+  <br>
+  directory=${1-`pwd`}<br>
+   # 如果没有其他特殊的指定, 默认为当前工作目录.<br>
+   # 下边的代码块, 和上边这句等价.<br>
+   # ----------------------------------------------------------<br>
+   # ARGS=1 # 需要一个命令行参数.<br>
+   #<br>
+   # if [ $# -ne &quot;$ARGS&quot; ] # 如果不是单个参数的话...<br>
+   # then<br>
+   # directory=`pwd` # 当前工作目录<br>
+   # else<br>
+   # directory=$1<br>
+   # fi<br>
+   # ----------------------------------------------------------<br>
+  <br>
+   echo &quot;symbolic links in directory \&quot;$directory\&quot;&quot;<br>
+  <br>
+   for file in &quot;$( find $directory -type l )&quot; # -type l = 符号链接<br>
+   do<br>
+&nbsp;&nbsp;echo &quot;$file&quot;<br>
+   done | sort # 否则的话, 列出的文件都是未经排序的.<br>
+   # 严格意义上说, 这里并不一定非要一个循环不可. 因为&quot;find&quot;命令的输出将被扩展成一个单词.  然而, 这种方式很容易理解也很容易说明.<br>
+  <br>
+   # 就像Dominik 'Aeneas' Schnitzer所指出的, 如果没将$( find $directory -type l )用&quot;&quot;引用起来的话, 那么将会把一个带有空白部分的文件名拆分成以空白分隔的两部分(文件名允许有空白).即使这里只会取出每个参数的第一个域.<br>
+  <br>
+   exit 0<br>
+  <br>
+  # Jean Helou建议采用下边的方法: <br>
+  <br>
+  echo &quot;symbolic links in directory \&quot;$directory\&quot;&quot;<br>
+   # 当前IFS的备份. 要小心使用这个值.<br>
+   OLDIFS=$IFS<br>
+   IFS=:<br>
+  <br>
+   for file in $(find $directory -type l -printf &quot;%p$IFS&quot;)<br>
+   do # ^^^^^^^^^^^^^^^^<br>
+&nbsp;&nbsp;echo &quot;$file&quot;<br>
+done|sort</p>
+<h3>例子 8-5. 将目录中所有符号链接文件的名字保存到一个文件中</h3>
+<p>  #!/bin/bash<br>
+   # symlinks.sh: 列出目录中所有的符号链接文件.<br>
+  <br>
+   OUTFILE=symlinks.list # 保存符号链接文件名的文件<br>
+  <br>
+   directory=${1-`pwd`}<br>
+   # 如果没有其他特殊的指定,<br>
+   #+ 默认为当前工作目录.<br>
+  <br>
+   echo &quot;symbolic links in directory \&quot;$directory\&quot;&quot; &gt; &quot;$OUTFILE&quot;<br>
+   echo &quot;---------------------------&quot; &gt;&gt; &quot;$OUTFILE&quot;<br>
+  <br>
+   for file in &quot;$( find $directory -type l )&quot; # -type l = 符号链接<br>
+   do<br>
+   &nbsp;&nbsp;echo &quot;$file&quot;<br>
+   &nbsp;&nbsp;done | sort &gt;&gt; &quot;$OUTFILE&quot; # 循环的stdout<br>
+   # ^^^^^^^^^^^^^ 重定向到一个文件中.<br>
+  exit 0</p>
+<p>&nbsp; </p>
+<p>  练习:<br>
+  1. 重写例8-2脚本, 通过选项可以控制脚本或者转换为大写或者转换为小写.</p>
+<p>2. 转换例8-3这个脚本, 用命令行参数代替内部用的$directory和$fstring.</p>
+</body>
+</html>

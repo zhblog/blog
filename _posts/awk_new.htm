@@ -1,0 +1,514 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>awk&nbsp;&nbsp; awk学习笔记</title>
+</head>
+
+<body>
+
+<p><b><font size="4">gawk</font></b>&nbsp;&nbsp; <span style="font-weight: 400">
+<font size="3"><a target="_blank" href="awk.htm">gawk学习笔记</a>&nbsp;&nbsp;&nbsp;
+<a target="_blank" href="awk_ibm.htm">IBM awk资料</a></p>
+<h3>语法:</h3>
+<p>gawk&nbsp; 'script'&nbsp; files</p>
+<p>script如下所示:</p>
+<p>/pattern/&nbsp; { actions&nbsp; }</p>
+<hr>
+<p>假定fruit.txt文件的内容如下:</p>
+<p>Fruit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Frice/lbs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+Quantity<br>
+Banana&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $0.89&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+100<br>
+Peach&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $0.79&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+65<br>
+Kiwi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+$1.50&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+22<br>
+Pineapple&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $1.29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+35<br>
+Apple&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $0.99&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+78</p>
+<h3>例7-1. 相对于数据文件fruit.txt的一组示例</h3>
+<p>输出所有内容</p>
+<p>1). gawk '{ print ; }' fruit.txt</p>
+<p>输出指定字段</p>
+<p>2). gawk '{ print $1,$3 ; }' fruit.txt</p>
+<p>以特定格式输出指定字段</p>
+<p>3). gawk '{ printf &quot;%-15s %s&quot;,$1,$3 ; }' fruit.txt</p>
+<p>在模式中使用正则表达式</p>
+<p>4). gawk '&nbsp; /\$[1-9][0-9]*\.[0-9[0-9]*/ {print $1,$2,$3;} 
+/\$0\.[0-9][0-9]*/{prints ; } ' fruit.txt</p>
+<p>在模式中使用关系表达式</p>
+<p>5). gawk '$3&lt;=75 { printf &quot;%s%t%s\n&quot;,$0,&quot;REORDER&quot; ; } $3&gt;75 print $0; ' fruit.txt</p>
+<p>在模式中使用匹配、正则表达式、关系表达式、逻辑表达式样</p>
+<p>6). gawk '($2 ~ /^\$[1-9][0-9]*\.[0-9][0-9]$/) &amp;&amp; ($3&lt;75){ printf &quot;%s%t%s%t%s&quot;,$0,&quot;*&quot;,&quot;REORDER&quot; 
+; }' fruit.txt</p>
+<p>查看IP地址</p>
+<p>7). ifconfig | gawk '/inet/{print $2}' | gawk -F: '{print $2}'</p>
+<hr>
+<p>数据文件employees的内容如下:</p>
+<p>Tom Jones&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4424&nbsp;&nbsp;&nbsp; 
+5/12/66&nbsp;&nbsp;&nbsp; 543354<br>
+Mary Adams&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5346&nbsp;&nbsp;&nbsp; 11/4/63&nbsp;&nbsp;&nbsp; 
+28765<br>
+Sally Chang&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1645&nbsp;&nbsp;&nbsp; 7/22/54&nbsp;&nbsp;&nbsp; 
+650000<br>
+Billy Black&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1683&nbsp;&nbsp;&nbsp; 9/23/44&nbsp;&nbsp;&nbsp; 
+336500</p>
+<h3>例7-2.&nbsp;关于数据文件employees的一组例子</h3>
+<p>模式匹配</p>
+<p>1). gawk '/Sally/{print $1,$2}' employees</p>
+<p>gawk的数据来源于管道</p>
+<p>2). df | gawk '$4&gt;75000{print}'</p>
+<p>3). rusers | gawk '/root$/{print $1}'</p>
+<p>4). date | gawk '{print &quot;Month:&quot; $2 &quot;\nYear:&quot;,$6}' </p>
+<p>利用-F选项指定字段分隔符</p>
+<p>5). gawk -F: '/Tom Jones/{print $1,$2}' employees</p>
+<p>6). gawk -F'[ :\t]'&nbsp; '{print $1,$2}' employees</p>
+<p>使用&quot;~&quot;针对某个字段进行模式匹配</p>
+<p>7). gawk '$1 ~ /[Bb]ill/{print $0}' employees</p>
+<p>8). gawk '$1 !~ /ly$/{print $0}' employees</p>
+<p>9). gawk '$2 ~ /E/{print $1,$2}' employees</p>
+<p>在模式,或字段模式中使用正则表达式</p>
+<p>10). gawk '/^[ns]/{print $1}' employees</p>
+<p>11). gawk '$5 ~ /\.[7-9]+/{print $0}' employees</p>
+<p>在操作中使用条件表达式</p>
+<p>12). gawk '{m=($1&gt;$2)?$1:$2 ;print m}' employees</p>
+<p>如果第一和第二个域相加大于100，则打印这些行。 </p>
+<p>13). gawk '$1 + $2 &lt; 100' test</p>
+<p>如果第一个域大于5，并且第二个域小于10，则打印这些行。</p>
+<p>14). gawk '$1 &gt; 5 &amp;&amp; $2 &lt; 10' test</p>
+<p>gawk函数</p>
+<p>15). gawk 'NR==1 {gsub(/northwest/,&quot;southeast&quot;,$1);print}' test</p>
+<p>16). gawk '{print substr($3,1,3);print length($3)}' employees</p>
+<p>17). gawk '{print index($1,&quot;ao&quot;)}' employees</p>
+<p>18). gawk 'BEGIN{split(&quot;10/14/2001&quot;,now,&quot;/&quot;);print now[1],now[2],now[3]}' test</p>
+
+<p>读输入(getline)</p> <span style="font-weight: 400">
+<p>19). gawk 'BEGIN{while(getline &lt; &quot;/etc/passwd&quot; &gt;0) {lc++}  print lc<span style="font-weight: 400">}</span>' datafile</p>
+</span> <span style="font-weight: 400">
+<hr>
+<h3>例7-3. 输出多个文件(由命令行参数指定)中空行数目</h3>
+<p>#!/bin/bash</p>
+<p>for i in&nbsp; $@</p>
+<p>do</p>
+<p>&nbsp;&nbsp;&nbsp; if [ -f $i ];then</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo $i</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gawk '/^ *$/ { x=x+1; print x; }' $i</p>
+<p>&nbsp;&nbsp;&nbsp; else</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;Error $i is not a file&quot; &gt;&amp;2</p>
+<p>&nbsp;&nbsp;&nbsp; fi</p>
+<p>done</p>
+<hr>
+<h3>例7-4. 输出多个文件(由命令行参数指定)中空行数目--只输出一次(在gawk中使用END)</h3>
+<p>#!/bin/bash</p>
+<p>for i in&nbsp; $@</p>
+<p>do</p>
+<p>&nbsp;&nbsp;&nbsp; if [ -f $i ];then</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;$i\c&quot;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gawk '/^ *$/ { x=x+1; next; } END {printf 
+&quot;%s\n&quot;,x; }' $i</p>
+<p>&nbsp;&nbsp;&nbsp; else</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo &quot;Error $i is not a file&quot; &gt;&amp;2</p>
+<p>&nbsp;&nbsp;&nbsp; fi</p>
+<p>done</p>
+<hr>
+<h3>例7-5. 订购数量在75以下的货物,并在单价高于1元的货物后加上&quot;*&quot;(在gawk中使用if条件)</h3>
+<p>awk '{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf &quot;%s\t&quot;,$0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($2 ~ /\$[1-9][0-9]*\.[0-9][0-9]/) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf &quot;*&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($3&lt;=75) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf &quot;REORDER\n&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf &quot;\n&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($3&lt;75) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf &quot;REORDER\n&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf &quot;\n&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}' fruit.txt</p>
+<hr>
+<h3>例7-6. 将文件各行字段按相反的顺序输出(在gawk中使用while循环)</h3>
+<p>#!/bin/bash</p>
+<p>gawk '{ x=NF;</p>
+<p>while (x&gt;0) </p>
+<p>&nbsp;&nbsp;&nbsp; {</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; printf(&quot;%16s&quot;,$x);</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-=1;</p>
+<p>&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; print &quot; &quot;;</p>
+<p>&nbsp;}' fruit.txt</p>
+<hr>
+<h3>例7-7. 将文件各行字段按相反的顺序输出(在gawk中使用for循环)</h3>
+<p>#!/bin/bash</p>
+<p>gawk '{</p>
+<p>for (x=1;x&lt;=NF;x+=1) </p>
+<p>&nbsp;&nbsp;&nbsp; {</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; printf&nbsp; &quot;%s&quot;, $x;</p>
+<p>&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; printf &quot;\n&quot;;</p>
+<p>&nbsp;}' fruit.txt</p>
+<hr>
+<h3>例7-8: gawk脚本1</h3>
+<p>脚本文件gawkfile文件的内容如下:</p>
+<p>/^Mary/{print &quot;Hello Mary!&quot;}<br>
+{print $1,$2,$3}</p>
+<p>执行脚本文件中的操作,可采用:</p>
+<p># gawk -f gawkfile employeess</p>
+<hr>
+<h3>例7-9: 对记录进行多种操作</h3>
+<p>利用gawk脚本对/etc/passwd文件进行数据合法性检验(如果字段数不等于7,或字段1不包含任何字母和数字字符,或字段2是一个*,则输出相应的提示信息).</p>
+<p># cat /etc/passwd | gawk -F: '\</p>
+<p>NF!=7 {printf(&quot;line %d,does not have 7 fields:%s\n&quot;,NR,$0)} \</p>
+<p>$1 !~ /[A-Za-z0-9]/{printf(&quot;line %d:nonealphanumeric user id:%s\n&quot;,NR,$0)} 
+\</p>
+<p>$2 == &quot;*&quot; {printf(&quot;no password: %s\n&quot;,$0)}'</p><hr>
+<h3>例7-10: 数组初步</h3>
+<p>1. 将文件employees中第二个字段的值保存在数组name中,并输出.</p>
+<p>gawk '{name[x++]=$2};END{for(i=0;i&lt;NR;i++) \</p>
+<p> print i,name[i]}' employees </p>
+<p>2.将文件employees中第三个字段的值保存在数组id中,并输出(使用字段下标的形式).</p>
+<p>gawk '{id[NR]=$3};END{for(x=1;x&lt;=NR;x++) \</p>
+<p>print id[x]  }' employees </p>
+<p>3.将文件employees中第三个字段的值保存在数组id中,并输出(使用for in形式).</p>
+<p>gawk '{id[NR]=$3};END{for(x in id) \</p>
+<p>print id[x] }' employees </p>
+<p>4.
+
+
+gawk 'BEGIN{ numelements=split("Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",mymonths,",")};\</p>
+<p>END{for(x in mymonths) \</p>
+<p>print mymonths[x] }} ' </p>
+<hr>
+<h3>例7-11: 自定义函数 </h3>
+<p>#!/usr/bin/env awk -f<br>
+  BEGIN {<br>
+  FS=&quot;\t+&quot;<br>
+  months=&quot;Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec&quot;<br>
+  }<br>
+  function monthdigit(mymonth) {<br>
+  return (index(months,mymonth)+3)/4<br>
+}</p>
+<p>END{<br>
+  print monthdigit(&quot;Mar&quot;)<br>
+}</p>
+<hr>
+<h3>例7-12: 脚本文件与自定义函数 </h3>
+<p>针对练习中的数据文件,编写一个用户自定义函数,要求函数能返回指定月份的人均捐款数额,月份由命令行传入</p>
+</span> <span style="font-weight: 700">
+<p>#cat awkf</p>
+</span> <span style="font-weight: 400">
+<p>BEGIN {<br>
+  total=0<br>
+n=0<br>
+  }<br>
+  function mon_avg(curmonth) {<br>
+  curmonth=4+curmonth<br>
+total+=$curmonth<br>
+n++<br>
+return total/n;<br>
+}</p>
+<p>{<br>
+x=mon_avg(argv[1])<br>
+}</p>
+<p>END{<br>
+  print &quot;The end is&quot;,x<br>
+}</p></span> <span style="font-weight: 700">
+<p>#gawk -f awkfile datafile</p>
+</span> <span style="font-weight: 400">
+<hr>
+<h3><span style="font-weight: 400"><strong>例7-13: 批量添加系统用户</strong></span></h3>
+<p>这个脚本还有很多地方需要改进，比如算法，比如数据的处理。 <br>
+希望大家不吝提出修改意见。 </p>
+<p>[code:1:22892b664a] <br>
+  #!/bin/sh <br>
+  # Name: useraddmuti <br>
+  # Descripton: To add users to your system. Users can be list in a file. <br>
+  # To exec this command your ID must be 0. <br>
+  # Author: PopZslam@Linux.net <br>
+  #----------------------------------- <br>
+  chkUID(){ <br>
+  getUID(){ <br>
+  &nbsp;&nbsp;id|sed -e 's/(.*$//' -e 's/^uid=//' <br>
+  } </p>
+<p> if [ &quot;`getUID`&quot; -ne 0 ] <br>
+  then <br>
+  &nbsp;&nbsp;echo -e &quot;\tYou are not root!&quot; <br>
+  &nbsp;&nbsp;exit 0 <br>
+  fi <br>
+  } <br>
+  chkUID <br>
+  usagePRT(){ <br>
+  &nbsp;&nbsp;echo ${USAGE:='USAGE:' `basename $0` '-f namelistfile'} <br>
+  } <br>
+  chkFILE(){ <br>
+  if [ ! -z &quot;`awk 'NF!=2{print NF;exit;}' $1`&quot; ] &amp;&amp; [ &quot;`awk 'NF!=2{print NF;exit;}' $1`&quot; -ne 2 ] ; then <br>
+  &nbsp;&nbsp;echo -e &quot;The file's format is not right!&quot; <br>
+  &nbsp;&nbsp;exit 0 <br>
+  fi <br>
+  } </p>
+<p>userCHK(){ <br>
+  for USER in `awk '{print $1;}' $1` <br>
+  do <br>
+  &nbsp;&nbsp;if grep -wq $USER /etc/passwd ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The user($USER) has been added!&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;exit 1 <br>
+  &nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;if echo $USER|grep -wq &quot;^[0-9].*&quot; ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The user($USER)'s name is wrong format!&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;exit 1 <br>
+  &nbsp;&nbsp;fi <br>
+  done <br>
+  } </p>
+<p>setOPT(){ <br>
+  echo -e &quot;Now Let's set some options or you can use default settings.&quot; <br>
+  setGRPNAME(){ <br>
+  while : <br>
+  do <br>
+  &nbsp;&nbsp;echo -e &quot;Would you like to add a new group to add these users to it?&quot; <br>
+  &nbsp;&nbsp;echo -e &quot;Enter YES to create a new group otherwise you must verify the group.&quot; <br>
+  &nbsp;&nbsp;printf &quot;Your Answer: &quot; <br>
+  &nbsp;&nbsp;read grpopt <br>
+  &nbsp;&nbsp;case $grpopt in <br>
+  &nbsp;&nbsp;yes) <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;printf &quot;Please enter the group's name: &quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;read grpoptnew <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;if cat /etc/group|sed 's/:.*//'|grep -wq $grpoptnew ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo &quot;The group's name($grpoptnew) exist.&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;else <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;grpname=$grpoptnew <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;All these users will be added to group($grpname)...&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;Adding group ...&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if cp /etc/group /etc/group.$$ &gt; /dev/null 2&gt;&amp;1 ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if groupadd $grpname ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The group($grpname) is added!&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rm -f /etc/group.$$ <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break 1 <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;There's something wrong when adding the group($grpname).&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot; *** Please recovered the group file. *** &quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;You can cp /etc/group.$$ to /etc/group to recover.&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo &quot;Error! Please check the program or your disk space.&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit 0 <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;;; <br>
+  &nbsp;&nbsp;*) : ;; <br>
+  &nbsp;&nbsp;esac <br>
+  done <br>
+  } <br>
+  setGRPNAME <br>
+  } </p>
+<p>addUSER(){ <br>
+  if cp /etc/passwd /etc/passwd.$$ &amp;&amp; cp /etc/shadow /etc/shadow.$$ ; then <br>
+  &nbsp;&nbsp;for user in `sed 's/ .*//' $1` <br>
+  &nbsp;&nbsp;do <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;pass=`awk '{ <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;$1~/$name/ <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;{print $2;exit} <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;} name=$user' $1` <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;if [ -z &quot;$pass&quot; ] ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The passwd is used by default sun123.&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pass=sun123 <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;if [ ${#pass} -lt 6 ] ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The user($user)'s password is too short!&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;Use default password: sun123.&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pass=sun123 <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;if useradd $user ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The user($user) is added.&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if echo $pass|passwd $user --stdin &gt; /dev/null 2&gt;&amp;1 ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The user($user)'s password is setted!&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The user($user)'s password is NOT set!&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;else <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;The user($user) is NOT add.&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;done <br>
+  &nbsp;&nbsp;rm -f /etc/passwd.$$ /etc/shadow.$$ <br>
+  else <br>
+  &nbsp;&nbsp;echo -e &quot;There something wrong when backup the passwd and shadow file.&quot; <br>
+  fi <br>
+  } </p>
+<p>if [ $# -ne 2 ] ; then <br>
+  &nbsp;&nbsp;usagePRT <br>
+  &nbsp;&nbsp;exit 0 <br>
+  fi </p>
+<p>case &quot;$1&quot; in <br>
+  -f) <br>
+  &nbsp;&nbsp;if [ -f &quot;$2&quot; ] ; then <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;Reading usernamelist file&quot;&quot;(&quot;$2&quot;)&quot; &quot;...&quot; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;chkFILE $2 <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;userCHK $2 <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;setOPT <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;addUSER $2 <br>
+  &nbsp;&nbsp;else <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;echo -e &quot;There's no usernamelist file!&quot; <br>
+  &nbsp;&nbsp;fi <br>
+  &nbsp;&nbsp;;; <br>
+  *) usagePRT <br>
+  &nbsp;&nbsp;exit 0 <br>
+  &nbsp;&nbsp;;; <br>
+  esac </p>
+<hr>
+<h3>附:获取不同操作系统下的IP地址</h3>
+<p>#!/bin/sh<br>
+  # Shell script scripts to read ip address<br>
+  # -------------------------------------------------------------------------<br>
+  # Copyright (c) 2005 nixCraft project &lt;http://cyberciti.biz/fb/&gt;<br>
+  # This script is licensed under GNU GPL version 2.0 or above<br>
+  # -------------------------------------------------------------------------<br>
+  # This script is part of nixCraft shell script collection (NSSC)<br>
+  # Visit http://bash.cyberciti.biz/ for more information.<br>
+  # -------------------------------------------------------------------------<br>
+  # Get OS name<br>
+  OS=`uname`<br>
+  IO=&quot;&quot; # store IP<br>
+  case $OS in<br>
+Linux) IP=`ifconfig | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`;;<br>
+FreeBSD|OpenBSD) IP=`ifconfig | grep -E 'inet.[0-9]' | grep -v '127.0.0.1' | awk '{ print $2}'` ;;<br>
+SunOS) IP=`ifconfig -a | grep inet | grep -v '127.0.0.1' | awk '{ print $2} '` ;;<br>
+*) IP=&quot;Unknown&quot;;;<br>
+esac<br>
+echo &quot;$IP&quot;</p>
+<h3>练习:</h3>
+<p>有数据文件内容如下:</p>
+<p>Mike Harrington:(510) 548-1278:250:100:175<br>
+Chrstian Dobbins:(408) 538-2358:155:90:201<br>
+Susan Dalsass:(206) 548-1348:250:60:50<br>
+Archie McNichol:(206) 654-6279:250:100:175<br>
+Jody Savage:(206) 548-1278:15:188:150<br>
+Guy Quigley:(916) 343-6410:250:100:175<br>
+Dan Savage:(406) 298-7744:450:300:275<br>
+Nancy McNeil:(206) 548-1278:250:80:75<br>
+John Goldenrod:(916) 348-4278:250:100:175<br>
+Chet Main:(510) 548-5258:50:95:135<br>
+Tom Savage:(408) 926-3456:250:168:200<br>
+Elizabeth Stachelin:(916) 440-1763:175:75:300</p>
+<p>各行记录内容包括姓名、电话号码和最近3个月的捐款数额。</p>
+<p>针对上述文件，使用gawk完成下列操作:</p>
+<p>1. 打印所有电话号码</p>
+<p>2. 打印Dan的电话号码</p>
+<p>3. 打印Susan的姓名和电话号码</p>
+<p>4. 打印所有以D开头的姓( <span style="font-weight: 700">gawk -F: '/^D/ 
+{split($1,name,&quot; &quot;);print name[2]}' datafile</span><span style="font-weight: 400">)</p>
+<p>5. 打印所有以C或E开头的名</p>
+<p>6. 打印所有只有4个字母的姓</p>
+<p>7. 打印所有916区的人的姓</p>
+<p>8. 打印Mike的捐款数额,打印时每个值都要以美元符号开头.</p>
+<p>9. 先打印姓,然后打印一个逗号,再打印名</p>
+<p>10. 写下一个名为facts的awk脚本,完成以下操作:打印Savages的全名和电话号码;打印Chet的捐款数额;打印所有第一个月捐款250元的人.</p>
+<p>11. 打印在第一个月捐款超过100元的人的姓名。</p>
+<p>12. 打印在第一个月捐款少于60元的人的姓名和电话号码。</p>
+<p>13. 打印在第三个月捐款额在90元到150元之间的人。</p>
+<p>14. 打印在这三个月捐款总额超过800元的人。</p>
+<p>15. 打印不在916区的人的姓.</p>
+<p>16. 打印月均捐款额大于150元的人的姓名和电话号码.</p>
+<p>17. 打印每条记录,并在记录前加上其记录号</p>
+<p>18. 打印每个人的姓名和捐款总额</p>
+<p>19. 把Elizabeth第二个月的捐款额加上10</p>
+<p>20. 把Nancy McNeil的名字改成Louise McInnes</p>
+<p>21. 编写一个用户自定义函数,要求函数能返回指定月份的人均捐款数额,月份由命令行传入.</p>
+<p>22. 编写一个gawk程序对文件中的每行编号,然后将它的输出发送到标准输出.</p>
+<p>23. 编写一个gawk程序,显示第1个字段中的字符数目,及第一个字段的内容.</p>
+<p>24.使用gawk来判断/etc/termcap中有多少行包含了字符串vt100.并使用grep验证一下自己的程序.</p>
+<p>参考答案:</p>
+<p>1. 打印所有电话号码</p>
+<p>gawk -F: '{ print $2; }' awk2.sh</p>
+<p>或</p>
+<p>gawk -F: '{ printf(&quot;%s\n&quot;, $2); }' awk2.sh</p>
+<p>2. 打印Dan的电话号码</p>
+<p> gawk -F: '/Dan/{ print $2; }' awk2.sh</p>
+<p>  3. 打印Susan的姓名和电话号码</p>
+<p> gawk -F: '/Susan/{ print $1,$2; }' awk2.sh</p>
+<p>4. 打印所有以D开头的姓</p>
+<p> gawk '{printf(&quot;%s %s\n&quot;, $1,$2)}' awk2.sh | gawk '$2~/^D/{print $2}' </p>
+<p><span style="font-weight: 400">5. 打印所有以C或E开头的名</span></p>
+<p>gawk  '$1~/^[CE]/{print $1}' awk2.sh</p>
+<p><span style="font-weight: 400">6. 打印所有只有4个字母的姓</span></p>
+<p>gawk -F: '{print $1}' awk2.sh | gawk  '$2 ~/^....$/{print $2}'</p>
+<p>或</p>
+<p><span style="font-weight: 400">7. 打印所有916区的人的姓</span></p>
+<p>gawk -F: '$2~/(916)/ {split($1,x,&quot; &quot;);print x[2]}' datafile<br>
+  或:  <br>
+ gawk -F: '$2~/(916)/ {print $1}' datafile | gawk '{print $2}'</p>
+<p><span style="font-weight: 400">8. 打印Mike的捐款数额,打印时每个值都要以美元符号开头.</span></p>
+<p> gawk -F: '$1~/Mike/ {printf(&quot;$%d,$%d,$%d\n&quot;, $3,$4,$5)}' datafile </p>
+<p><span style="font-weight: 400">9. 先打印姓,然后打印一个逗号,再打印名</span></p>
+<p>gawk -F: 'split($1,x,&quot; &quot;) {printf(&quot;%s,%s\n&quot;,x[2],x[1])}' datafile </p>
+<p><span style="font-weight: 400">10. 写下一个名为facts的awk脚本,完成以下操作:打印Savages的全名和电话号码;打印Chet的捐款数额;打印所有第一个月捐款250元的人.</span></p>
+<p>脚本的facts内容如下:</p>
+<p>BEGIN{<br>
+  FS=&quot;:&quot;<br>
+  }<br>
+  <br>
+  $1 ~ /Savages/ {print $1,$2}<br>
+  $1 ~ /Chen/ {print $1,$3,$4,$5}<br>
+  $3==250 {print $1,$2}<br>
+</p>
+<p>按下面的方式执行脚本</p>
+<p>gawk -f facts datafile </p>
+<p><span style="font-weight: 400">11. 打印在第一个月捐款超过100元的人的姓名。</span></p>
+<p> gawk -F: '$3&gt;100{print $1}' awk2.sh</p>
+<p>  <span style="font-weight: 400">12. 打印在第一个月捐款少于60元的人的姓名和电话号码。</span></p>
+<p> gawk -F: '$3&lt;60 {print $1,$2}' awk2.sh</p>
+<p>  <span style="font-weight: 400">13. 打印在第三个月捐款额在90元到150元之间的人。</span></p>
+<p> gawk -F: '90&lt;=$5 &amp;&amp; $5&lt;=150 {print $1}' awk2.sh</p>
+<p>  <span style="font-weight: 400">14. 打印在这三个月捐款总额超过800元的人。</span></p>
+<p> gawk -F: '$3+$4+$5&gt;800 {print $1}' awk2.sh</p>
+<p><span style="font-weight: 400"></span><span style="font-weight: 400"></span><span style="font-weight: 400">15. 打印不在916区的人的姓.</span></p>
+<p> gawk -F: '$2!~916 {split($1,nn,&quot; &quot;); print nn[2]}' datafile<br>
+  或 
+  <br>
+ gawk -F: '$2!~916 {print $1}' datafile | gawk '{print $2}' </p>
+<p><span style="font-weight: 400">16. 打印月均捐款额大于150元的人的姓名和电话号码.</span></p>
+<p>gawk -F: '$3+$5+$4&gt;450 {print $1,$2}' datafile </p>
+<p><span style="font-weight: 400">17. 打印每条记录,并在记录前加上其记录号</span></p>
+<p>gawk '{print NR&quot; &quot;$0}' awk2.sh</p>
+<p><span style="font-weight: 400">18. 打印每个人的姓名和捐款总额</span></p>
+<p>gawk -F: '{print $1,$3+$4+$5;}' awk2.sh</p>
+<p><span style="font-weight: 400">19. 把Elizabeth第二个月的捐款额加上10</span></p>
+<p>gawk '$1~/Elizabeth/ {$4=$4+10;print $0;}' datafile  </p>
+<p><span style="font-weight: 400">20. 把Nancy McNeil的名字改成Louise McInnes</span></p>
+<p>gawk -F: '$1 ~ /Nancy McNeil/{gsub(&quot;Nancy McNeil&quot;,&quot;Louise McInnes&quot;,$1);print}' awk2.sh</p>
+<p><span style="font-weight: 400">21. 编写一个用户自定义函数,要求函数能返回指定月份的人均捐款数额,月份由命令行传入.</span></p>
+<p>脚本应按如下方式执行:</p>
+<p>gawk -f awk3.sh -v m=0 awk2.sh</p>
+<p>脚本awk3的内容如下: </p>
+<p>BEGIN{<br>
+  FS=&quot;:&quot;<br>
+  r=0<br>
+  n=0
+  <br>
+}</p>
+<p>  function mon_tot(curmonth)<br>
+  {<br>
+  r+=$(2+m)<br>
+  n++<br>
+  return r <br>
+  }</p>
+<p>  x=mon_tot(m){}</p>
+<p>  END{<br>
+  printf(&quot;month%d:average denotion is %s\n&quot;,m, x/n)<br>
+  }</p>
+<p><span style="font-weight: 400">22. 编写一个gawk程序对文件中的每行编号,然后将它的输出发送到标准输出.</span></p>
+<p>gawk '{print NR&quot; &quot;$0}' awk2.sh</p>
+<p><span style="font-weight: 400">23. 编写一个gawk程序,显示第1个字段中的字符数目,及第一个字段的内容.</span></p>
+<p>gawk -F: '{print length($1),$1}' awk2.sh</p>
+<p><span style="font-weight: 400">24.使用gawk来判断/etc/termcap中有多少行包含了字符串vt100.并使用grep验证一下自己的程序.</span></p>
+<p>gawk 'BEGIN{n=0} /vt100/{n++} END{print n}' /etc/termcap</p>
+<p> grep -c vt100 /etc/termcap</p>
+</body>
+
+</html>
