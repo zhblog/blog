@@ -1,0 +1,179 @@
+---
+layout: default
+title: Protobuf简介 
+author: zzh 
+thisdate: 2013-02-18
+classification: script
+---
+<p id="fortitle"> {{ page.thisdate }} </p>
+<h1>protobuf简介</h1>
+protobuf的官方介绍如下：
+<pre class="preclass">
+Protocol buffers are a flexible, efficient, automated mechanism for serializing structured data – think XML, but smaller, faster, and simpler. You define how you want your data to be structured once, then you can use special generated source code to easily write and read your structured data to and from a variety of data streams and using a variety of languages. You can even update your data structure without breaking deployed programs that are compiled against the "old" format.</pre>
+一个简单的protobuf格式如下
+<pre class="precode">
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+
+  repeated PhoneNumber phone = 4;
+}
+</pre>
+<pre>
+解释：
+message： 消息定义
+Person： 消息名称
+enum：枚举类型
+required：可选项
+optional：必选项
+repeated：数组选项
+
+另：可以有默认值，数据定义类型等
+</pre>
+<p>protobuf的优势是通讯时候的数据统一，简洁，明了，而且快速，灵活，支持语言丰富，官方支持C++ Java Python，其他语言的第三方支持也非常稳定和丰富，包括我使用过的js(当时用的时候出现过bug，自己修复过，给作者发邮件没回应)，C</p>
+<p>现在通过C 和Python利用ZMQ做通讯演示简单的利用protobuf定义数据的网络传输</p>
+<p>protobuf文件amessage.proto内容</p>
+<pre class="precode">
+message AMessage
+{
+    required int32 a=1; 
+    optional int32 b=2;
+}
+</pre>
+<p>生成C文件和python文件的简单脚本</p>
+<pre class="precode">
+#!/usr/bin/bash
+file="../file/person.proto"
+if [ $# -eq 1 ];
+then
+    file="../file/$1.proto"
+fi
+echo $file
+
+protoc --python_out=../python/ --proto_path=../file/ $file
+protoc-c --c_out=../c/ --proto_path=../file $file
+</pre>
+<p>C语言的ZMQ客户端和protobuf的打包test.z</p>
+<pre class="precode">
+#include <zmq.h>  
+#include <string.h>  
+#include <stdio.h>  
+#include <unistd.h>  
+#include <stdlib.h>
+#include "amessage.pb-c.h"
+
+static void* packbuf()
+{
+    AMessage msg = AMESSAGE__INIT; // AMessage
+    void *buf;                     // Buffer to store serialized data
+    unsigned len;                  // Length of serialized data
+    msg.a = 1;
+    //msg.has_b = 1; 
+    msg.b = 2;
+    len = amessage__get_packed_size(&msg);
+
+    buf = malloc(len);
+    amessage__pack(&msg,buf);
+    return buf;
+}
+
+
+int main (int argc,char**argv)  
+{  
+    //参数1为要发送的消息  
+    void *context = zmq_init (1);  
+
+    // Socket to talk to server  
+    printf ("Connecting to hello world server...\n");  
+    //连接server  
+    void *requester = zmq_socket (context, ZMQ_REQ);  
+    zmq_connect (requester, "tcp://localhost:5555");  
+
+    int request_nbr=0;  
+    for (request_nbr = 0; request_nbr != 10; request_nbr++) {  
+        //构建发送消息  
+        zmq_msg_t request={0};  
+        //申请消息的空间
+        void *buf;
+        buf = packbuf();
+        zmq_msg_init_size (&request, sizeof(buf));  
+        //填充消息  
+        memcpy (zmq_msg_data (&request), buf, sizeof(buf));  
+        printf ("Sending Hello %d\n", request_nbr);  
+        //发送消息  
+        zmq_send (requester, &request, 0);  
+        zmq_msg_close (&request);  
+        //准备接收回复  
+        zmq_msg_t reply={0};  
+        zmq_msg_init (&reply);  
+        //接收回复  
+        zmq_recv (requester, &reply, 0);  
+
+        //读取回复消息  
+        int size = zmq_msg_size (&reply);  
+        char *string = malloc (size + 1);  
+        memset(string,0,size+1);  
+        memcpy (string, zmq_msg_data (&reply), size);  
+        printf ("recv from server string=[%s]\n",string);  
+        free(string); 
+        zmq_msg_close (&reply);  
+    }  
+    zmq_close (requester);  
+    zmq_term (context);  
+    return 0;  
+} 
+</pre>
+
+<p>Makefile文件</p>
+<pre class="precode">
+all = client 
+CC=clang
+objs = amessage.pb-c.o   
+CFLAGS = -Wall 
+$(all): test.c $(objs)
+    clang -I. -o $@ $^ -lprotobuf-c -lzmq
+clean:
+    $(RM) *.o
+    $(RM) $(all)
+    $(RM) *~ 
+
+</pre>
+<p>Python的Server端代码，解析合成protobuf数据结构</p>
+<pre class="precode">
+import zmq
+import time
+import amessage_pb2 as APB 
+
+context = zmq.Context()
+socket = context.socket(zmq.REP)
+socket.bind("tcp://*:5555")
+
+am = APB.AMessage()
+while True:
+    #  Wait for next request from client
+    buf = socket.recv()
+    print "Received request: ", len(buf)
+    print repr(buf)
+    APB.AMessage.ParseFromString(am, buf)
+    print am.a
+    print am.b
+    #  Do some 'work'
+    time.sleep (1)        #   Do some 'work'
+
+    #  Send reply back to client
+    socket.send("World")
+
+socket.close()
+</pre>
