@@ -6,7 +6,6 @@ thisdate: 2013-02-18
 classification: script
 ---
 <p id="fortitle"> {{ page.thisdate }} </p>
-<h1>protobuf简介</h1>
 protobuf的官方介绍如下：
 <pre class="preclass">
 Protocol buffers are a flexible, efficient, automated mechanism for serializing structured data – think XML, but smaller, faster, and simpler. You define how you want your data to be structured once, then you can use special generated source code to easily write and read your structured data to and from a variety of data streams and using a variety of languages. You can even update your data structure without breaking deployed programs that are compiled against the "old" format.</pre>
@@ -67,11 +66,11 @@ protoc-c --c_out=../c/ --proto_path=../file $file
 </pre>
 <p>C语言的ZMQ客户端和protobuf的打包test.z</p>
 <pre class="codepre">
-#include <zmq.h>  
-#include <string.h>  
-#include <stdio.h>  
-#include <unistd.h>  
-#include <stdlib.h>
+#include &lt;zmq.h>  
+#include &lt;string.h&gt;  
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;  
+#include &lt;stdlib.h&gt;
 #include "amessage.pb-c.h"
 
 static void* packbuf()
