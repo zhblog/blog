@@ -9,8 +9,13 @@ classification: lgthw
 <pre class="preclass">
 花了一下午看了GO语言，感觉中GO的最大优势就是处理并发，正好现在项目中用到的并发，不知道GO的效果会怎么样，于是找资料做了相关的程序，是一个GO写的聊天室
 参考<a href="http://www.badgerr.co.uk/2011/06/20/golang-away-tcp-chat-server/">这里</a>并加上了客户端
-直接上代码，已经加上了注释
 </pre>
+<pre class="preclass">
+接下来：
+1：改成类似python SocketServer的东西，加上timeout之类的东东
+2：与python SocketServer比较性能，并作出对GO的改进
+</pre>
+直接上代码，已经加上了注释
 <p>server.go</p>
 <pre class="codepre">package main
 
