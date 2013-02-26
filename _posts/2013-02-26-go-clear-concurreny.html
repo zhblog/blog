@@ -65,11 +65,6 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 <p>非并发的做法是这样的：</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7cec5" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     // 函数 rand_generator_1 ，返回 int
     func rand_generator_1() int {
@@ -80,11 +75,6 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 <p>上面是一个函数，返回一个int。假如rand.Int()这个函数调用需要很长时间等待，那该函数的调用者也会因此而挂起。所以我们可以创建一个协程，专门执行rand.Int()。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7d2b2" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     // 函数 rand_generator_2，返回 通道(Channel)
     func rand_generator_2() chan int {
@@ -120,11 +110,6 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 <p>那么让我们用多路复用技术做一个更高并发的随机数生成器吧。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7d694" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     // 函数 rand_generator_3 ，返回通道(Channel)
     func rand_generator_3() chan int {
@@ -160,11 +145,6 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 下调用函数。这样的设计可以提供很大的自由度和并发度。函数调用和函数参数准备这两个过程可以完全解耦。下面举一个用该技术访问数据库的例子。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7da7a" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     //一个查询结构体
     type query struct {
@@ -209,11 +189,6 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <p>要并发循环很简单，只有在每个循环体内部启动协程。协程作为循环体可以并发执行。调用启动前设置一个计数器，每一个循环体执行完毕就在计数器上加一个元素，调用完成后通过监听计数器等待循环协程全部完成。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7de66" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     //建立计数器
     sem := make(chan int, N); 
@@ -238,11 +213,6 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <p>由于每个Filter协程都可以并发运行，这样的结构非常有利于多核环境。下面是一个例子，用这种模式来产生素数。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7e24c" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     // A concurrent prime sieve
     package main
@@ -288,11 +258,6 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <p>下面的例子描述如何用这个方式，实现一个共享变量。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7e633" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     //共享变量有一个读通道和一个写通道组成
     type sharded_var struct {
@@ -345,11 +310,6 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 不过这样就要承担内存泄漏的风险了。等协程执行完毕后，这部分通道内存将会失去引用，会被自动垃圾回收掉。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
-<div id="crayon-512c70ae7ea1a" class="crayon-syntax crayon-theme-classic crayon-font-monaco crayon-os-pc print-yes" data-settings=" scroll-mouseover" style="margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px ! important; line-height: 15px ! important; height: auto;">
-
-    <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
-        <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a></div></div>
-    <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
     <div class="crayon-plain-wrap"><pre class="codepre">
     func never_leak(ch chan int) {
             //初始化timeout，缓冲为1
