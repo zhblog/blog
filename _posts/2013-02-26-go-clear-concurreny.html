@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Unix Hater 
+title: Go的简洁并发 
 author: reserved 
 thisdate: 2013-02-26
 classification: Go
@@ -14,7 +14,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 富的外延。可以解决现实世界中各种各样的问题。本文以GO语言为例，解释其中内核、外延。</p>
 <h3>并发模式之内核</h3>
 <p>这种并发模式的内核只需要<strong>协程</strong>和<strong>通道</strong>就够了。协程负责执行代码，通道负责在协程之间传递事件。</p>
-<p class="addimg" id="/Go/go1.jpg">
+<p class="addimg" id="/GO/go1.jpg">
 <p>不久前，并发编程是个非常困难的事。要想编写一个良好的并发程序，我们不得不了解线程，锁，semaphore，barrier甚至CPU更新高速
 缓存的方式，而且他们个个都有怪脾气，处处是陷阱。笔者除非万不得以，决不会自己操作这些底层并发元素。一个简洁的并发模式不需要这些复杂的底层元素，协
 程和通道就够了。</p>
@@ -60,7 +60,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 洁明了，而且支持全部功能。</p>
 <h4>生成器</h4>
 <p>有的时候，我们需要有一个函数能不断生成数据。比方说这个函数可以读文件，读网络，生成自增长序列，生成随机数。这些行为的特点就是，函数的已知一些变量，如文件路径。然后不断调用，返回新的数据。</p>
-<p class="addimg" id="/Go/go2.jpg">
+<p class="addimg" id="/GO/go2.jpg">
 <p>下面生成随机数为例， 以让我们做一个会并发执行的随机数生成器。</p>
 <p>非并发的做法是这样的：</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
@@ -70,21 +70,12 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">// 函数 rand_generator_1 ，返回 int
-            func rand_generator_1() int {
-            return rand.Int()
-            }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7cec5-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7cec5-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7cec5-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7cec5-4">4</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7cec5-1"><span class="c">// 函数 rand_generator_1 ，返回 int</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7cec5-2"><span class="r">func</span><span class="h"> </span><span class="e">rand_generator_1</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="t">int</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7cec5-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">return</span><span class="h"> </span><span class="i">rand</span><span class="sy">.</span><span class="t">Int</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7cec5-4"><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    // 函数 rand_generator_1 ，返回 int
+    func rand_generator_1() int {
+        return rand.Int()
+    }
+    </pre></div>
 <!-- [Format Time: 0.0011 seconds] -->
 <p>上面是一个函数，返回一个int。假如rand.Int()这个函数调用需要很长时间等待，那该函数的调用者也会因此而挂起。所以我们可以创建一个协程，专门执行rand.Int()。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
@@ -94,37 +85,28 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">// 函数 rand_generator_2，返回 通道(Channel)
-            func rand_generator_2() chan int {
-            // 创建通道
-            out := make(chan int)
-            // 创建协程
-            go func() {
-            for {
-            //向通道内写入数据，如果无人读取会等待
-            out &lt;- rand.Int()
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    // 函数 rand_generator_2，返回 通道(Channel)
+    func rand_generator_2() chan int {
+        // 创建通道
+        out := make(chan int)
+        // 创建协程
+        go func() {
+             for {
+                //向通道内写入数据，如果无人读取会等待
+                out &lt;- rand.Int()
             }
-            }()
-            return out
-            }
+        }()
+        return out
+    }
 
-            func main() {
-            // 生成随机数作为一个服务
-            rand_service_handler := rand_generator_2()
-            // 从服务中读取随机数并打印
-            fmt.Printf("%d\n", &lt;-rand_service_handler)
-            }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7d2b2-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-4">4</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-6">6</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-8">8</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-10">10</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-12">12</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-14">14</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-16">16</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-18">18</div><div class="crayon-num" data-line="crayon-512c70ae7d2b2-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d2b2-20">20</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7d2b2-1"><span class="c">// 函数 rand_generator_2，返回 通道(Channel)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-2"><span class="r">func</span><span class="h"> </span><span class="e">rand_generator_2</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="e">chan</span><span class="h"> </span><span class="t">int</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// 创建通道</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-4"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">out</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">int</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-5"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// 创建协程</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-6"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="r">func</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-7"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">for</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-8"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//向通道内写入数据，如果无人读取会等待</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-9"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">out</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="i">rand</span><span class="sy">.</span><span class="t">Int</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-10"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-11"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-12"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">return</span><span class="h"> </span><span class="i">out</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-13"><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-14">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7d2b2-15"><span class="r">func</span><span class="h"> </span><span class="e">main</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-16"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// 生成随机数作为一个服务</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-17"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">rand_service_handler</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">rand_generator_2</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-18"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// 从服务中读取随机数并打印</span></div><div class="crayon-line" id="crayon-512c70ae7d2b2-19"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">fmt</span><span class="sy">.</span><span class="e">Printf</span><span class="sy">(</span><span class="s">"%d\n"</span><span class="sy">,</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">rand_service_handler</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d2b2-20"><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+    func main() {
+       // 生成随机数作为一个服务
+       rand_service_handler := rand_generator_2()
+       // 从服务中读取随机数并打印
+       fmt.Printf("%d\n", &lt;-rand_service_handler)
+    }
+     </pre></div>
 <!-- [Format Time: 0.0032 seconds] -->
 <p>上面的这段函数就可以并发执行了rand.Int()。有一点值得注意到函数的返回可以理解为一个“服务”。但我们需要获取随机数据 
 时候，可以随时向这个服务取用，他已经为我们准备好了相应的数据，无需等待，随要随到。如果我们调用这个服务不是很频繁，一个协程足够满足我们的需求了。
@@ -134,7 +116,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 <p>多路复用是让一次处理多个队列的技术。Apache使用处理每个连接都需要一个进程，所以其并发性能不是很好。而Nighx使用多路复用的技术，让
 一个进程处理多个连接，所以并发性能比较好。同样，在协程的场合，多路复用也是需要的，但又有所不同。多路复用可以将若干个相似的小服务整合成一个大服
 务。</p>
-<p class="addimg" id="/Go/go3.jpg">
+<p class="addimg" id="/GO/go3.jpg">
 <p>那么让我们用多路复用技术做一个更高并发的随机数生成器吧。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
@@ -143,48 +125,37 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">// 函数 rand_generator_3 ，返回通道(Channel)
-            func rand_generator_3() chan int {
-            // 创建两个随机数生成器服务
-            rand_generator_1 := rand_generator_2()
-            rand_generator_2 := rand_generator_2()
-
-            //创建通道
-            out := make(chan int)
-
-            //创建协程
-            go func() {
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    // 函数 rand_generator_3 ，返回通道(Channel)
+    func rand_generator_3() chan int {
+        // 创建两个随机数生成器服务
+        rand_generator_1 := rand_generator_2()
+        rand_generator_2 := rand_generator_2()
+        //创建通道
+        out := make(chan int)
+        //创建协程
+        go func() {
             for {
-            //读取生成器1中的数据，整合
-            out &lt;- &lt;-rand_generator_1
+                //读取生成器1中的数据，整合
+                out &lt;- &lt;-rand_generator_1
             }
-            }()
-            go func() {
+        }()
+        go func() {
             for {
-            //读取生成器2中的数据，整合
-            out &lt;- &lt;-rand_generator_2
+                //读取生成器2中的数据，整合
+                out &lt;- &lt;-rand_generator_2
             }
-            }()
-            return out
-            }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7d694-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7d694-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-4">4</div><div class="crayon-num" data-line="crayon-512c70ae7d694-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-6">6</div><div class="crayon-num" data-line="crayon-512c70ae7d694-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-8">8</div><div class="crayon-num" data-line="crayon-512c70ae7d694-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-10">10</div><div class="crayon-num" data-line="crayon-512c70ae7d694-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-12">12</div><div class="crayon-num" data-line="crayon-512c70ae7d694-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-14">14</div><div class="crayon-num" data-line="crayon-512c70ae7d694-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-16">16</div><div class="crayon-num" data-line="crayon-512c70ae7d694-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-18">18</div><div class="crayon-num" data-line="crayon-512c70ae7d694-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-20">20</div><div class="crayon-num" data-line="crayon-512c70ae7d694-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-22">22</div><div class="crayon-num" data-line="crayon-512c70ae7d694-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7d694-24">24</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7d694-1"><span class="c">// 函数 rand_generator_3 ，返回通道(Channel)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-2"><span class="r">func</span><span class="h"> </span><span class="e">rand_generator_3</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="e">chan</span><span class="h"> </span><span class="t">int</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7d694-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// 创建两个随机数生成器服务</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-4"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">rand_generator_1</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">rand_generator_2</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7d694-5"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">rand_generator_2</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">rand_generator_2</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-6">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7d694-7"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//创建通道</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-8"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">out</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">int</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7d694-9">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-10"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//创建协程</span></div><div class="crayon-line" id="crayon-512c70ae7d694-11"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="r">func</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-12"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">for</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7d694-13"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//读取生成器1中的数据，整合</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-14"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">out</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">rand_generator_1</span></div><div class="crayon-line" id="crayon-512c70ae7d694-15"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-16"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7d694-17"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="r">func</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-18"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">for</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7d694-19"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//读取生成器2中的数据，整合</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-20"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">out</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">rand_generator_2</span></div><div class="crayon-line" id="crayon-512c70ae7d694-21"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-22"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7d694-23"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">return</span><span class="h"> </span><span class="i">out</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7d694-24"><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+        }()
+        return out
+    }
+    </pre></div>
 <!-- [Format Time: 0.0036 seconds] -->
 <p>上面是使用了多路复用技术的高并发版的随机数生成器。通过整合两个随机数生成器，这个版本的能力是刚才的两倍。虽然协程可以大量创建，但是众多协程
 还是会争抢输出的通道。Go语言提供了Select关键字来解决，各家也有各家窍门。加大输出通道的缓冲大小是个通用的解决方法。</p>
 <p>多路复用技术可以用来整合多个通道。提升性能和操作的便捷。配合其他的模式使用有很大的威力。</p>
 <h4>Furture技术</h4>
 <p>Furture是一个很有用的技术，我们常常使用Furture来操作线程。我们可以在使用线程的时候，可以创建一个线程，返回Furture，之后可以通过它等待结果。 但是在协程环境下的Furtue可以更加彻底，输入参数同样可以是Furture的。</p>
-<p class="addimg" id="/Go/go4.jpg">
+<p class="addimg" id="/GO/go4.jpg">
 <p>调用一个函数的时候，往往是参数已经准备好了。调用协程的时候也同样如此。但是如果我们将传入的参数设为通道，这样我们就可以在不准备好参数的情况
 下调用函数。这样的设计可以提供很大的自由度和并发度。函数调用和函数参数准备这两个过程可以完全解耦。下面举一个用该技术访问数据库的例子。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
@@ -194,49 +165,36 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">//一个查询结构体
-            type query struct {
-            //参数Channel
-            sql chan string
-            //结果Channel
-            result chan string
-            }
-
-            //执行Query
-            func execQuery(q query) {
-            //启动协程
-            go func() {
-            //获取输入
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    //一个查询结构体
+    type query struct {
+        //参数Channel
+        sql chan string
+        //结果Channel
+        result chan string
+    }
+    //执行Query
+    func execQuery(q query) {
+        //启动协程
+        go func() {
+             //获取输入
             sql := &lt;-q.sql
             //访问数据库，输出结果通道
             q.result &lt;- "get " + sql
-            }()
-
-            }
-
-            func main() {
-            //初始化Query
-            q :=
-            query{make(chan string, 1), make(chan string, 1)}
-            //执行Query，注意执行的时候无需准备参数
-            execQuery(q)
-
-            //准备参数
-            q.sql &lt;- "select * from table"
-            //获取结果
-            fmt.Println(&lt;-q.result)
-            }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7da7a-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-4">4</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-6">6</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-8">8</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-10">10</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-12">12</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-14">14</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-16">16</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-18">18</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-20">20</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-22">22</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-24">24</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-26">26</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-28">28</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-30">30</div><div class="crayon-num" data-line="crayon-512c70ae7da7a-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7da7a-32">32</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7da7a-1"><span class="c">//一个查询结构体</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-2"><span class="r">type</span><span class="h"> </span><span class="e">query</span><span class="h"> </span><span class="t">struct</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//参数Channel</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-4"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">sql </span><span class="e">chan </span><span class="t">string</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-5"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//结果Channel</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-6"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">result </span><span class="e">chan </span><span class="t">string</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-7"><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-8">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7da7a-9"><span class="c">//执行Query</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-10"><span class="r">func</span><span class="h"> </span><span class="e">execQuery</span><span class="sy">(</span><span class="i">q</span><span class="h"> </span><span class="i">query</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-11"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//启动协程</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-12"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="r">func</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-13"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//获取输入</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-14"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">sql</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">q</span><span class="sy">.</span><span class="v">sql</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-15"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//访问数据库，输出结果通道</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-16"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">q</span><span class="sy">.</span><span class="v">result</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="s">"get "</span><span class="h"> </span><span class="o">+</span><span class="h"> </span><span class="i">sql</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-17"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-18">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7da7a-19"><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-20">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7da7a-21"><span class="r">func</span><span class="h"> </span><span class="e">main</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-22"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//初始化Query</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-23"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">q</span><span class="h"> </span><span class="o">:</span><span class="o">=</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-24"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">query</span><span class="sy">{</span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">string</span><span class="sy">,</span><span class="h"> </span><span class="cn">1</span><span class="sy">)</span><span class="sy">,</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">string</span><span class="sy">,</span><span class="h"> </span><span class="cn">1</span><span class="sy">)</span><span class="sy">}</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-25"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//执行Query，注意执行的时候无需准备参数</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-26"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">execQuery</span><span class="sy">(</span><span class="i">q</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-27">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-28"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//准备参数</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-29"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">q</span><span class="sy">.</span><span class="v">sql</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="s">"select * from table"</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-30"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//获取结果</span></div><div class="crayon-line" id="crayon-512c70ae7da7a-31"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">fmt</span><span class="sy">.</span><span class="e">Println</span><span class="sy">(</span><span class="o">&lt;</span><span class="o">-</span><span class="i">q</span><span class="sy">.</span><span class="v">result</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7da7a-32"><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+        }()
+    }
+    func main() {
+        //初始化Query
+        q :=
+        query{make(chan string, 1), make(chan string, 1)}
+        //执行Query，注意执行的时候无需准备参数
+        execQuery(q)
+        //准备参数
+        q.sql &lt;- "select * from table"
+        //获取结果
+        fmt.Println(&lt;-q.result)
+    }
+    </pre></div>
 <!-- [Format Time: 0.0047 seconds] -->
 <p>上面利用Furture技术，不单让结果在Furture获得，参数也是在Furture获取。准备好参数后，自动执行。Furture和生成器的
 区别在于，Furture返回一个结果，而生成器可以重复调用。还有一个值得注意的地方，就是将参数Channel和结果Channel定义在一个结构体
@@ -247,7 +205,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <p>Future是一个非常强大的技术手段。可以在调用的时候不关心数据是否准备好，返回值是否计算好的问题。让程序中的组件在准备好数据的时候自动跑起来。</p>
 <h4>并发循环</h4>
 <p>循环往往是性能上的热点。如果性能瓶颈出现在CPU上的话，那么九成可能性热点是在一个循环体内部。所以如果能让循环体并发执行，那么性能就会提高很多。</p>
-<p class="addimg" id="/Go/go5.jpg">
+<p class="addimg" id="/GO/go5.jpg">
 <p>要并发循环很简单，只有在每个循环体内部启动协程。协程作为循环体可以并发执行。调用启动前设置一个计数器，每一个循环体执行完毕就在计数器上加一个元素，调用完成后通过监听计数器等待循环协程全部完成。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
@@ -256,36 +214,27 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a><span class="crayon-language">Go</span></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">//建立计数器
-            sem := make(chan int, N); 
-            //FOR循环体
-            for i,xi := range data {
-            //建立协程
-            go func (i int, xi float) {
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    //建立计数器
+    sem := make(chan int, N); 
+    //FOR循环体
+    for i,xi := range data {
+        //建立协程
+        go func (i int, xi float) {
             doSomething(i,xi);
             //计数
             sem &lt;- 0;
-            } (i, xi);
-            }
-            // 等待循环结束
-            for i := 0; i &lt; N; ++i { &lt;-sem }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7de66-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7de66-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7de66-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7de66-4">4</div><div class="crayon-num" data-line="crayon-512c70ae7de66-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7de66-6">6</div><div class="crayon-num" data-line="crayon-512c70ae7de66-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7de66-8">8</div><div class="crayon-num" data-line="crayon-512c70ae7de66-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7de66-10">10</div><div class="crayon-num" data-line="crayon-512c70ae7de66-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7de66-12">12</div><div class="crayon-num" data-line="crayon-512c70ae7de66-13">13</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7de66-1"><span class="c">//建立计数器</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7de66-2"><span class="i">sem</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">int</span><span class="sy">,</span><span class="h"> </span><span class="i">N</span><span class="sy">)</span><span class="sy">;</span><span class="h"> </span></div><div class="crayon-line" id="crayon-512c70ae7de66-3"><span class="c">//FOR循环体</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7de66-4"><span class="st">for</span><span class="h"> </span><span class="i">i</span><span class="sy">,</span><span class="i">xi</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">range</span><span class="h"> </span><span class="e">data</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7de66-5"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//建立协程</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7de66-6"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="r">func</span><span class="h"> </span><span class="sy">(</span><span class="i">i</span><span class="h"> </span><span class="t">int</span><span class="sy">,</span><span class="h"> </span><span class="e">xi </span><span class="t">float</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7de66-7"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">doSomething</span><span class="sy">(</span><span class="i">i</span><span class="sy">,</span><span class="i">xi</span><span class="sy">)</span><span class="sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7de66-8"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//计数</span></div><div class="crayon-line" id="crayon-512c70ae7de66-9"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">sem</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="cn">0</span><span class="sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7de66-10"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span><span class="h"> </span><span class="sy">(</span><span class="i">i</span><span class="sy">,</span><span class="h"> </span><span class="i">xi</span><span class="sy">)</span><span class="sy">;</span></div><div class="crayon-line" id="crayon-512c70ae7de66-11"><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7de66-12"><span class="c">// 等待循环结束</span></div><div class="crayon-line" id="crayon-512c70ae7de66-13"><span class="st">for</span><span class="h"> </span><span class="i">i</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="cn">0</span><span class="sy">;</span><span class="h"> </span><span class="i">i</span><span class="h"> </span><span class="o">&lt;</span><span class="h"> </span><span class="i">N</span><span class="sy">;</span><span class="h"> </span><span class="o">++</span><span class="e">i</span><span class="h"> </span><span class="sy">{</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">sem</span><span class="h"> </span><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+        } (i, xi);
+    }
+    // 等待循环结束
+    for i := 0; i &lt; N; ++i { &lt;-sem }
+    </pre></div>
 <!-- [Format Time: 0.0035 seconds] -->
 <p>上面是一个并发循环例子。通过计数器来等待循环全部完成。如果结合上面提到的Future技术的话，则不必等待。可以等到真正需要的结果的地方，再去检查数据是否完成。</p>
 <p>通过并发循环可以提供性能，利用多核，解决CPU热点。正因为协程可以大量创建，才能在循环体中如此使用，如果是使用线程的话，就需要引入线程池之类的东西，防止创建过多线程，而协程则简单的多。</p>
 <h4>Chain Filter技术</h4>
 <p>前面提到了Future技术首尾相连，可以形成一个并发的pipe filter。这种方式可以做很多事情，如果每个Filter都由同一个函数组成，还可以有一种简单的办法把他们连起来。</p>
-<p class="addimg" id="/Go/go6.jpg">
+<p class="addimg" id="/GO/go6.jpg">
 <p>由于每个Filter协程都可以并发运行，这样的结构非常有利于多核环境。下面是一个例子，用这种模式来产生素数。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
@@ -294,51 +243,40 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">// A concurrent prime sieve
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    // A concurrent prime sieve
+    package main
+    // Send the sequence 2, 3, 4, ... to channel 'ch'.
+    func Generate(ch chan&lt;- int) {
+        for i := 2; ; i++ {
+        ch &lt;- i // Send 'i' to channel 'ch'.
+        }
+    }
 
-            package main
-
-            // Send the sequence 2, 3, 4, ... to channel 'ch'.
-            func Generate(ch chan&lt;- int) {
-            for i := 2; ; i++ {
-            ch &lt;- i // Send 'i' to channel 'ch'.
-            }
-            }
-
-            // Copy the values from channel 'in' to channel 'out',
-            // removing those divisible by 'prime'.
-            func Filter(in &lt;-chan int, out chan&lt;- int, prime int) {
-            for {
+    // Copy the values from channel 'in' to channel 'out',
+    // removing those divisible by 'prime'.
+    func Filter(in &lt;-chan int, out chan&lt;- int, prime int) {
+        for {
             i := &lt;-in // Receive value from 'in'.
             if i%prime != 0 {
             out &lt;- i // Send 'i' to 'out'.
             }
-            }
-            }
+         }
+    }
 
-            // The prime sieve: Daisy-chain Filter processes.
-            func main() {
-            ch := make(chan int) // Create a new channel.
-            go Generate(ch)      // Launch Generate goroutine.
-            for i := 0; i &lt; 10; i++ {
+    // The prime sieve: Daisy-chain Filter processes.
+    func main() {
+        ch := make(chan int) // Create a new channel.
+        go Generate(ch)      // Launch Generate goroutine.
+        for i := 0; i &lt; 10; i++ {
             prime := &lt;-ch
             print(prime, "\n")
             ch1 := make(chan int)
             go Filter(ch, ch1, prime)
             ch = ch1
-            }
-            }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7e24c-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-4">4</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-6">6</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-8">8</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-10">10</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-12">12</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-14">14</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-16">16</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-18">18</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-20">20</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-22">22</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-24">24</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-26">26</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-28">28</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-30">30</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-32">32</div><div class="crayon-num" data-line="crayon-512c70ae7e24c-33">33</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e24c-34">34</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7e24c-1"><span class="c">// A concurrent prime sieve</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-2">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7e24c-3"><span class="t">package</span><span class="h"> </span><span class="i">main</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-4">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7e24c-5"><span class="c">// Send the sequence 2, 3, 4, ... to channel 'ch'.</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-6"><span class="e">func </span><span class="e">Generate</span><span class="sy">(</span><span class="e">ch </span><span class="i">chan</span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="t">int</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-7"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">for</span><span class="h"> </span><span class="i">i</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="cn">2</span><span class="sy">;</span><span class="h"> </span><span class="sy">;</span><span class="h"> </span><span class="e">i</span><span class="o">++</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-8"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">ch</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="i">i</span><span class="h"> </span><span class="c">// Send 'i' to channel 'ch'.</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-9"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-10"><span class="sy">}</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-11">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-12"><span class="c">// Copy the values from channel 'in' to channel 'out',</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-13"><span class="c">// removing those divisible by 'prime'.</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-14"><span class="e">func </span><span class="e">Filter</span><span class="sy">(</span><span class="st">in</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="e">chan </span><span class="t">int</span><span class="sy">,</span><span class="h"> </span><span class="e">out </span><span class="i">chan</span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="t">int</span><span class="sy">,</span><span class="h"> </span><span class="e">prime </span><span class="t">int</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-15"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">for</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-16"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">i</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="st">in</span><span class="h"> </span><span class="c">// Receive value from 'in'.</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-17"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">if</span><span class="h"> </span><span class="e">i</span><span class="o">%</span><span class="e">prime</span><span class="h"> </span><span class="o">!=</span><span class="h"> </span><span class="cn">0</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-18"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">out</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="i">i</span><span class="h"> </span><span class="c">// Send 'i' to 'out'.</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-19"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-20"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-21"><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-22">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7e24c-23"><span class="c">// The prime sieve: Daisy-chain Filter processes.</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-24"><span class="e">func </span><span class="e">main</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-25"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">ch</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">int</span><span class="sy">)</span><span class="h"> </span><span class="c">// Create a new channel.</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-26"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="e">Generate</span><span class="sy">(</span><span class="i">ch</span><span class="sy">)</span><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// Launch Generate goroutine.</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-27"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">for</span><span class="h"> </span><span class="i">i</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="cn">0</span><span class="sy">;</span><span class="h"> </span><span class="i">i</span><span class="h"> </span><span class="o">&lt;</span><span class="h"> </span><span class="cn">10</span><span class="sy">;</span><span class="h"> </span><span class="e">i</span><span class="o">++</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-28"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">prime</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="e">ch</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-29"><span class="e">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">print</span><span class="sy">(</span><span class="i">prime</span><span class="sy">,</span><span class="h"> </span><span class="s">"\n"</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-30"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">ch1</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">int</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-31"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="e">Filter</span><span class="sy">(</span><span class="i">ch</span><span class="sy">,</span><span class="h"> </span><span class="i">ch1</span><span class="sy">,</span><span class="h"> </span><span class="i">prime</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-32"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="v">ch</span><span class="h"> </span><span class="o">=</span><span class="h"> </span><span class="i">ch1</span></div><div class="crayon-line" id="crayon-512c70ae7e24c-33"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e24c-34"><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+        }
+    }
+    </pre></div>
 <!-- [Format Time: 0.0066 seconds] -->
 <p>上面的程序创建了10个Filter，每个分别过滤一个素数，所以可以输出前10个素数。</p>
 <p>Chain-Filter通过简单的代码创建并发的过滤器链。这种办法还有一个好处，就是每个通道只有两个协程会访问，就不会有激烈的竞争，性能会比较好。</p>
@@ -346,7 +284,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <h4></h4>
 <p>&nbsp;</p>
 <p>协程之间的通信只能够通过通道。但是我们习惯于共享变量，而且很多时候使用共享变量能让代码更简洁。比如一个Server有两个状态开和关。其他仅仅希望获取或改变其状态，那又该如何做呢。可以将这个变量至于0通道中，并使用一个协程来维护。</p>
-<p class="addimg" id="/Go/go7.jpg">
+<p class="addimg" id="/GO/go7.jpg">
 <p>下面的例子描述如何用这个方式，实现一个共享变量。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
@@ -355,50 +293,41 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">//共享变量有一个读通道和一个写通道组成
-            type sharded_var struct {
-            reader chan int
-            writer chan int
-            }
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    //共享变量有一个读通道和一个写通道组成
+    type sharded_var struct {
+        reader chan int
+        writer chan int
+    }
 
-            //共享变量维护协程
-            func sharded_var_whachdog(v sharded_var) {
-            go func() {
-            //初始值
-            var value int = 0
-            for {
+    //共享变量维护协程
+    func sharded_var_whachdog(v sharded_var) {
+       go func() {
+       //初始值
+       var value int = 0
+       for {
             //监听读写通道，完成服务
             select {
             case value = &lt;-v.writer:
             case v.reader &lt;- value:
-            }
-            }
-            }()
-            }
+        }
+      }
+    }()
+   }
 
-            func main() {
-            //初始化，并开始维护协程
-            v := sharded_var{make(chan int), make(chan int)}
-            sharded_var_whachdog(v)
+   func main() {
+    //初始化，并开始维护协程
+    v := sharded_var{make(chan int), make(chan int)}
+    sharded_var_whachdog(v)
 
-            //读取初始值
-            fmt.Println(&lt;-v.reader)
-            //写入一个值
-            v.writer &lt;- 1
-            //读取新写入的值
-            fmt.Println(&lt;-v.reader)
-            }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7e633-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7e633-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-4">4</div><div class="crayon-num" data-line="crayon-512c70ae7e633-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-6">6</div><div class="crayon-num" data-line="crayon-512c70ae7e633-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-8">8</div><div class="crayon-num" data-line="crayon-512c70ae7e633-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-10">10</div><div class="crayon-num" data-line="crayon-512c70ae7e633-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-12">12</div><div class="crayon-num" data-line="crayon-512c70ae7e633-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-14">14</div><div class="crayon-num" data-line="crayon-512c70ae7e633-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-16">16</div><div class="crayon-num" data-line="crayon-512c70ae7e633-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-18">18</div><div class="crayon-num" data-line="crayon-512c70ae7e633-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-20">20</div><div class="crayon-num" data-line="crayon-512c70ae7e633-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-22">22</div><div class="crayon-num" data-line="crayon-512c70ae7e633-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-24">24</div><div class="crayon-num" data-line="crayon-512c70ae7e633-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-26">26</div><div class="crayon-num" data-line="crayon-512c70ae7e633-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-28">28</div><div class="crayon-num" data-line="crayon-512c70ae7e633-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-30">30</div><div class="crayon-num" data-line="crayon-512c70ae7e633-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7e633-32">32</div><div class="crayon-num" data-line="crayon-512c70ae7e633-33">33</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7e633-1"><span class="c">//共享变量有一个读通道和一个写通道组成</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-2"><span class="e">type</span><span class="h"> </span><span class="e">sharded_var</span><span class="h"> </span><span class="t">struct</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e633-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">reader </span><span class="e">chan </span><span class="t">int</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-4"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">writer </span><span class="e">chan </span><span class="t">int</span></div><div class="crayon-line" id="crayon-512c70ae7e633-5"><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-6">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7e633-7"><span class="c">//共享变量维护协程</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-8"><span class="e">func </span><span class="e">sharded_var_whachdog</span><span class="sy">(</span><span class="i">v</span><span class="h"> </span><span class="i">sharded_var</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e633-9"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="e">func</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-10"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//初始值</span></div><div class="crayon-line" id="crayon-512c70ae7e633-11"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="t">var</span><span class="h"> </span><span class="e">value</span><span class="h"> </span><span class="t">int</span><span class="h"> </span><span class="o">=</span><span class="h"> </span><span class="cn">0</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-12"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">for</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e633-13"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//监听读写通道，完成服务</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-14"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">select</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e633-15"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">case</span><span class="h"> </span><span class="v">value</span><span class="h"> </span><span class="o">=</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">v</span><span class="sy">.</span><span class="v">writer</span><span class="o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-16"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">case</span><span class="h"> </span><span class="i">v</span><span class="sy">.</span><span class="v">reader</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="i">value</span><span class="o">:</span></div><div class="crayon-line" id="crayon-512c70ae7e633-17"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-18"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line" id="crayon-512c70ae7e633-19"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-20"><span class="sy">}</span></div><div class="crayon-line" id="crayon-512c70ae7e633-21">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-22"><span class="e">func </span><span class="e">main</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7e633-23"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//初始化，并开始维护协程</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-24"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">v</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">sharded_var</span><span class="sy">{</span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">int</span><span class="sy">)</span><span class="sy">,</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">int</span><span class="sy">)</span><span class="sy">}</span></div><div class="crayon-line" id="crayon-512c70ae7e633-25"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">sharded_var_whachdog</span><span class="sy">(</span><span class="i">v</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-26">&nbsp;</div><div class="crayon-line" id="crayon-512c70ae7e633-27"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//读取初始值</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-28"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">fmt</span><span class="sy">.</span><span class="e">Println</span><span class="sy">(</span><span class="o">&lt;</span><span class="o">-</span><span class="i">v</span><span class="sy">.</span><span class="v">reader</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7e633-29"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//写入一个值</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-30"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">v</span><span class="sy">.</span><span class="v">writer</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="cn">1</span></div><div class="crayon-line" id="crayon-512c70ae7e633-31"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//读取新写入的值</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7e633-32"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">fmt</span><span class="sy">.</span><span class="e">Println</span><span class="sy">(</span><span class="o">&lt;</span><span class="o">-</span><span class="i">v</span><span class="sy">.</span><span class="v">reader</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7e633-33"><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+    //读取初始值
+    fmt.Println(&lt;-v.reader)
+    //写入一个值
+    v.writer &lt;- 1
+    //读取新写入的值
+    fmt.Println(&lt;-v.reader)
+  }
+  </pre></div>
 <!-- [Format Time: 0.0052 seconds] -->
 <p>这样，就可以在协程和通道的基础上实现一个协程安全的共享变量了。定义一个写通道，需要更新变量的时候，往里写新的值。再定义一个读通道，需要读的时候，从里面读。通过一个单独的协程来维护这两个通道。保证数据的一致性。</p>
 <p>一般来说，协程之间不推荐使用共享变量来交互，但是按照这个办法，在一些场合，使用共享变量也是可取的。很多平台上有较为原生的共享变量支持，到底用那种实现比较好，就见仁见智了。另外利用协程和通道，可以还实现各种常见的并发数据结构，如锁等等，就不一一赘述。</p>
@@ -410,7 +339,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <p>只有两种情况会导致协程无法结束。一种情况是协程想从一个通道读数据，但无人往这个通道写入数据，或许这个通道已经被遗忘了。还有一种情况是程想往一个通道写数据，可是由于无人监听这个通道，该协程将永远无法向下执行。下面分别讨论如何避免这两种情况。</p>
 <p>对于协程想从一个通道读数据，但无人往这个通道写入数据这种情况。解决的办法很简单，加入超时机制。对于有不确定会不会返回的情况，必须加入超时，
 避免出现永久等待。另外不一定要使用定时器才能终止协程。也可以对外暴露一个退出提醒通道。任何其他协程都可以通过该通道来提醒这个协程终止。</p>
-<p class="addimg" id="/Go/go8.jpg">
+<p class="addimg" id="/GO/go8.jpg">
 <p>对于协程想往一个通道写数据，但通道阻塞无法写入这种情况。解决的办法也很简单，就是给通道加缓冲。但前提是这个通道只会接收到固定数目的写入。比
 方说，已知一个通道最多只会接收N次数据，那么就将这个通道的缓冲设置为N。那么该通道将永远不会堵塞，协程自然也不会泄漏。也可以将其缓冲设置为无限，
 不过这样就要承担内存泄漏的风险了。等协程执行完毕后，这部分通道内存将会失去引用，会被自动垃圾回收掉。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
@@ -421,7 +350,8 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
     <div class="crayon-toolbar" data-settings=" mouseover overlay hide delay" style="height: 18px ! important; line-height: 18px ! important; margin-top: -18px; display: none; position: absolute; z-index: 2;">
         <div class="crayon-tools"><a class="crayon-nums-button crayon-button crayon-pressed" title="切换是否显示行编号"></a><a class="crayon-wrap-button crayon-button" title="切换自动换行"></a><a class="crayon-copy-button crayon-button" data-text="使用 %s 复制，使用 %s 粘贴。" title="复制代码"></a><a class="crayon-popup-button crayon-button" title="在新窗口中显示代码" onclick="return false;"></a><a style="display: none;" class="crayon-expand-button crayon-button" title="Expand Code"></a><a class="crayon-plain-button crayon-button" title="纯文本显示代码"></a></div></div>
     <div class="crayon-info" style="min-height: 15px !important; line-height: 15px !important;"></div>
-    <div class="crayon-plain-wrap"><pre class="codepre">func never_leak(ch chan int) {
+    <div class="crayon-plain-wrap"><pre class="codepre">
+    func never_leak(ch chan int) {
             //初始化timeout，缓冲为1
             timeout := make(chan bool, 1)
             //启动timeout协程，由于缓存为1，不可能泄露
@@ -436,18 +366,8 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
             case &lt;-timeout:
             // the read from ch has timed out
             }
-            }</pre></div>
-    <div class="crayon-main" style="position: relative; z-index: 1; overflow: hidden;">
-        <table style="" class="crayon-table">
-            <tbody><tr class="crayon-row">
-                    <td class="crayon-nums " data-settings="show" style="font-size: 12px !important; line-height: 15px !important;">
-                        <div class="crayon-nums-content"><div class="crayon-num" data-line="crayon-512c70ae7ea1a-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-2">2</div><div class="crayon-num" data-line="crayon-512c70ae7ea1a-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-4">4</div><div class="crayon-num" data-line="crayon-512c70ae7ea1a-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-6">6</div><div class="crayon-num" data-line="crayon-512c70ae7ea1a-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-8">8</div><div class="crayon-num" data-line="crayon-512c70ae7ea1a-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-10">10</div><div class="crayon-num" data-line="crayon-512c70ae7ea1a-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-12">12</div><div class="crayon-num" data-line="crayon-512c70ae7ea1a-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-14">14</div><div class="crayon-num" data-line="crayon-512c70ae7ea1a-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-512c70ae7ea1a-16">16</div></div>
-                    </td>
-                    <td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-line" id="crayon-512c70ae7ea1a-1"><span class="e">func </span><span class="e">never_leak</span><span class="sy">(</span><span class="e">ch </span><span class="e">chan </span><span class="t">int</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-2"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//初始化timeout，缓冲为1</span></div><div class="crayon-line" id="crayon-512c70ae7ea1a-3"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">timeout</span><span class="h"> </span><span class="o">:</span><span class="o">=</span><span class="h"> </span><span class="e">make</span><span class="sy">(</span><span class="e">chan </span><span class="t">bool</span><span class="sy">,</span><span class="h"> </span><span class="cn">1</span><span class="sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-4"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//启动timeout协程，由于缓存为1，不可能泄露</span></div><div class="crayon-line" id="crayon-512c70ae7ea1a-5"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">go </span><span class="e">func</span><span class="sy">(</span><span class="sy">)</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-6"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">time</span><span class="sy">.</span><span class="e">Sleep</span><span class="sy">(</span><span class="cn">1</span><span class="h"> </span><span class="o">*</span><span class="h"> </span><span class="i">time</span><span class="sy">.</span><span class="v">Second</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7ea1a-7"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="i">timeout</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="h"> </span><span class="t">true</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-8"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span><span class="sy">(</span><span class="sy">)</span></div><div class="crayon-line" id="crayon-512c70ae7ea1a-9"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">//监听通道，由于设有超时，不可能泄露</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-10"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="e">select</span><span class="h"> </span><span class="sy">{</span></div><div class="crayon-line" id="crayon-512c70ae7ea1a-11"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">case</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">ch</span><span class="o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-12"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// a read from ch has occurred</span></div><div class="crayon-line" id="crayon-512c70ae7ea1a-13"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="st">case</span><span class="h"> </span><span class="o">&lt;</span><span class="o">-</span><span class="i">timeout</span><span class="o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-14"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c">// the read from ch has timed out</span></div><div class="crayon-line" id="crayon-512c70ae7ea1a-15"><span class="h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-512c70ae7ea1a-16"><span class="sy">}</span></div></div></td>
-                </tr>
-        </tbody></table>
-    </div>
-</div>
+        }
+            </pre></div>
 <!-- [Format Time: 0.0028 seconds] -->
 <p>上面是个避免泄漏例子。使用超时避免读堵塞，使用缓冲避免写堵塞。</p>
 <p>和内存里面的对象一样，对于长期存在的协程，我们不用担心泄漏问题。一是长期存在，二是数量较少。要警惕的只有那些被临时创建的协程，这些协程数量
