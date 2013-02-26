@@ -66,16 +66,17 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     // 函数 rand_generator_1 ，返回 int
     func rand_generator_1() int {
         return rand.Int()
-    }
-    </pre></div>
+    }</pre></div>
 <!-- [Format Time: 0.0011 seconds] -->
 <p>上面是一个函数，返回一个int。假如rand.Int()这个函数调用需要很长时间等待，那该函数的调用者也会因此而挂起。所以我们可以创建一个协程，专门执行rand.Int()。</p><!-- Crayon Syntax Highlighter v2.0.2 -->
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     // 函数 rand_generator_2，返回 通道(Channel)
     func rand_generator_2() chan int {
         // 创建通道
@@ -95,8 +96,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
        rand_service_handler := rand_generator_2()
        // 从服务中读取随机数并打印
        fmt.Printf("%d\n", &lt;-rand_service_handler)
-    }
-     </pre></div>
+    } </pre></div>
 <!-- [Format Time: 0.0032 seconds] -->
 <p>上面的这段函数就可以并发执行了rand.Int()。有一点值得注意到函数的返回可以理解为一个“服务”。但我们需要获取随机数据 
 时候，可以随时向这个服务取用，他已经为我们准备好了相应的数据，无需等待，随要随到。如果我们调用这个服务不是很频繁，一个协程足够满足我们的需求了。
@@ -111,6 +111,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     // 函数 rand_generator_3 ，返回通道(Channel)
     func rand_generator_3() chan int {
         // 创建两个随机数生成器服务
@@ -132,8 +133,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
             }
         }()
         return out
-    }
-    </pre></div>
+    }</pre></div>
 <!-- [Format Time: 0.0036 seconds] -->
 <p>上面是使用了多路复用技术的高并发版的随机数生成器。通过整合两个随机数生成器，这个版本的能力是刚才的两倍。虽然协程可以大量创建，但是众多协程
 还是会争抢输出的通道。Go语言提供了Select关键字来解决，各家也有各家窍门。加大输出通道的缓冲大小是个通用的解决方法。</p>
@@ -146,6 +146,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     //一个查询结构体
     type query struct {
         //参数Channel
@@ -173,8 +174,7 @@ Scala等为并发设计的程序语言的兴起，新的并发模式逐渐清晰
         q.sql &lt;- "select * from table"
         //获取结果
         fmt.Println(&lt;-q.result)
-    }
-    </pre></div>
+    }</pre></div>
 <!-- [Format Time: 0.0047 seconds] -->
 <p>上面利用Furture技术，不单让结果在Furture获得，参数也是在Furture获取。准备好参数后，自动执行。Furture和生成器的
 区别在于，Furture返回一个结果，而生成器可以重复调用。还有一个值得注意的地方，就是将参数Channel和结果Channel定义在一个结构体
@@ -190,6 +190,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     //建立计数器
     sem := make(chan int, N); 
     //FOR循环体
@@ -202,8 +203,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
         } (i, xi);
     }
     // 等待循环结束
-    for i := 0; i &lt; N; ++i { &lt;-sem }
-    </pre></div>
+    for i := 0; i &lt; N; ++i { &lt;-sem }</pre></div>
 <!-- [Format Time: 0.0035 seconds] -->
 <p>上面是一个并发循环例子。通过计数器来等待循环全部完成。如果结合上面提到的Future技术的话，则不必等待。可以等到真正需要的结果的地方，再去检查数据是否完成。</p>
 <p>通过并发循环可以提供性能，利用多核，解决CPU热点。正因为协程可以大量创建，才能在循环体中如此使用，如果是使用线程的话，就需要引入线程池之类的东西，防止创建过多线程，而协程则简单的多。</p>
@@ -214,6 +214,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     // A concurrent prime sieve
     package main
     // Send the sequence 2, 3, 4, ... to channel 'ch'.
@@ -245,8 +246,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
             go Filter(ch, ch1, prime)
             ch = ch1
         }
-    }
-    </pre></div>
+    }</pre></div>
 <!-- [Format Time: 0.0066 seconds] -->
 <p>上面的程序创建了10个Filter，每个分别过滤一个素数，所以可以输出前10个素数。</p>
 <p>Chain-Filter通过简单的代码创建并发的过滤器链。这种办法还有一个好处，就是每个通道只有两个协程会访问，就不会有激烈的竞争，性能会比较好。</p>
@@ -259,6 +259,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     //共享变量有一个读通道和一个写通道组成
     type sharded_var struct {
         reader chan int
@@ -291,8 +292,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
     v.writer &lt;- 1
     //读取新写入的值
     fmt.Println(&lt;-v.reader)
-  }
-  </pre></div>
+  }</pre></div>
 <!-- [Format Time: 0.0052 seconds] -->
 <p>这样，就可以在协程和通道的基础上实现一个协程安全的共享变量了。定义一个写通道，需要更新变量的时候，往里写新的值。再定义一个读通道，需要读的时候，从里面读。通过一个单独的协程来维护这两个通道。保证数据的一致性。</p>
 <p>一般来说，协程之间不推荐使用共享变量来交互，但是按照这个办法，在一些场合，使用共享变量也是可取的。很多平台上有较为原生的共享变量支持，到底用那种实现比较好，就见仁见智了。另外利用协程和通道，可以还实现各种常见的并发数据结构，如锁等等，就不一一赘述。</p>
@@ -311,6 +311,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
 <link rel="stylesheet" type="text/css" href="Go-%E7%AE%80%E6%B4%81%E7%9A%84%E5%B9%B6%E5%8F%91%20%7C%20%E6%88%91%E8%87%AA%E7%84%B6_files/monaco.css">
 
     <div class="crayon-plain-wrap"><pre class="codepre">
+
     func never_leak(ch chan int) {
             //初始化timeout，缓冲为1
             timeout := make(chan bool, 1)
@@ -326,8 +327,7 @@ filter。这个pipe filter可以用于读写数据流，操作数据流。</p>
             case &lt;-timeout:
             // the read from ch has timed out
             }
-        }
-            </pre></div>
+        }</pre></div>
 <!-- [Format Time: 0.0028 seconds] -->
 <p>上面是个避免泄漏例子。使用超时避免读堵塞，使用缓冲避免写堵塞。</p>
 <p>和内存里面的对象一样，对于长期存在的协程，我们不用担心泄漏问题。一是长期存在，二是数量较少。要警惕的只有那些被临时创建的协程，这些协程数量
