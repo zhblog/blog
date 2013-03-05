@@ -13,7 +13,13 @@ reload(sys)
 sys.setdefaultencoding('utf8') 
 
 # ===========import the configs========
-f = open('config.yaml')
+infile = "config.yaml"
+outfile = "point.html"
+if len(sys.argv) > 2:
+    infile = sys.argv[1]
+    outfile = sys.argv[2]
+
+f = open(infile)
 config = yaml.load(f)
 f.close()
 filename = config['filename']
@@ -248,6 +254,6 @@ content += '''
 
 
 # =================write file=====================
-fslide = codecs.open('point.html', mode="w", encoding="utf8")
+fslide = codecs.open(outfile, mode="w", encoding="utf8")
 fslide.write(content)
 fslide.close()
