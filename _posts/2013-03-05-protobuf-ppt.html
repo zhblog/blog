@@ -1,15 +1,16 @@
 ---
 layout: point
-title: CLI 
+title: Protobuf 
 author: zzh 
-thisdate: 2012-10-18
+thisdate: 2013-03-05
 classification: linux
 ---
+
 <!doctype html>  
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>YAML-CLI</title>
+    <title>PROTOBUF简介</title>
     <link rel="stylesheet" href="/blog/weakpoint/core/weakpoint.css">
     <script src="/blog/weakpoint/third/jquery.js" type="text/javascript"></script>
     <script src="/blog/weakpoint/third/jquery.bxSlider.min.js" type="text/javascript"></script>
@@ -42,14 +43,14 @@ classification: linux
     
   </head>
 <body>
-    <div class="navi"><span>由来</span><span>解读</span><span>完善</span><span>接下来</span>
+    <div class="navi"><span>Protobug简介</span><span>Protobuf简单使用</span>
     </div>
     <div id="wrapper">
     <div id="slider1">
     <div class="paper"><div class="paper-container">
 <!-- ====================front page ===============  -->
-<div class="title">YAML-CLI</div>
-<div class="subtitle">基于yaml的自动化CLI</div>
+<div class="title">PROTOBUF简介</div>
+<div class="subtitle">牛X的序列化框架</div>
 <div class="meta"><img style="float:left;margin:15px;" class="avatar"src="/blog/weakpoint/img/ubuntu-gril.jpg" alt="avatar" width="180" height="140"/>
 <table>
 <tbody>
@@ -60,13 +61,13 @@ classification: linux
   <li class="github"><a href="http://github.com/zhblog" target="_blank">Github</a></li>
 </ul></td></tr>
 <tr class="organization"><td>学无止境</td></tr>
-<tr class="date"><td>2012-10-17</td></tr>
+<tr class="date"><td>2013-03-05</td></tr>
 </tbody>
 </table>
 </div>
 <div class="theme">clean theme</div>
  <!-- ================front page==============  -->
-<div id="popup" style="margin-top: 60px;width:380px;height:120px;color: #333;display:none;background-color:#ddd;padding: 20px;border-radius: 15px;">j/k PPT翻页F11全屏</div></div></div>
+<div id="popup" style="margin-top: 60px;width:380px;height:120px;color: #333;display:none;background-color:#ddd;padding: 20px;border-radius: 15px;">j / k PPT翻页<br>F11 全屏</br>试试看!</div></div></div>
 
 
 
@@ -78,7 +79,7 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h1>由来</h1>
+<h1>Protobug简介</h1>
 
     <!-- ====================================================== -->
     </div></div>
@@ -93,12 +94,12 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>为什么要cli</h2>
+<h2>WHAT</h2>
 <ul>
-<li>cli符合unix，linux用户使用配置习惯 </li>
-<li>思科，华为等板卡的设置提供比较规范的cli设置</li>
-<li>在一些系统上，cli是唯一的配置平台，不提供X和web </li>
-<li>CLI的设置占用资源少，输入规范明了</li>
+<li>google的</li>
+<li>开源序的</li>
+<li>平台无关、语言无关的</li>
+<li>结构化数据的序列化与反序列化 </li>
 </ul>
 
     <!-- ====================================================== -->
@@ -114,14 +115,12 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>cli实现的方式</h2>
+<h2>WHERE</h2>
 <ul>
-<li>据说思科华为的实现方式是C的if，else，及其庞大，形成模板，我汗</li>
-<li>parser+lexer实现词法语法解析</li>
-<li>其他实现方式,自己实现模板方法</li>
-<li>我的实现方式<br />
-</li>
-<li><img alt="" src="/blog/img/w/test.png" /></li>
+<li><a href="blog.itpub.net/post/42700/527047">官方网站</a> </li>
+<li><a href="http://code.google.com/p/protobuf-c/">C语言支持</a></li>
+<li><a href="http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns">其他语言列表</a></li>
+<li><a href="https://developers.google.com/protocol-buffers/">简介教程</a>  </li>
 </ul>
 
     <!-- ====================================================== -->
@@ -137,14 +136,12 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>为什么是yaml-cli</h2>
+<h2>WHY</h2>
 <ul>
-<li><strong>yaml</strong>的表达能力牛逼的要死 </li>
-<li><strong>json</strong>可以方便的支持web的扩展</li>
-<li>readline提供了强有力的扩展API </li>
-<li>C 提供了快速的，占用资源少的实现方式.</li>
-<li>LUA插件也许是未来的最好是先方式.<br />
-</li>
+<li>语言中立，平台中立，可扩展性好 </li>
+<li>性能可靠</li>
+<li>使用简单,API相对统一 </li>
+<li>相较JSON，XML定义简单，接口统一</li>
 </ul>
 
     <!-- ====================================================== -->
@@ -160,7 +157,7 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h1>解读</h1>
+<h1>Protobuf简单使用</h1>
 
     <!-- ====================================================== -->
     </div></div>
@@ -175,18 +172,25 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>1. 代码结构</h2>
-<pre><code>├── check.c
-├── dispatcher.c
-├── file
-│   ├── CMD3.yaml
-│   ├── regex
-│   ├── root.yaml
-├── main.c
-├── re2val.c
-├── readline.c
-└── script
-    └── write_web.py
+<h2>1. protobuf文件</h2>
+<pre><code>message Person {
+required string name = 1;
+required int32 id = 2;
+optional string email = 3;
+
+enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+    }
+
+message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+    }
+
+repeated PhoneNumber phone = 4;
+}
 </code></pre>
 
     <!-- ====================================================== -->
@@ -204,10 +208,12 @@ classification: linux
     
 <h2>2. 增加模块</h2>
 <ul>
-<li>在file中新增一个yaml文件，那文件名字定义为你的模块名</li>
-<li>在root.yaml中增加信的模块的部分 </li>
-<li>在新的模块yaml中编写你的命令</li>
-<li>编译执行测试</li>
+<li>message： 消息定义</li>
+<li>Person： 消息名称</li>
+<li>enum：枚举类型</li>
+<li>required：可选项</li>
+<li>optional：必选项</li>
+<li>repeated：数组选项</li>
 </ul>
 
     <!-- ====================================================== -->
@@ -223,13 +229,12 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>3. 编写模块的命令规则</h2>
-<pre><code>- cmd: debug &lt;int:integer&gt;
-  help: debug no help
-  web: yes
-  file: yes
-  debug: no
-  rpc: cli_set_debug_flag
+<h2>3. 测试用proto</h2>
+<pre><code>message AMessage
+{
+    required int32 a=1; 
+    optional int32 b=2;
+}
 </code></pre>
 
     <!-- ====================================================== -->
@@ -245,13 +250,16 @@ classification: linux
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>4. 命令解读</h2>
-<pre><code>cmd:命令过规则
-help：提示的字符串
-web：是否支持web
-file：是否支持配置导入
-debug：是不是内部命令
-rpc：此命令的解析函数名称
+<h2>4. 编译proto</h2>
+<pre><code>#!/usr/bin/bash
+file="../file/person.proto"
+if [ $# -eq 1 ];
+then
+    file="../file/$1.proto"
+fi
+echo $file
+protoc --python_out=../python/ --proto_path=../file/ $file
+protoc-c --c_out=../c/ --proto_path=../file $file
 </code></pre>
 
     <!-- ====================================================== -->
@@ -267,11 +275,21 @@ rpc：此命令的解析函数名称
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>5. 命令规则解读</h2>
-<pre><code>&lt;&gt;:必选项，可包含其他形式
-[]:可选项，可包含其他方式
-{}:可重复选项，多选多
-|：多选一
+<h2>5. C语言打包程序</h2>
+<pre><code>static void* packbuf()
+{
+    AMessage msg = AMESSAGE__INIT; // AMessage
+    void *buf;                     // Buffer to store serialized data
+    unsigned len;                  // Length of serialized data
+    msg.a = 1;
+    //msg.has_b = 1; 
+    msg.b = 2;
+    len = amessage__get_packed_size(&amp;msg);
+
+    buf = malloc(len);
+    amessage__pack(&amp;msg,buf);
+    return buf;
+}
 </code></pre>
 
     <!-- ====================================================== -->
@@ -287,7 +305,18 @@ rpc：此命令的解析函数名称
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h1>完善</h1>
+<h2>6. 编译C的makefile</h2>
+<pre><code>all = client 
+CC=clang
+objs = amessage.pb-c.o   
+CFLAGS = -Wall 
+$(all): test.c $(objs)
+    clang -I. -o $@ $^ -lprotobuf-c -lzmq
+clean:
+    $(RM) *.o
+    $(RM) $(all)
+    $(RM) *~
+</code></pre>
 
     <!-- ====================================================== -->
     </div></div>
@@ -302,66 +331,13 @@ rpc：此命令的解析函数名称
     <div class="paper"><div class="paper-container">
     <!-- =========================SLIDE==========================-->
     
-<h2>加法和减法</h2>
-<ul>
-<li>删除部分规则</li>
-<li>增加新的规则</li>
-</ul>
-
-    <!-- ====================================================== -->
-    </div></div>
-
-
-
-
-
-
-    
-    
-    <div class="paper"><div class="paper-container">
-    <!-- =========================SLIDE==========================-->
-    
-<h1>接下来</h1>
-
-    <!-- ====================================================== -->
-    </div></div>
-
-
-
-
-
-
-    
-    
-    <div class="paper"><div class="paper-container">
-    <!-- =========================SLIDE==========================-->
-    
-<h2>json的不爽</h2>
-<ol>
-<li>对树形结构的支持不好 </li>
-<li>命令多的时候很不好处理命名问题</li>
-<li>rpc的解析很是不好玩</li>
-</ol>
-
-    <!-- ====================================================== -->
-    </div></div>
-
-
-
-
-
-
-    
-    
-    <div class="paper"><div class="paper-container">
-    <!-- =========================SLIDE==========================-->
-    
-<h2>LUA</h2>
-<ul>
-<li>快速，胶水</li>
-<li>解释起小，可以移植</li>
-<li>编写快速</li>
-</ul>
+<h2>7. Python解包</h2>
+<pre><code>print "Received request: ", len(buf)
+print repr(buf)
+APB.AMessage.ParseFromString(am, buf)
+print am.a
+print am.b
+</code></pre>
     <!-- ====================================================== -->
     </div></div>
     <div class="paper"><div class="paper-container">
