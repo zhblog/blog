@@ -15,18 +15,19 @@ classification: GO
 <p>不过除了一个简单的Sample以后，要想看一些用法就只能去看测试代码和 <a href="http://goneat.org/lp/mgo">api doc</a> 了。简单记录一下自己使用过程中的代码片段</p>
 <h2>install mgo</h2>
 <p>To install mgo, make sure you have the bzr command available and then run:</p>
-<pre class="preclass"><code>install bzr
+<pre class="codepre"><code>install bzr
     go get labix.org/v2/mgo
 </code></pre>
 <h2>connect</h2>
 <p>连接到mongodb非常简单</p>
 <div>
-    <pre class="preclass"><code>session, err := mgo.Dial("localhost:27017")
+    <pre class="codepre"><code>
+	session, err := mgo.Dial("localhost:27017")
     if err != nil {
       panic(err)
-      }
-      defer session.Close()
-      </code>code>
+     }
+    defer session.Close()
+      </code>
       </pre>
 </div>
 
@@ -34,58 +35,64 @@ classification: GO
 
 <h2>database</h2>
 <div>
-    <pre class="preclass"><code>  db := session.DB("hello_mgo")
+    <pre class="codepre"><code>  
+    db := session.DB("hello_mgo")
     </code></pre>
 </div>
 
 <h2>collection</h2>
 <div>
-    <pre class="preclass"><code>  coll := db.C("products")
+    <pre class="codepre"><code>  
+    coll := db.C("products")
     </code></pre>
 </div>
 
 <h2>insert</h2>
 <div>
-    <pre class="preclass"><code>  coll.Insert(bson.M{"name":"cola"})
+    <pre class="codepre"><code>  coll.Insert(bson.M{"name":"cola"})
     </code></pre>
 </div>
 
 <p>也可以同时insert多条记录</p>
-<pre class="preclass"><code>
+<pre class="codepre"><code>
       coll.Insert(bson.M{"name":"cola"},bson.M{"name":"bread"})
   </code></pre>
 
   <h2>find by id</h2>
   <div>
-      <pre class="preclass"><code> result := make(bson.M)
+      <pre class="codepre"><code> 
+       result := make(bson.M)
        coll.Find(bson.M{"_id": bson.ObjectIdHex("4f54c441188ffed1c65a187b")}).One(product)
        </code></pre>
   </div>
 
   <h2>update</h2>
   <div>
-      <pre class="preclass"><code>  coll.Update(bson.M{"name": "cola"}, bson.M{"$set": bson.M{"name": "coca cola"}})
-        coll.UpdateAll(bson.M{"name": "cola"}, bson.M{"$set": bson.M{"name": "coca cola"}})
-          coll.Upsert(bson.M{"name": "cola"}, bson.M{"$set": bson.M{"name": "coca cola"}})
+      <pre class="codepre"><code>  
+      coll.Update(bson.M{"name": "cola"}, bson.M{"$set": bson.M{"name": "coca cola"}})
+      coll.UpdateAll(bson.M{"name": "cola"}, bson.M{"$set": bson.M{"name": "coca cola"}})
+      coll.Upsert(bson.M{"name": "cola"}, bson.M{"$set": bson.M{"name": "coca cola"}})
          </code> </pre>
   </div>
 
   <h2>remove</h2>
   <div>
-      <pre class="preclass"><code>  coll.Remove(bson.M{})
-        coll.RemoveAll(bson.M{})
+      <pre class="codepre"><code>  
+      coll.Remove(bson.M{})
+      coll.RemoveAll(bson.M{})
         </code></pre>
   </div>
 
   <h2>bson.M &amp; bson.D</h2>
   <div>
-      <pre class="preclass"><code>type M map[string]interface{}
-
-      type D []DocElem
+      <pre class="codepre"><code>
+		type M map[string]interface{}
+		type D []DocElem
 
       // See the bson.D type.
       type DocElem struct {
           Name  string
-              Value interface{}
-              }
+          Value interface{}
+       }
               </code></pre>
+              </div>
